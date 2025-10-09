@@ -42,6 +42,11 @@ fun Login(
     val username = viewModel.username.collectAsState()
     val password = viewModel.password.collectAsState()
 
+    LaunchedEffect(key1 = userState.value) {
+        if (userState.value is UiState.Success) {
+            onLogin()
+        }
+    }
 
     val isVisible = remember {
         mutableStateOf(false)
