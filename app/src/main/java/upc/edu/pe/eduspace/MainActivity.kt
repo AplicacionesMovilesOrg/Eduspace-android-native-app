@@ -11,37 +11,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import upc.edu.pe.eduspace.core.ui.theme.EduspaceTheme
+import dagger.hilt.android.AndroidEntryPoint
+import upc.edu.pe.eduspace.core.navigation.EduSpaceNavigation
+import upc.edu.pe.eduspace.core.ui.theme.EduSpaceTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            EduspaceTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            EduSpaceTheme {
+                EduSpaceNavigation()
             }
         }
     }
 }
 
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    EduspaceTheme {
-        Greeting("Android")
+fun PreviewEduSpaceNavigation() {
+    EduSpaceTheme {
+        EduSpaceNavigation()
     }
 }
