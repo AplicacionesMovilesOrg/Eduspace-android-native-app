@@ -26,7 +26,7 @@ class HomeViewModel @Inject constructor(
                 val data = repository.getUserHome()
                 _homeState.value = UiState.Success(data)
             } catch (e: Exception) {
-                _homeState.value = UiState.Error(e.message ?: "Error al cargar la información")
+                _homeState.value = UiState.Error(e.message ?: "Error al cargar los reportes")
             }
         }
     }
