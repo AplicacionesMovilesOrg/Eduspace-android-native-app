@@ -81,6 +81,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     }
 
     fun updateDni(value: String) {
+        // Solo permitir números y máximo 8 dígitos
         if (value.isEmpty() || (value.all { it.isDigit() } && value.length <= 8)) {
             _dni.value = value
             _dniError.value = null
@@ -92,6 +93,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     }
 
     fun updatePhone(value: String) {
+        // Solo permitir números y máximo 9 dígitos
         if (value.isEmpty() || (value.all { it.isDigit() } && value.length <= 9)) {
             _phone.value = value
             _phoneError.value = null
@@ -111,7 +113,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     private fun validateFirstName(): Boolean {
         return when {
             _firstName.value.isBlank() -> {
-                _firstNameError.value = "First name is required"
+                _firstNameError.value = "El nombre es obligatorio"
                 false
             }
             else -> {
@@ -124,7 +126,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     private fun validateLastName(): Boolean {
         return when {
             _lastName.value.isBlank() -> {
-                _lastNameError.value = "Last name is required"
+                _lastNameError.value = "El apellido es obligatorio"
                 false
             }
             else -> {
@@ -138,11 +140,11 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
         return when {
             _email.value.isBlank() -> {
-                _emailError.value = "Email is required"
+                _emailError.value = "El correo es obligatorio"
                 false
             }
             !_email.value.matches(emailPattern.toRegex()) -> {
-                _emailError.value = "Invalid email format"
+                _emailError.value = "Formato de correo inválido"
                 false
             }
             else -> {
@@ -155,15 +157,15 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     private fun validateDni(): Boolean {
         return when {
             _dni.value.isBlank() -> {
-                _dniError.value = "DNI is required"
+                _dniError.value = "El DNI es obligatorio"
                 false
             }
             _dni.value.length != 8 -> {
-                _dniError.value = "DNI must be 8 digits"
+                _dniError.value = "El DNI debe tener 8 dígitos"
                 false
             }
             !_dni.value.all { it.isDigit() } -> {
-                _dniError.value = "DNI must contain only numbers"
+                _dniError.value = "El DNI solo debe contener números"
                 false
             }
             else -> {
@@ -176,19 +178,19 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     private fun validatePhone(): Boolean {
         return when {
             _phone.value.isBlank() -> {
-                _phoneError.value = "Phone number is required"
+                _phoneError.value = "El teléfono es obligatorio"
                 false
             }
             _phone.value.length != 9 -> {
-                _phoneError.value = "Phone number must be 9 digits"
+                _phoneError.value = "El teléfono debe tener 9 dígitos"
                 false
             }
             !_phone.value.startsWith("9") -> {
-                _phoneError.value = "Phone number must start with 9"
+                _phoneError.value = "El teléfono debe comenzar con 9"
                 false
             }
             !_phone.value.all { it.isDigit() } -> {
-                _phoneError.value = "Phone number must contain only numbers"
+                _phoneError.value = "El teléfono solo debe contener números"
                 false
             }
             else -> {
@@ -201,11 +203,11 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     private fun validateUsername(): Boolean {
         return when {
             _username.value.isBlank() -> {
-                _usernameError.value = "Username is required"
+                _usernameError.value = "El nombre de usuario es obligatorio"
                 false
             }
             _username.value.length < 4 -> {
-                _usernameError.value = "Username must be at least 4 characters"
+                _usernameError.value = "El usuario debe tener al menos 4 caracteres"
                 false
             }
             else -> {
@@ -219,23 +221,23 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
         val password = _password.value
         return when {
             password.isBlank() -> {
-                _passwordError.value = "Password is required"
+                _passwordError.value = "La contraseña es obligatoria"
                 false
             }
             password.length < 8 -> {
-                _passwordError.value = "Password must be at least 8 characters"
+                _passwordError.value = "La contraseña debe tener al menos 8 caracteres"
                 false
             }
             !password.any { it.isUpperCase() } -> {
-                _passwordError.value = "Must contain at least one uppercase letter"
+                _passwordError.value = "Debe contener al menos una mayúscula"
                 false
             }
             !password.any { it.isDigit() } -> {
-                _passwordError.value = "Must contain at least one number"
+                _passwordError.value = "Debe contener al menos un número"
                 false
             }
             !password.any { !it.isLetterOrDigit() } -> {
-                _passwordError.value = "Must contain at least one special character"
+                _passwordError.value = "Debe contener al menos un carácter especial"
                 false
             }
             else -> {
@@ -246,6 +248,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     }
 
     fun performSignUp() {
+        // Validar todos los campos
         val isFirstNameValid = validateFirstName()
         val isLastNameValid = validateLastName()
         val isEmailValid = validateEmail()
@@ -254,6 +257,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
         val isUsernameValid = validateUsername()
         val isPasswordValid = validatePassword()
 
+        // Si algún campo no es válido, no continuar
         if (!isFirstNameValid || !isLastNameValid || !isEmailValid ||
             !isDniValid || !isPhoneValid || !isUsernameValid || !isPasswordValid) {
             return
