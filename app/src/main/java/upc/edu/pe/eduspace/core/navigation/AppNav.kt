@@ -6,12 +6,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import upc.edu.pe.eduspace.features.auth.presentation.login.Login
 import upc.edu.pe.eduspace.features.auth.presentation.signup.SignUp
+import upc.edu.pe.eduspace.features.home.presentation.home.HomeScreen
 
 @Composable
 fun AppNav() {
     val navController = rememberNavController()
 
-    NavHost(navController, startDestination = Route.Login.route) {
+    NavHost(
+        navController = navController,
+        startDestination = Route.Login.route
+    ) {
         composable(Route.Login.route) {
             Login(
                 onLogin = {
@@ -38,6 +42,9 @@ fun AppNav() {
             )
         }
 
-        // ... (las otras rutas)
+        composable(Route.Main.route) {
+            println("✅ Navegando a Home desde AppNav")
+            HomeScreen(onMenuClick = { /* TODO abrir drawer */ })
+        }
     }
 }
