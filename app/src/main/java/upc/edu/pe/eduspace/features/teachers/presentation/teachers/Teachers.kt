@@ -96,15 +96,6 @@ private fun TeachersContent(
     onTeacherClick: (Teacher) -> Unit = {}
 ) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Teacher Management") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF2E68B8),
-                    titleContentColor = Color.White
-                )
-            )
-        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onAddTeacher,

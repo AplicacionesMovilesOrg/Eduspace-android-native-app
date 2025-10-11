@@ -31,6 +31,7 @@ import upc.edu.pe.eduspace.features.menu.data.MenuRepositoryImpl
 import upc.edu.pe.eduspace.features.menu.domain.GetMenuUseCase
 import upc.edu.pe.eduspace.features.menu.domain.model.Screen
 import upc.edu.pe.eduspace.features.menu.presentation.SimpleScreen
+import upc.edu.pe.eduspace.features.teachers.presentation.teachers.TeachersRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +91,7 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                 composable(Screen.CLASSROOMS.route) { SimpleScreen("Classrooms") }
                 composable(Screen.SHARED_SPACES.route) { SimpleScreen("Shared Spaces") }
                 composable(Screen.MEETINGS.route) { SimpleScreen("Meetings") }
-                composable(Screen.TEACHERS.route) { SimpleScreen("Teachers") }
+                composable(Screen.TEACHERS.route) { TeachersRoute() }
             }
         }
 //...
