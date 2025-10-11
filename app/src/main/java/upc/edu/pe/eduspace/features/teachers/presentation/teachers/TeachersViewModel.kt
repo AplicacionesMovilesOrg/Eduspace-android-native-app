@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
+import upc.edu.pe.eduspace.features.teachers.domain.repositories.CreateTeacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.TeachersRepository
 import javax.inject.Inject
 
@@ -24,8 +26,22 @@ class TeachersViewModel @Inject constructor(
         }
     }
 
+    fun createTeacher(input: CreateTeacher, onDone: () -> Unit, onError: (String)->Unit) {
+        viewModelScope.launch {
+            runCatching { repository.createTeacher(input) }
+                .onSuccess { created ->
+                    if (created != null) {
+                        _teachers.update {
+                            it + created
+                        }
+                        onDone()
+                    } else onError("Could not create teacher")
+                }
+                .onFailure { e -> onError(e.message ?: "Error creating teacher") }
+        }
+    }
+
     init {
-        // igual que en HomeViewModel: cargar al iniciar
         getAllTeachers()
     }
 }
