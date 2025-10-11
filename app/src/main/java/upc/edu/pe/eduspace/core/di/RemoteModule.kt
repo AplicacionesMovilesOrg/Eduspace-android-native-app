@@ -28,6 +28,4 @@ object RemoteModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-
-
 }
