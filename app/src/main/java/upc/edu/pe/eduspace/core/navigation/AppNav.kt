@@ -6,7 +6,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import upc.edu.pe.eduspace.features.auth.presentation.login.Login
 import upc.edu.pe.eduspace.features.auth.presentation.signup.SignUp
-import upc.edu.pe.eduspace.features.home.presentation.home.HomeScreen
 
 @Composable
 fun AppNav() {
@@ -43,8 +42,13 @@ fun AppNav() {
         }
 
         composable(Route.Main.route) {
-            println("✅ Navegando a Home desde AppNav")
-            HomeScreen(onMenuClick = { /* TODO abrir drawer */ })
+            EduSpaceNavigation(
+                onLogout = {
+                    navController.navigate(Route.Login.route) {
+                        popUpTo(Route.Main.route) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

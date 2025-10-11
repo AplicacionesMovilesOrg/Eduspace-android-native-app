@@ -1,15 +1,27 @@
 package upc.edu.pe.eduspace.features.home.presentation.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,11 +37,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.home.domain.models.ReportResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel(),
-    onMenuClick: () -> Unit
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val homeState by viewModel.homeState.collectAsState()
 
@@ -41,79 +51,59 @@ fun HomeScreen(
         colors = listOf(Color(0xFF66A9D9), Color(0xFFFFE07A))
     )
 
-    Scaffold(
-        containerColor = Color.Transparent,
-        topBar = {
-            TopAppBar(
-                title = { Text("Inicio") },
-                navigationIcon = {
-                    IconButton(onClick = onMenuClick) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Open navigation menu")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface
-                )
-            )
-        }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(gradient)
-                .padding(innerPadding)
-        ) {
-            when (val state = homeState) {
-                is UiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-
-                is UiState.Error -> {
-                    Text(
-                        text = state.message,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-
-                is UiState.Success -> {
-                    val user = state.data
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        item {
-                            Spacer(Modifier.height(32.dp))
-                            WelcomeCard(
-                                firstName = user.firstName,
-                                lastName = user.lastName
-                            )
-                            Spacer(Modifier.height(24.dp))
-                        }
-
-                        if (user.reports.isEmpty()) {
-                            item {
-                                Text(
-                                    text = "No hay reportes disponibles",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        } else {
-                            items(user.reports) { report ->
-                                ReportCard(report = report)
-                                Spacer(Modifier.height(12.dp))
-                            }
-                        }
-                    }
-                }
-
-                else -> {}
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(gradient)
+            .padding(16.dp)
+    ) {
+        when (val state = homeState) {
+            is UiState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+
+            is UiState.Error -> {
+                Text(
+                    text = state.message,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            is UiState.Success -> {
+                val user = state.data
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    item {
+                        Spacer(Modifier.height(32.dp))
+                        WelcomeCard(
+                            firstName = user.firstName,
+                            lastName = user.lastName
+                        )
+                        Spacer(Modifier.height(24.dp))
+                    }
+
+                    if (user.reports.isEmpty()) {
+                        item {
+                            Text(
+                                text = "No hay reportes disponibles",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    } else {
+                        items(user.reports) { report ->
+                            ReportCard(report = report)
+                            Spacer(Modifier.height(12.dp))
+                        }
+                    }
+                }
+            }
+
+            else -> {}
         }
     }
 }
@@ -198,5 +188,5 @@ fun ReportCard(report: ReportResource) {
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(onMenuClick = {})
+    HomeScreen()
 }

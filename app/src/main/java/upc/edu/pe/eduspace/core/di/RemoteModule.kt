@@ -17,7 +17,7 @@ object RemoteModule {
     @Singleton
     @Named("url")
     fun provideBaseUrl(): String {
-        return "http://10.0.2.2:8080/api/v1/"
+        return "https://eduspace-platform-production-e783.up.railway.app/api/v1/"
     }
 
     @Provides
