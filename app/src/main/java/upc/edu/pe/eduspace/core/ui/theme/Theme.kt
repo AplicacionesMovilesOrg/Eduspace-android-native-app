@@ -1,7 +1,6 @@
 package upc.edu.pe.eduspace.core.ui.theme
 
 import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -24,7 +23,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {

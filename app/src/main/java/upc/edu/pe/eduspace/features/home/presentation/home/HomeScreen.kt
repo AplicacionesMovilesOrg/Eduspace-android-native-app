@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.home.domain.models.ReportResource
 
@@ -89,7 +89,7 @@ fun HomeScreen(
                     if (user.reports.isEmpty()) {
                         item {
                             Text(
-                                text = "No hay reportes disponibles",
+                                text = "No reports available",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -141,7 +141,7 @@ fun WelcomeCard(firstName: String, lastName: String) {
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "Bienvenido",
+                text = "Welcome",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
             )
 
@@ -172,12 +172,12 @@ fun ReportCard(report: ReportResource) {
             Text(text = report.description)
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Estado: ${report.status}",
+                text = "Status: ${report.status}",
                 color = Color.Gray,
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = "Fecha: ${report.createdAt.take(10)}",
+                text = "Date: ${report.createdAt.take(10)}",
                 color = Color.Gray,
                 style = MaterialTheme.typography.bodySmall
             )

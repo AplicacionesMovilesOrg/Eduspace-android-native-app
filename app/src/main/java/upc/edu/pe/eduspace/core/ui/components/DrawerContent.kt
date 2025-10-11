@@ -1,4 +1,5 @@
 package upc.edu.pe.eduspace.core.ui.components
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
@@ -25,7 +26,6 @@ import upc.edu.pe.eduspace.features.menu.domain.model.Screen
 
 @Composable
 fun DrawerHeader() {
-    // Gradiente con borde redondeado como la imagen
     val gradient = Brush.verticalGradient(
         colors = listOf(Color(0xFF1FA2FF), Color(0xFF12D8FA), Color(0xFFA6FFCB))
     )
@@ -39,7 +39,10 @@ fun DrawerHeader() {
     ) {
         Text("Menu", color = Color.White, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(12.dp))
-        Divider(color = Color.White.copy(alpha = .7f), thickness = 1.dp)
+        HorizontalDivider(
+            color = Color.White.copy(alpha = .7f),
+            thickness = 1.dp
+        )
     }
 }
 
@@ -53,17 +56,27 @@ fun DrawerMenu(
         DrawerHeader()
         Spacer(Modifier.height(8.dp))
         items.forEach { item ->
-            val color = if (item.isDanger) Color(0xFFDA1E28) else MaterialTheme.colorScheme.onSurface
             val selected = item.screen == current
+
+            val primaryCyan = Color(0xFF1FA2FF)
+            val textColorDark = Color(0xFF161616)
+
             NavigationDrawerItem(
-                label = { Text(item.screen.label, color = color) },
+                label = { Text(item.screen.label) },
                 selected = selected,
                 onClick = { onClick(item) },
-                icon = { Icon(item.icon, contentDescription = null, tint = color) },
+                icon = { Icon(item.icon, contentDescription = null) },
+                colors = NavigationDrawerItemDefaults.colors(
+                    unselectedTextColor = if (item.isDanger) Color(0xFFDA1E28) else textColorDark,
+                    unselectedIconColor = if (item.isDanger) Color(0xFFDA1E28) else textColorDark,
+                    selectedTextColor = if (item.isDanger) Color(0xFFDA1E28) else primaryCyan,
+                    selectedIconColor = if (item.isDanger) Color(0xFFDA1E28) else primaryCyan,
+                    selectedContainerColor = primaryCyan.copy(alpha = 0.12f)
+                ),
                 modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             )
         }
         Spacer(Modifier.height(12.dp))
-        Divider(Modifier.padding(horizontal = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
     }
 }
