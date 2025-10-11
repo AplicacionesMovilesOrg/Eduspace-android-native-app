@@ -4,6 +4,8 @@ data class Teacher(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val dni: String
+    val dni: String,
+    val address: String,
+    val phone: String
 )
 
