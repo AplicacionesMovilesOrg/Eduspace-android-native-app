@@ -1,5 +1,6 @@
-package upc.edu.pe.eduspace.features.home.data.remote.repositories
+package upc.edu.pe.eduspace.features.home.data.repositories
 
+import android.util.Log
 import upc.edu.pe.eduspace.features.home.data.remote.models.toDomain
 import upc.edu.pe.eduspace.features.home.data.remote.services.HomeService
 import upc.edu.pe.eduspace.features.home.domain.models.UserHome
@@ -11,13 +12,20 @@ class HomeRepositoryImpl @Inject constructor(
 ) : HomeRepository {
 
     override suspend fun getUserHome(): UserHome {
-        val reports = homeService.getReports().map { it.toDomain() }
+        try {
+            val profiles = homeService.getAdministratorProfiles()
+            val profile = profiles.firstOrNull()
 
-        // Por ahora el nombre del usuario lo podrías obtener del token o de authRepo
-        return UserHome(
-            firstName = "Andres",
-            lastName = "Torres",
-            reports = reports
-        )
+            val reports = homeService.getReports().map { it.toDomain() }
+
+            return UserHome(
+                firstName = profile?.firstName ?: "User",
+                lastName = profile?.lastName ?: "",
+                reports = reports
+            )
+        } catch (e: Exception) {
+            Log.e("HomeRepository", "Error obteniendo datos del Home: ${e.message}")
+            throw e
+        }
     }
 }
