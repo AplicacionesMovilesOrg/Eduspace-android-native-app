@@ -26,6 +26,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import upc.edu.pe.eduspace.core.ui.components.DrawerMenu
+import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.ClassroomsRoute
 import upc.edu.pe.eduspace.features.home.presentation.home.HomeScreen
 import upc.edu.pe.eduspace.features.menu.data.MenuRepositoryImpl
 import upc.edu.pe.eduspace.features.menu.domain.GetMenuUseCase
@@ -88,7 +89,7 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Screen.HOME.route) { HomeScreen() }
-                composable(Screen.CLASSROOMS.route) { SimpleScreen("Classrooms") }
+                composable(Screen.CLASSROOMS.route) { ClassroomsRoute() }
                 composable(Screen.SHARED_SPACES.route) { SimpleScreen("Shared Spaces") }
                 composable(Screen.MEETINGS.route) { SimpleScreen("Meetings") }
                 composable(Screen.TEACHERS.route) { TeachersRoute() }

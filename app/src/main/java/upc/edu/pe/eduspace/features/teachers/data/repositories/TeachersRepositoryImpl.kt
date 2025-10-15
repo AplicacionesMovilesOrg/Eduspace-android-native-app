@@ -22,8 +22,10 @@ class TeachersRepositoryImpl @Inject constructor(
 
         val list = response.body() ?: emptyList<TeacherDto>()
 
-        return@withContext list.map { dto ->
+        return@withContext list.mapNotNull { dto ->
+            val id = dto.id ?: return@mapNotNull null
             Teacher(
+                id = id,
                 firstName = dto.firstName.orEmpty(),
                 lastName  = dto.lastName.orEmpty(),
                 email     = dto.email.orEmpty(),
@@ -44,7 +46,9 @@ class TeachersRepositoryImpl @Inject constructor(
         val r = service.createTeacher(req)
         if (!r.isSuccessful) return null
         val dto = r.body() ?: return null
+        val id = dto.id ?: return null
         return Teacher(
+            id = id,
             firstName = dto.firstName.orEmpty(),
             lastName  = dto.lastName.orEmpty(),
             email     = dto.email.orEmpty(),

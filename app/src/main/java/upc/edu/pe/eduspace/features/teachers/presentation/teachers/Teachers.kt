@@ -339,14 +339,3 @@ private fun AddTeacherDialogStyled(
         }
     }
 }
-
-/* Preview (solo UI, sin red) */
-@Preview(showBackground = true, name = "Teachers – Lista")
-@Composable
-private fun TeachersPreview_List() {
-    val fake = listOf(
-        Teacher(firstName = "Ana",  lastName = "Pérez", email = "ana@upc.edu.pe",  dni = "12345678", address = "Jr puno", phone = "987654321"),
-        Teacher(firstName = "Luis", lastName = "Gómez", email = "luis@upc.edu.pe", dni = "87654321", address = "Jr puno", phone = "987654321")
-    )
-    TeachersContent(teachers = fake)
-}
