@@ -20,12 +20,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import kotlinx.coroutines.launch
 import upc.edu.pe.eduspace.core.ui.components.DrawerMenu
+import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.ClassroomDetailRoute
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.ClassroomsRoute
 import upc.edu.pe.eduspace.features.home.presentation.home.HomeScreen
 import upc.edu.pe.eduspace.features.menu.data.MenuRepositoryImpl
@@ -89,7 +92,25 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Screen.HOME.route) { HomeScreen() }
-                composable(Screen.CLASSROOMS.route) { ClassroomsRoute() }
+                composable(Screen.CLASSROOMS.route) {
+                    ClassroomsRoute(
+                        onClassroomClick = { classroomId ->
+                            navController.navigate("classroom_detail/$classroomId")
+                        }
+                    )
+                }
+                composable(
+                    route = "classroom_detail/{classroomId}",
+                    arguments = listOf(
+                        navArgument("classroomId") { type = NavType.IntType }
+                    )
+                ) { backStackEntry ->
+                    val classroomId = backStackEntry.arguments?.getInt("classroomId") ?: 0
+                    ClassroomDetailRoute(
+                        classroomId = classroomId,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
                 composable(Screen.SHARED_SPACES.route) { SimpleScreen("Shared Spaces") }
                 composable(Screen.MEETINGS.route) { SimpleScreen("Meetings") }
                 composable(Screen.TEACHERS.route) { TeachersRoute() }
