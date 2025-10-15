@@ -37,6 +37,32 @@ class TeachersRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun getTeacherById(id: Int): Teacher? = withContext(Dispatchers.IO) {
+        try {
+            val response = service.getTeacherById(id)
+            if (!response.isSuccessful) {
+                Log.e("TeachersRepository", "Error getting teacher by id: ${response.message()}")
+                return@withContext null
+            }
+
+            val dto = response.body() ?: return@withContext null
+            val teacherId = dto.id ?: return@withContext null
+
+            return@withContext Teacher(
+                id = teacherId,
+                firstName = dto.firstName.orEmpty(),
+                lastName = dto.lastName.orEmpty(),
+                email = dto.email.orEmpty(),
+                dni = dto.dni.orEmpty(),
+                address = dto.address.orEmpty(),
+                phone = dto.phone.orEmpty()
+            )
+        } catch (e: Exception) {
+            Log.e("TeachersRepository", "Exception getting teacher by id: ${e.message}", e)
+            return@withContext null
+        }
+    }
+
     override suspend fun createTeacher(input: CreateTeacher): Teacher? {
         val req = CreateTeacherRequestDto(
             firstName = input.firstName, lastName = input.lastName,

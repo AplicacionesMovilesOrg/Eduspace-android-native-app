@@ -6,20 +6,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,19 +32,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.ClassroomCard
+import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.ClassroomsHeader
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.CreateClassroomDialog
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.DeleteConfirmationDialog
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.EditClassroomDialog
+import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.EmptyClassroomsState
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassroomsRoute(
+    onClassroomClick: (Int) -> Unit = {},
     viewModel: ClassroomsViewModel = hiltViewModel()
 ) {
     val classroomsState by viewModel.classroomsState.collectAsState()
@@ -112,6 +118,7 @@ fun ClassroomsRoute(
         classroomsState = classroomsState,
         teachersState = teachersState,
         onAddClick = { showCreateDialog = true },
+        onClassroomClick = onClassroomClick,
         onEditClick = { classroom ->
             selectedClassroom = classroom
             showEditDialog = true
@@ -160,13 +167,10 @@ fun ClassroomsRoute(
     }
 
     snackMessage?.let { msg ->
-        Snackbar(
-            action = { TextButton(onClick = { snackMessage = null }) { Text("OK") } },
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(align = Alignment.BottomCenter)
-                .padding(16.dp)
-        ) { Text(msg) }
+        CustomSnackbar(
+            message = msg,
+            onDismiss = { snackMessage = null }
+        )
     }
 }
 
@@ -176,6 +180,7 @@ private fun ClassroomsContent(
     classroomsState: UiState<List<Classroom>>,
     teachersState: UiState<List<Teacher>>,
     onAddClick: () -> Unit,
+    onClassroomClick: (Int) -> Unit,
     onEditClick: (Classroom) -> Unit,
     onDeleteClick: (Classroom) -> Unit
 ) {
@@ -184,11 +189,25 @@ private fun ClassroomsContent(
             ExtendedFloatingActionButton(
                 onClick = onAddClick,
                 containerColor = Color(0xFF2E68B8),
-                contentColor = Color.White
+                contentColor = Color.White,
+                shape = RoundedCornerShape(16.dp),
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 12.dp
+                )
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add classroom")
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Add classroom")
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add classroom",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    "Add Classroom",
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
             }
         }
     ) { padding ->
@@ -208,15 +227,21 @@ private fun ClassroomsContent(
                 }
                 is UiState.Success -> {
                     val classrooms = classroomsState.data
-                    if (classrooms.isEmpty()) {
-                        Text("No classrooms available", Modifier.align(Alignment.Center))
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        item {
+                            ClassroomsHeader(classroomCount = classrooms.size)
+                        }
+
+                        if (classrooms.isEmpty()) {
+                            item {
+                                EmptyClassroomsState()
+                            }
+                        } else {
                             items(classrooms) { classroom ->
                                 val teachers = (teachersState as? UiState.Success)?.data ?: emptyList()
                                 val teacher = teachers.find { it.id == classroom.teacherId }
@@ -225,6 +250,7 @@ private fun ClassroomsContent(
                                 ClassroomCard(
                                     classroom = classroom,
                                     teacherName = teacherName,
+                                    onClick = { onClassroomClick(classroom.id) },
                                     onEditClick = { onEditClick(classroom) },
                                     onDeleteClick = { onDeleteClick(classroom) }
                                 )
