@@ -135,10 +135,6 @@ app/
 - **Coil** - Image loading
 - **KSP** - Kotlin Symbol Processing
 
-## 📱 Screenshots
-
-> Add your app screenshots here
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -358,14 +354,8 @@ Contributions are welcome! Please follow these steps:
 - Built with ❤️ using Jetpack Compose
 - Material Design 3 components
 - Clean Architecture principles
-- Backend API by [Your Team Name]
 
 ## 📞 Contact
 
 For questions or support, please contact:
-- Email: your.email@example.com
 - GitHub Issues: [Project Issues](https://github.com/yourusername/eduspace-android/issues)
-
----
-
-**Made with** ❤️ **and** ☕ **by [Your Team/Name]**
