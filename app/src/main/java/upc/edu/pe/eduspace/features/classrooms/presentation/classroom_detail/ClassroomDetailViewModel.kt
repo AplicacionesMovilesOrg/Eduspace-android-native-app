@@ -14,6 +14,9 @@ import upc.edu.pe.eduspace.features.classrooms.domain.repositories.ClassroomsRep
 import upc.edu.pe.eduspace.features.classrooms.domain.repositories.CreateResource
 import upc.edu.pe.eduspace.features.classrooms.domain.repositories.ResourcesRepository
 import upc.edu.pe.eduspace.features.classrooms.domain.repositories.UpdateResource
+import upc.edu.pe.eduspace.features.meetings.domain.models.CreateMeeting
+import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
+import upc.edu.pe.eduspace.features.meetings.domain.repositories.MeetingsRepository
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.TeachersRepository
 import javax.inject.Inject
@@ -22,7 +25,8 @@ import javax.inject.Inject
 class ClassroomDetailViewModel @Inject constructor(
     private val classroomsRepository: ClassroomsRepository,
     private val resourcesRepository: ResourcesRepository,
-    private val teachersRepository: TeachersRepository
+    private val teachersRepository: TeachersRepository,
+    private val meetingsRepository: MeetingsRepository
 ) : ViewModel() {
 
     private val _classroomState = MutableStateFlow<UiState<Classroom>>(UiState.Initial)
@@ -42,6 +46,9 @@ class ClassroomDetailViewModel @Inject constructor(
 
     private val _deleteResourceState = MutableStateFlow<UiState<Boolean>>(UiState.Initial)
     val deleteResourceState: StateFlow<UiState<Boolean>> = _deleteResourceState.asStateFlow()
+
+    private val _createMeetingState = MutableStateFlow<UiState<Meeting>>(UiState.Initial)
+    val createMeetingState: StateFlow<UiState<Meeting>> = _createMeetingState.asStateFlow()
 
     fun getClassroomById(classroomId: Int) {
         viewModelScope.launch {
@@ -165,5 +172,40 @@ class ClassroomDetailViewModel @Inject constructor(
 
     fun resetDeleteResourceState() {
         _deleteResourceState.value = UiState.Initial
+    }
+
+    fun createMeeting(
+        administratorId: Int,
+        classroomId: Int,
+        title: String,
+        description: String,
+        date: String,
+        start: String,
+        end: String
+    ) {
+        viewModelScope.launch {
+            _createMeetingState.value = UiState.Loading
+            try {
+                val meeting = CreateMeeting(
+                    title = title,
+                    description = description,
+                    date = date,
+                    start = start,
+                    end = end
+                )
+                val result = meetingsRepository.createMeeting(administratorId, classroomId, meeting)
+                if (result != null) {
+                    _createMeetingState.value = UiState.Success(result)
+                } else {
+                    _createMeetingState.value = UiState.Error("Error creating meeting")
+                }
+            } catch (e: Exception) {
+                _createMeetingState.value = UiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun resetCreateMeetingState() {
+        _createMeetingState.value = UiState.Initial
     }
 }

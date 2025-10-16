@@ -31,10 +31,11 @@ import upc.edu.pe.eduspace.core.ui.components.DrawerMenu
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.ClassroomDetailRoute
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.ClassroomsRoute
 import upc.edu.pe.eduspace.features.home.presentation.home.HomeScreen
+import upc.edu.pe.eduspace.features.meetings.presentation.meeting_detail.MeetingDetailRoute
+import upc.edu.pe.eduspace.features.meetings.presentation.meetings.MeetingsRoute
 import upc.edu.pe.eduspace.features.menu.data.MenuRepositoryImpl
 import upc.edu.pe.eduspace.features.menu.domain.GetMenuUseCase
 import upc.edu.pe.eduspace.features.menu.domain.model.Screen
-import upc.edu.pe.eduspace.features.menu.presentation.SimpleScreen
 import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_area_detail.SharedAreaDetailRoute
 import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_areas.SharedAreasRoute
 import upc.edu.pe.eduspace.features.teachers.presentation.teachers.TeachersRoute
@@ -130,7 +131,23 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
-                composable(Screen.MEETINGS.route) { SimpleScreen("Meetings") }
+                composable(Screen.MEETINGS.route) {
+                    MeetingsRoute(
+                        onNavigateToDetail = { meetingId ->
+                            navController.navigate("meeting_detail/$meetingId")
+                        }
+                    )
+                }
+                composable(
+                    route = "meeting_detail/{meetingId}",
+                    arguments = listOf(
+                        navArgument("meetingId") { type = NavType.IntType }
+                    )
+                ) {
+                    MeetingDetailRoute(
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
                 composable(Screen.TEACHERS.route) { TeachersRoute() }
             }
         }

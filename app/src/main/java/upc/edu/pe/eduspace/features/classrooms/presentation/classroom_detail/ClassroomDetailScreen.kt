@@ -14,8 +14,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,6 +56,7 @@ import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.com
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.components.ResourceCard
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.components.ResourcesHeader
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.DeleteConfirmationDialog
+import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.CreateMeetingDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,10 +71,12 @@ fun ClassroomDetailRoute(
     val createResourceState by viewModel.createResourceState.collectAsState()
     val updateResourceState by viewModel.updateResourceState.collectAsState()
     val deleteResourceState by viewModel.deleteResourceState.collectAsState()
+    val createMeetingState by viewModel.createMeetingState.collectAsState()
 
     var showAddResourceDialog by remember { mutableStateOf(false) }
     var showEditResourceDialog by remember { mutableStateOf(false) }
     var showDeleteResourceDialog by remember { mutableStateOf(false) }
+    var showCreateMeetingDialog by remember { mutableStateOf(false) }
     var selectedResource by remember { mutableStateOf<Resource?>(null) }
     var snackMessage by remember { mutableStateOf<String?>(null) }
 
@@ -124,6 +130,21 @@ fun ClassroomDetailRoute(
         }
     }
 
+    LaunchedEffect(createMeetingState) {
+        when (createMeetingState) {
+            is UiState.Success -> {
+                snackMessage = "Meeting created successfully"
+                showCreateMeetingDialog = false
+                viewModel.resetCreateMeetingState()
+            }
+            is UiState.Error -> {
+                snackMessage = (createMeetingState as UiState.Error).message
+                viewModel.resetCreateMeetingState()
+            }
+            else -> {}
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -139,7 +160,7 @@ fun ClassroomDetailRoute(
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = Color.White
                         )
@@ -203,6 +224,28 @@ fun ClassroomDetailRoute(
                                 classroom = classroom,
                                 teacherState = teacherState
                             )
+                        }
+
+                        item {
+                            Button(
+                                onClick = { showCreateMeetingDialog = true },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF2E68B8)
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Event,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    "Create Meeting for this Classroom",
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
 
                         item {
@@ -313,6 +356,19 @@ fun ClassroomDetailRoute(
                 onDismiss = { showDeleteResourceDialog = false },
                 onConfirm = {
                     viewModel.deleteResource(classroomId, resource.id)
+                }
+            )
+        }
+    }
+
+    if (showCreateMeetingDialog) {
+        val classroom = (classroomState as? UiState.Success<Classroom>)?.data
+        if (classroom != null) {
+            CreateMeetingDialog(
+                onDismiss = { showCreateMeetingDialog = false },
+                onConfirm = { title, description, date, start, end ->
+                    // administratorId hardcoded to 1 for now - in production get from auth session
+                    viewModel.createMeeting(1, classroom.id, title, description, date, start, end)
                 }
             )
         }
