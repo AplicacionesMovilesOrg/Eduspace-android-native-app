@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.launch
 import upc.edu.pe.eduspace.core.data.LanguagePreferences
+import upc.edu.pe.eduspace.core.data.SessionManager
 import upc.edu.pe.eduspace.core.ui.components.DrawerMenu
 import upc.edu.pe.eduspace.core.utils.getLocalizedLabel
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.ClassroomDetailRoute
@@ -56,6 +57,9 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
     val languagePreferences = remember { LanguagePreferences(context) }
     val currentLanguage by languagePreferences.languageFlow.collectAsState(initial = "en")
 
+    // Session manager for logout
+    val sessionManager = remember { SessionManager(context) }
+
     val getMenu = remember { GetMenuUseCase(MenuRepositoryImpl()) }
     val menuItems = remember { getMenu() }
 
@@ -73,6 +77,8 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                     onClick = { item ->
                         scope.launch {
                             if (item.screen == Screen.LOGOUT) {
+                                // Clear session on logout
+                                sessionManager.clearSession()
                                 onLogout()
                             } else {
                                 navController.navigate(item.screen.route) {
