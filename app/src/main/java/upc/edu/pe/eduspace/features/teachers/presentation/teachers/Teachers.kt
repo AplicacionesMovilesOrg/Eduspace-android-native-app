@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -36,7 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,31 +53,50 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
+import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.CreateTeacher
-import upc.edu.pe.eduspace.features.teachers.presentation.teachers.components.CustomSnackbar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeachersRoute(
     viewModel: TeachersViewModel = hiltViewModel(),
 ) {
-    val teachers by viewModel.teachers.collectAsState()
+    val teachersState by viewModel.teachers.collectAsStateWithLifecycle()
+    val createState by viewModel.createState.collectAsStateWithLifecycle()
 
     var showDialog by remember { mutableStateOf(false) }
     var snack by remember { mutableStateOf<String?>(null) }
-
     var selectedTeacher by remember { mutableStateOf<Teacher?>(null) }
 
     // Reload data when returning to this screen
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         viewModel.getAllTeachers()
     }
 
+    // Handle create state
+    LaunchedEffect(createState) {
+        when (createState) {
+            is UiState.Success -> {
+                snack = "Teacher created successfully"
+                showDialog = false
+                viewModel.resetCreateState()
+            }
+            is UiState.Error -> {
+                snack = (createState as UiState.Error).message
+                viewModel.resetCreateState()
+            }
+            else -> {}
+        }
+    }
+
     TeachersContent(
-        teachers = teachers,
+        teachersState = teachersState,
         onAddTeacher = { showDialog = true },
-        onTeacherClick = { selectedTeacher = it }
+        onTeacherClick = { selectedTeacher = it },
+        onRetry = { viewModel.getAllTeachers() }
     )
 
     if (showDialog) {
@@ -93,12 +113,7 @@ fun TeachersRoute(
                         phone     = phone,
                         username  = username,
                         password  = password
-                    ),
-                    onDone = {
-                        showDialog = false
-                        snack = "Created teacher"
-                    },
-                    onError = { msg -> snack = msg }
+                    )
                 )
             }
         )
@@ -122,9 +137,10 @@ fun TeachersRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TeachersContent(
-    teachers: List<Teacher>,
+    teachersState: UiState<List<Teacher>>,
     onAddTeacher: () -> Unit = {},
-    onTeacherClick: (Teacher) -> Unit = {}
+    onTeacherClick: (Teacher) -> Unit = {},
+    onRetry: () -> Unit = {}
 ) {
     Scaffold(
         floatingActionButton = {
@@ -163,22 +179,53 @@ private fun TeachersContent(
                     )
                 )
         ) {
-            if (teachers.isEmpty()) {
-                Text("There are no teachers", Modifier.align(Alignment.Center))
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(teachers) { t ->
-                        TeacherCard(
-                            t = t,
-                            onClick = { onTeacherClick(t) }
+            when (teachersState) {
+                is UiState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                is UiState.Success -> {
+                    val teachers = teachersState.data
+                    if (teachers.isEmpty()) {
+                        Text(
+                            text = "No teachers available",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.align(Alignment.Center)
                         )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            items(teachers) { t ->
+                                TeacherCard(
+                                    t = t,
+                                    onClick = { onTeacherClick(t) }
+                                )
+                            }
+                        }
                     }
                 }
+                is UiState.Error -> {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = teachersState.message,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Button(onClick = onRetry) {
+                            Text("Retry")
+                        }
+                    }
+                }
+                else -> {}
             }
         }
     }

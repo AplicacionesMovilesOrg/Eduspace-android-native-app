@@ -32,11 +32,11 @@ interface MeetingsService {
     ): Response<MeetingDto>
 
     @DELETE("meetings/{id}")
-    suspend fun deleteMeeting(@Path("id") id: Int): Response<Void>
+    suspend fun deleteMeeting(@Path("id") id: Int): Response<Unit>
 
     @POST("meetings/{meetingId}/teachers/{teacherId}")
     suspend fun addTeacherToMeeting(
         @Path("meetingId") meetingId: Int,
         @Path("teacherId") teacherId: Int
-    ): Response<Void>
+    ): Response<Unit>
 }

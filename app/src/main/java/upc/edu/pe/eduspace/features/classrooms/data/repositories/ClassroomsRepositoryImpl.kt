@@ -20,48 +20,58 @@ class ClassroomsRepositoryImpl @Inject constructor(
     override suspend fun getAllClassrooms(): List<Classroom> = withContext(Dispatchers.IO) {
         try {
             val response = service.getAllClassrooms()
+
             if (!response.isSuccessful) {
-                Log.e("ClassroomsRepository", "Error getting classrooms: ${response.message()}")
-                return@withContext emptyList()
+                val errorMsg = "Failed to load classrooms: ${response.message()}"
+                Log.e("ClassroomsRepository", errorMsg)
+                throw Exception(errorMsg)
             }
 
-            val list = response.body() ?: emptyList<ClassroomDto>()
+            val list = response.body() ?: throw Exception("Empty response body")
+            Log.d("ClassroomsRepository", "Successfully loaded ${list.size} classrooms")
+
             return@withContext list.mapNotNull { dto -> dto.toDomain() }
         } catch (e: Exception) {
-            Log.e("ClassroomsRepository", "Exception getting classrooms", e)
-            return@withContext emptyList()
+            Log.e("ClassroomsRepository", "Error loading classrooms", e)
+            throw e
         }
     }
 
     override suspend fun getClassroomById(id: Int): Classroom? = withContext(Dispatchers.IO) {
         try {
             val response = service.getClassroomById(id)
+
             if (!response.isSuccessful) {
-                Log.e("ClassroomsRepository", "Error getting classroom by id: ${response.message()}")
-                return@withContext null
+                val errorMsg = "Failed to load classroom: ${response.message()}"
+                Log.e("ClassroomsRepository", errorMsg)
+                throw Exception(errorMsg)
             }
 
-            val dto = response.body()
-            return@withContext dto?.toDomain()
+            val dto = response.body() ?: throw Exception("Empty response body")
+            return@withContext dto.toDomain()
         } catch (e: Exception) {
-            Log.e("ClassroomsRepository", "Exception getting classroom by id", e)
-            return@withContext null
+            Log.e("ClassroomsRepository", "Error loading classroom by id", e)
+            throw e
         }
     }
 
     override suspend fun getClassroomsByTeacherId(teacherId: Int): List<Classroom> = withContext(Dispatchers.IO) {
         try {
             val response = service.getClassroomsByTeacherId(teacherId)
+
             if (!response.isSuccessful) {
-                Log.e("ClassroomsRepository", "Error getting classrooms by teacher: ${response.message()}")
-                return@withContext emptyList()
+                val errorMsg = "Failed to load classrooms for teacher: ${response.message()}"
+                Log.e("ClassroomsRepository", errorMsg)
+                throw Exception(errorMsg)
             }
 
-            val list = response.body() ?: emptyList<ClassroomDto>()
+            val list = response.body() ?: throw Exception("Empty response body")
+            Log.d("ClassroomsRepository", "Successfully loaded ${list.size} classrooms for teacher $teacherId")
+
             return@withContext list.mapNotNull { dto -> dto.toDomain() }
         } catch (e: Exception) {
-            Log.e("ClassroomsRepository", "Exception getting classrooms by teacher", e)
-            return@withContext emptyList()
+            Log.e("ClassroomsRepository", "Error loading classrooms for teacher", e)
+            throw e
         }
     }
 

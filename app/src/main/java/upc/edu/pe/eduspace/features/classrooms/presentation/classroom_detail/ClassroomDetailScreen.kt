@@ -45,12 +45,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Resource
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.components.AddResourceDialog
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.components.ClassroomInfoCard
-import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.components.CustomSnackbar
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.components.EditResourceDialog
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.components.EmptyResourcesState
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.components.ResourceCard
@@ -63,14 +63,15 @@ import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.Cr
 fun ClassroomDetailRoute(
     classroomId: Int,
     onNavigateBack: () -> Unit,
-    viewModel: ClassroomDetailViewModel = hiltViewModel()
+    viewModel: ClassroomDetailViewModel = hiltViewModel(),
+    resourcesViewModel: ClassroomResourcesViewModel = hiltViewModel()
 ) {
     val classroomState by viewModel.classroomState.collectAsState()
     val teacherState by viewModel.teacherState.collectAsState()
-    val resourcesState by viewModel.resourcesState.collectAsState()
-    val createResourceState by viewModel.createResourceState.collectAsState()
-    val updateResourceState by viewModel.updateResourceState.collectAsState()
-    val deleteResourceState by viewModel.deleteResourceState.collectAsState()
+    val resourcesState by resourcesViewModel.resourcesState.collectAsState()
+    val createResourceState by resourcesViewModel.createResourceState.collectAsState()
+    val updateResourceState by resourcesViewModel.updateResourceState.collectAsState()
+    val deleteResourceState by resourcesViewModel.deleteResourceState.collectAsState()
     val createMeetingState by viewModel.createMeetingState.collectAsState()
 
     var showAddResourceDialog by remember { mutableStateOf(false) }
@@ -82,7 +83,7 @@ fun ClassroomDetailRoute(
 
     LaunchedEffect(classroomId) {
         viewModel.getClassroomById(classroomId)
-        viewModel.getResourcesByClassroomId(classroomId)
+        resourcesViewModel.getResourcesByClassroomId(classroomId)
     }
 
     LaunchedEffect(createResourceState) {
@@ -90,11 +91,11 @@ fun ClassroomDetailRoute(
             is UiState.Success -> {
                 snackMessage = "Resource created successfully"
                 showAddResourceDialog = false
-                viewModel.resetCreateResourceState()
+                resourcesViewModel.resetCreateResourceState()
             }
             is UiState.Error -> {
                 snackMessage = (createResourceState as UiState.Error).message
-                viewModel.resetCreateResourceState()
+                resourcesViewModel.resetCreateResourceState()
             }
             else -> {}
         }
@@ -105,11 +106,11 @@ fun ClassroomDetailRoute(
             is UiState.Success -> {
                 snackMessage = "Resource updated successfully"
                 showEditResourceDialog = false
-                viewModel.resetUpdateResourceState()
+                resourcesViewModel.resetUpdateResourceState()
             }
             is UiState.Error -> {
                 snackMessage = (updateResourceState as UiState.Error).message
-                viewModel.resetUpdateResourceState()
+                resourcesViewModel.resetUpdateResourceState()
             }
             else -> {}
         }
@@ -120,11 +121,11 @@ fun ClassroomDetailRoute(
             is UiState.Success -> {
                 snackMessage = "Resource deleted successfully"
                 showDeleteResourceDialog = false
-                viewModel.resetDeleteResourceState()
+                resourcesViewModel.resetDeleteResourceState()
             }
             is UiState.Error -> {
                 snackMessage = (deleteResourceState as UiState.Error).message
-                viewModel.resetDeleteResourceState()
+                resourcesViewModel.resetDeleteResourceState()
             }
             else -> {}
         }
@@ -332,7 +333,7 @@ fun ClassroomDetailRoute(
             classroomId = classroomId,
             onDismiss = { showAddResourceDialog = false },
             onSubmit = { name, kindOfResource ->
-                viewModel.createResource(classroomId, name, kindOfResource)
+                resourcesViewModel.createResource(classroomId, name, kindOfResource)
             }
         )
     }
@@ -343,7 +344,7 @@ fun ClassroomDetailRoute(
                 resource = resource,
                 onDismiss = { showEditResourceDialog = false },
                 onSubmit = { name, kindOfResource ->
-                    viewModel.updateResource(classroomId, resource.id, name, kindOfResource)
+                    resourcesViewModel.updateResource(classroomId, resource.id, name, kindOfResource)
                 }
             )
         }
@@ -355,7 +356,7 @@ fun ClassroomDetailRoute(
                 classroomName = resource.name,
                 onDismiss = { showDeleteResourceDialog = false },
                 onConfirm = {
-                    viewModel.deleteResource(classroomId, resource.id)
+                    resourcesViewModel.deleteResource(classroomId, resource.id)
                 }
             )
         }

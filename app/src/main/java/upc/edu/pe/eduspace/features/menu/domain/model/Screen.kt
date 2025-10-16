@@ -6,5 +6,5 @@ enum class Screen(val route: String, val label: String) {
     SHARED_SPACES("shared_spaces", "Shared Spaces"),
     MEETINGS("meetings", "Meetings"),
     TEACHERS("teachers", "Teachers"),
-    LOGOUT("logout", "Cerrar Sesión")
+    LOGOUT("logout", "Logout")
 }

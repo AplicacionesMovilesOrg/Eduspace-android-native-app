@@ -50,10 +50,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
 import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.AddTeacherDialog
-import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.CustomSnackbar
 import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.DeleteConfirmationDialog
 import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.EditMeetingDialog
 

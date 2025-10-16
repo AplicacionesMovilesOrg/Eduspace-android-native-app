@@ -48,9 +48,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.shared_spaces.domain.models.SharedArea
-import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_areas.components.CustomSnackbar
 import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_areas.components.DeleteConfirmationDialog
 import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_areas.components.EditSharedAreaDialog
 

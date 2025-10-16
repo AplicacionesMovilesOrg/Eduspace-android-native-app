@@ -28,12 +28,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.utils.UiState
 
 @Composable
@@ -68,7 +70,7 @@ fun LoginCard(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Welcome",
+                text = stringResource(R.string.welcome_back),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1976D2)
@@ -112,7 +114,7 @@ private fun LoginFormFields(
         value = username,
         onValueChange = onUsernameChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Email or Username") },
+        placeholder = { Text(stringResource(R.string.username)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Email,
@@ -136,7 +138,7 @@ private fun LoginFormFields(
         value = password,
         onValueChange = onPasswordChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Password") },
+        placeholder = { Text(stringResource(R.string.password)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Lock,
@@ -188,7 +190,7 @@ private fun LoginButton(
         enabled = enabled
     ) {
         Text(
-            text = "Sign In",
+            text = stringResource(R.string.login),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
@@ -220,12 +222,12 @@ private fun LoginStateIndicators(loginState: UiState<*>) {
 private fun SignUpLink(onClick: () -> Unit) {
     TextButton(onClick = onClick) {
         Text(
-            text = "New here?  ",
+            text = stringResource(R.string.dont_have_account) + "  ",
             color = Color(0xFF424242),
             fontSize = 14.sp
         )
         Text(
-            text = "Sign Up",
+            text = stringResource(R.string.sign_up),
             color = Color(0xFF1976D2),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold

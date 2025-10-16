@@ -15,11 +15,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +29,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.launch
+import upc.edu.pe.eduspace.core.data.LanguagePreferences
 import upc.edu.pe.eduspace.core.ui.components.DrawerMenu
+import upc.edu.pe.eduspace.core.utils.getLocalizedLabel
 import upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail.ClassroomDetailRoute
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.ClassroomsRoute
 import upc.edu.pe.eduspace.features.home.presentation.home.HomeScreen
@@ -47,6 +51,11 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // Language preferences
+    val context = LocalContext.current
+    val languagePreferences = remember { LanguagePreferences(context) }
+    val currentLanguage by languagePreferences.languageFlow.collectAsState(initial = "en")
+
     val getMenu = remember { GetMenuUseCase(MenuRepositoryImpl()) }
     val menuItems = remember { getMenu() }
 
@@ -60,31 +69,34 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
             Box(modifier = Modifier.fillMaxSize().background(Color(0xFFFFFFFF))) {
                 DrawerMenu(
                     items = menuItems,
-                    current = currentScreen
-                ) { item ->
-                    scope.launch {
-                        if (item.screen == Screen.LOGOUT) {
-                            onLogout()
-                        } else {
-                            navController.navigate(item.screen.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(Screen.HOME.route) { saveState = true }
+                    current = currentScreen,
+                    onClick = { item ->
+                        scope.launch {
+                            if (item.screen == Screen.LOGOUT) {
+                                onLogout()
+                            } else {
+                                navController.navigate(item.screen.route) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(Screen.HOME.route) { saveState = true }
+                                }
                             }
+                            drawerState.close()
                         }
-                        drawerState.close()
-                    }
-                }
+                    },
+                    languagePreferences = languagePreferences,
+                    currentLanguage = currentLanguage
+                )
             }
         }) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(currentScreen?.label ?: "EduSpace") },
+                    title = { Text(currentScreen?.getLocalizedLabel() ?: "EduSpace") },
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch { if (drawerState.isClosed) drawerState.open() else drawerState.close() }
-                        }) { Icon(Icons.Default.Menu, contentDescription = "Menu") }
+                        }) { Icon(Icons.Default.Menu, contentDescription = null) }
                     }
                 )
             }

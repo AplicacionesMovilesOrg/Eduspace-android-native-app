@@ -11,7 +11,7 @@ data class MeetingDto(
     val start: String?,
     val end: String?,
     val administrator: AdministratorDto?,
-    val classroom: ClassroomDto?,
+    val classroom: ClassroomRefDto?,
     val teachers: List<TeacherInfoDto>?
 )
 
@@ -19,7 +19,7 @@ data class AdministratorDto(
     val administratorId: Int?
 )
 
-data class ClassroomDto(
+data class ClassroomRefDto(
     val classroomId: Int?
 )
 

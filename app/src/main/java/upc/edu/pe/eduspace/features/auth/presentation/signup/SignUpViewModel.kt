@@ -1,5 +1,6 @@
 package upc.edu.pe.eduspace.features.auth.presentation.signup
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -137,13 +138,12 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
     }
 
     private fun validateEmail(): Boolean {
-        val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
         return when {
             _email.value.isBlank() -> {
                 _emailError.value = "El correo es obligatorio"
                 false
             }
-            !_email.value.matches(emailPattern.toRegex()) -> {
+            !Patterns.EMAIL_ADDRESS.matcher(_email.value).matches() -> {
                 _emailError.value = "Formato de correo inválido"
                 false
             }
