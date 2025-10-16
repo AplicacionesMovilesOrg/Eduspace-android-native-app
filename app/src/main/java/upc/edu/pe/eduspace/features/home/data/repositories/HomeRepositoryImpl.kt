@@ -24,7 +24,7 @@ class HomeRepositoryImpl @Inject constructor(
                 reports = reports
             )
         } catch (e: Exception) {
-            Log.e("HomeRepository", "Error obteniendo datos del Home: ${e.message}")
+            Log.e("HomeRepository", "Error loading home data: ${e.message}")
             throw e
         }
     }

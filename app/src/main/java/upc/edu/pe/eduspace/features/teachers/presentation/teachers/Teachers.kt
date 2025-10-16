@@ -14,27 +14,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,6 +54,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.CreateTeacher
+import upc.edu.pe.eduspace.features.teachers.presentation.teachers.components.CustomSnackbar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,6 +67,11 @@ fun TeachersRoute(
     var snack by remember { mutableStateOf<String?>(null) }
 
     var selectedTeacher by remember { mutableStateOf<Teacher?>(null) }
+
+    // Reload data when returning to this screen
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.getAllTeachers()
+    }
 
     TeachersContent(
         teachers = teachers,
@@ -109,13 +112,10 @@ fun TeachersRoute(
     }
 
     snack?.let { msg ->
-        Snackbar(
-            action = { TextButton(onClick = { snack = null }) { Text("OK") } },
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(align = Alignment.BottomCenter)
-                .padding(16.dp)
-        ) { Text(msg) }
+        CustomSnackbar(
+            message = msg,
+            onDismiss = { snack = null }
+        )
     }
 }
 
@@ -131,11 +131,25 @@ private fun TeachersContent(
             ExtendedFloatingActionButton(
                 onClick = onAddTeacher,
                 containerColor = Color(0xFF2E68B8),
-                contentColor = Color.White
+                contentColor = Color.White,
+                shape = RoundedCornerShape(16.dp),
+                elevation = androidx.compose.material3.FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 12.dp
+                )
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add teacher")
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Add teacher")
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    "Add Teacher",
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
             }
         }
     ) { padding ->
@@ -176,7 +190,10 @@ private fun TeacherCard(
     onClick: () -> Unit = {}
 ) {
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color.White),
         onClick = onClick
     ) {
         Row(
@@ -185,38 +202,63 @@ private fun TeacherCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val initials = (t.firstName.firstOrNull()?.toString().orEmpty() +
-                    t.lastName.firstOrNull()?.toString().orEmpty()).lowercase()
-
+            // Icon container with gradient
             Box(
                 Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFFE0E6EF)),
+                    .size(60.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFF2E68B8),
+                                Color(0xFF4A90E2)
+                            )
+                        )
+                    ),
                 contentAlignment = Alignment.Center
             ) {
+                val initials = (t.firstName.firstOrNull()?.toString().orEmpty() +
+                        t.lastName.firstOrNull()?.toString().orEmpty()).uppercase()
                 Text(
                     initials,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF5D6B8A),
-                    fontWeight = FontWeight.SemiBold
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
-            Spacer(Modifier.width(12.dp))
-            Column {
+            Spacer(Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Text(
                     "${t.firstName} ${t.lastName}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF2E68B8)
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = Color(0xFF1A1A1A)
                 )
-                Text("Email: ${t.email}", style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "DNI: ${t.dni}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF9E9E9E)
+                    t.email,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF666666)
                 )
+                // DNI badge
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color(0xFF2E68B8).copy(alpha = 0.1f)
+                ) {
+                    Text(
+                        "DNI: ${t.dni}",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = Color(0xFF2E68B8),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
             }
         }
     }
@@ -228,26 +270,112 @@ private fun TeacherDetailDialog(
     teacher: Teacher,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = "${teacher.firstName} ${teacher.lastName}",
-                style = MaterialTheme.typography.titleLarge.copy(color = Color(0xFF2E68B8))
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("Email: ${teacher.email}", style = MaterialTheme.typography.bodyMedium)
-                Text("DNI: ${teacher.dni}", style = MaterialTheme.typography.bodyMedium)
-                Text("Address: ${teacher.address}", style = MaterialTheme.typography.bodyMedium)
-                Text("Phone: ${teacher.phone}", style = MaterialTheme.typography.bodyMedium)
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            Modifier
+                .fillMaxWidth(0.9f)
+                .wrapContentHeight()
+        ) {
+            Surface(
+                shape = RoundedCornerShape(24.dp),
+                tonalElevation = 8.dp,
+                shadowElevation = 12.dp,
+                color = Color.White
+            ) {
+                Column(
+                    Modifier
+                        .padding(24.dp)
+                        .navigationBarsPadding(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Header with gradient icon
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Box(
+                            Modifier
+                                .size(56.dp)
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(
+                                    Brush.linearGradient(
+                                        colors = listOf(
+                                            Color(0xFF2E68B8),
+                                            Color(0xFF4A90E2)
+                                        )
+                                    )
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            val initials = (teacher.firstName.firstOrNull()?.toString().orEmpty() +
+                                    teacher.lastName.firstOrNull()?.toString().orEmpty()).uppercase()
+                            Text(
+                                initials,
+                                style = MaterialTheme.typography.titleLarge,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        Text(
+                            text = "${teacher.firstName} ${teacher.lastName}",
+                            style = MaterialTheme.typography.headlineSmall.copy(
+                                color = Color(0xFF2E68B8),
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
+
+                    HorizontalDivider()
+
+                    // Details section
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        DetailRow(label = "Email", value = teacher.email)
+                        DetailRow(label = "DNI", value = teacher.dni)
+                        DetailRow(label = "Address", value = teacher.address)
+                        DetailRow(label = "Phone", value = teacher.phone)
+                    }
+
+                    // Close button
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Button(
+                            onClick = onDismiss,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF2E68B8)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text("Close", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
             }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Close") }
         }
-    )
+    }
+}
+
+@Composable
+private fun DetailRow(label: String, value: String) {
+    Column {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = Color(0xFF666666)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color(0xFF1A1A1A),
+            fontWeight = FontWeight.Medium
+        )
+    }
 }
 
 
