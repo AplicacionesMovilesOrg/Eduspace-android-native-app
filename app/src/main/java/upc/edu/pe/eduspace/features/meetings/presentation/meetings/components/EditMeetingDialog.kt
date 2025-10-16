@@ -51,6 +51,7 @@ import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,27 +63,28 @@ fun EditMeetingDialog(
     var title by remember { mutableStateOf(meeting.title) }
     var description by remember { mutableStateOf(meeting.description) }
 
-    // Parse existing date to millis for DatePicker
-    val initialDateMillis = remember {
+    val sdf = remember {
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+    }
+
+    fun Long.toFormattedDateString(): String = sdf.format(Date(this))
+
+    val initialDateMillis = remember(meeting.date) {
         try {
-            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             sdf.parse(meeting.date)?.time
         } catch (e: Exception) {
             null
         }
     }
 
-    // Date picker state with initial date
-    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialDateMillis)
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDateMillis
+    )
     var showDatePicker by remember { mutableStateOf(false) }
-    val selectedDate by remember {
-        derivedStateOf {
-            datePickerState.selectedDateMillis?.let {
-                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                sdf.format(Date(it))
-            } ?: meeting.date
-        }
-    }
+
+    var selectedDateText by remember { mutableStateOf(meeting.date) }
 
     // Parse existing times
     val (initialStartHour, initialStartMinute) = remember {
@@ -111,13 +113,13 @@ fun EditMeetingDialog(
 
     val startTime by remember {
         derivedStateOf {
-            String.format(Locale.getDefault(), "%02d:%02d", startTimeState.hour, startTimeState.minute)
+            String.format(Locale.getDefault(), "%02d:%02d:00", startTimeState.hour, startTimeState.minute)
         }
     }
 
     val endTime by remember {
         derivedStateOf {
-            String.format(Locale.getDefault(), "%02d:%02d", endTimeState.hour, endTimeState.minute)
+            String.format(Locale.getDefault(), "%02d:%02d:00", endTimeState.hour, endTimeState.minute)
         }
     }
 
@@ -188,7 +190,7 @@ fun EditMeetingDialog(
 
                     // Date picker field
                     OutlinedTextField(
-                        value = selectedDate,
+                        value = selectedDateText,
                         onValueChange = { },
                         label = { Text("Date") },
                         readOnly = true,
@@ -251,12 +253,12 @@ fun EditMeetingDialog(
                         Button(
                             onClick = {
                                 if (title.isNotBlank() && description.isNotBlank() &&
-                                    selectedDate.isNotBlank()
+                                    selectedDateText.isNotBlank()
                                 ) {
                                     onConfirm(
                                         title.trim(),
                                         description.trim(),
-                                        selectedDate,
+                                        selectedDateText,
                                         startTime,
                                         endTime
                                     )
@@ -278,7 +280,12 @@ fun EditMeetingDialog(
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
-                TextButton(onClick = { showDatePicker = false }) {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        selectedDateText = it.toFormattedDateString()
+                    }
+                    showDatePicker = false
+                }) {
                     Text("OK")
                 }
             },

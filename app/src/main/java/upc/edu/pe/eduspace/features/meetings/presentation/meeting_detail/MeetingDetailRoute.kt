@@ -67,6 +67,7 @@ fun MeetingDetailRoute(
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
     val deleteState by viewModel.deleteState.collectAsStateWithLifecycle()
     val addTeacherState by viewModel.addTeacherState.collectAsStateWithLifecycle()
+    val availableTeachersState by viewModel.availableTeachers.collectAsStateWithLifecycle()
 
     var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -300,7 +301,22 @@ fun MeetingDetailRoute(
                                     )
 
                                     Button(
-                                        onClick = { showAddTeacherDialog = true },
+                                        onClick = {
+                                            // Check if there are available teachers before opening dialog
+                                            val state = availableTeachersState
+                                            if (state is UiState.Success) {
+                                                if (state.data.isEmpty()) {
+                                                    // If the filtered list is empty, show snackbar
+                                                    snackMessage = "No hay más profesores disponibles para agregar"
+                                                } else {
+                                                    // If there are available teachers, show the dialog
+                                                    showAddTeacherDialog = true
+                                                }
+                                            } else {
+                                                // If still loading or error, allow opening dialog (it will handle states)
+                                                showAddTeacherDialog = true
+                                            }
+                                        },
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = Color(0xFF2E68B8)
                                         ),
@@ -454,12 +470,37 @@ fun MeetingDetailRoute(
     }
 
     if (showAddTeacherDialog) {
-        AddTeacherDialog(
-            onDismiss = { showAddTeacherDialog = false },
-            onConfirm = { teacherId ->
-                viewModel.addTeacherToMeeting(teacherId)
+        // Handle the state of available teachers
+        when (val state = availableTeachersState) {
+            is UiState.Loading -> {
+                // Optionally show a loading indicator in the dialog
+                AddTeacherDialog(
+                    teachers = emptyList(),
+                    onDismiss = { showAddTeacherDialog = false },
+                    onConfirm = { teacherId ->
+                        viewModel.addTeacherToMeeting(teacherId)
+                    }
+                )
             }
-        )
+            is UiState.Error -> {
+                // Show error if teachers failed to load
+                LaunchedEffect(state) {
+                    snackMessage = state.message
+                    showAddTeacherDialog = false
+                }
+            }
+            is UiState.Success -> {
+                // Pass the FILTERED list to the dialog
+                AddTeacherDialog(
+                    teachers = state.data,
+                    onDismiss = { showAddTeacherDialog = false },
+                    onConfirm = { teacherId ->
+                        viewModel.addTeacherToMeeting(teacherId)
+                    }
+                )
+            }
+            else -> {}
+        }
     }
 
     snackMessage?.let { msg ->

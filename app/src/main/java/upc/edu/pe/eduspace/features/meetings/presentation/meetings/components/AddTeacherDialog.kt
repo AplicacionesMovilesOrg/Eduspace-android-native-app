@@ -27,8 +27,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,22 +38,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
-import upc.edu.pe.eduspace.features.teachers.presentation.teachers.TeachersViewModel
 
 @Composable
 fun AddTeacherDialog(
+    teachers: List<Teacher>,
     onDismiss: () -> Unit,
-    onConfirm: (teacherId: Int) -> Unit,
-    teachersViewModel: TeachersViewModel = hiltViewModel()
+    onConfirm: (teacherId: Int) -> Unit
 ) {
-    val teachers by teachersViewModel.teachers.collectAsState()
     var selectedTeacher by remember { mutableStateOf<Teacher?>(null) }
-
-    LaunchedEffect(Unit) {
-        teachersViewModel.getAllTeachers()
-    }
 
     val primaryBlue = Color(0xFF2E68B8)
 
