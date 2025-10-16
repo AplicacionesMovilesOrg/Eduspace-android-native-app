@@ -367,8 +367,7 @@ fun ClassroomDetailRoute(
             CreateMeetingDialog(
                 onDismiss = { showCreateMeetingDialog = false },
                 onConfirm = { title, description, date, start, end ->
-                    // administratorId hardcoded to 1 for now - in production get from auth session
-                    viewModel.createMeeting(1, classroom.id, title, description, date, start, end)
+                    viewModel.createMeeting(classroom.id, title, description, date, start, end)
                 }
             )
         }

@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import upc.edu.pe.eduspace.core.data.SessionManager
 import upc.edu.pe.eduspace.core.utils.Resource
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.auth.domain.models.User
@@ -13,7 +14,10 @@ import upc.edu.pe.eduspace.features.auth.domain.repositories.AuthRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val repository: AuthRepository) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val repository: AuthRepository,
+    private val sessionManager: SessionManager
+) : ViewModel() {
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username
 
@@ -40,7 +44,11 @@ class LoginViewModel @Inject constructor(private val repository: AuthRepository)
             )
 
             when (resource) {
-                is Resource.Success -> _user.value = UiState.Success(resource.data as User)
+                is Resource.Success -> {
+                    val user = resource.data as User
+                    sessionManager.saveAdminId(user.id)
+                    _user.value = UiState.Success(user)
+                }
                 is Resource.Error -> _user.value = UiState.Error(resource.message as String)
                 is Resource.Loading -> _user.value = UiState.Loading
             }

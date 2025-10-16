@@ -9,7 +9,7 @@ lifecycleRuntimeKtx = "2.9.4"
 activityCompose = "1.11.0"
 composeBom = "2025.10.00"
 
-roomRuntime = "2.8.1" # Room
+roomRuntime = "2.8.2" # Room
 coilCompose = "3.3.0" # Coil
 navigationCompose = "2.9.5" # Navigation
 retrofit = "3.0.0" # Retrofit
@@ -18,6 +18,7 @@ hiltNavigationCompose = "1.3.0" # Hilt navigation
 lifecycleViewmodel = "2.9.4" # ViewModel
 materialIconsExtended = "1.7.8" # Material icons extended
 kspVersion = "2.2.20-2.0.3" # ksp plugin
+datastorePreferences = "1.1.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +65,8 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 
 # Material icons extended
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
+
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

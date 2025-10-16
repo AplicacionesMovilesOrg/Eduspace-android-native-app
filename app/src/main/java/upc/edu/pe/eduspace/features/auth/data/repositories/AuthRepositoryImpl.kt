@@ -21,6 +21,7 @@ class AuthRepositoryImpl @Inject constructor(private val service: AuthService) :
             if (response.isSuccessful) {
                 response.body()?.let { authResponse ->
                     val user = User(
+                        id = authResponse.id,
                         name = authResponse.username,
                         email = authResponse.username,
                     )

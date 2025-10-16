@@ -50,6 +50,7 @@ import androidx.compose.ui.window.DialogProperties
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,17 +61,21 @@ fun CreateMeetingDialog(
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
-    // Date picker state
-    val datePickerState = rememberDatePickerState()
-    var showDatePicker by remember { mutableStateOf(false) }
-    val selectedDate by remember {
-        derivedStateOf {
-            datePickerState.selectedDateMillis?.let {
-                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                sdf.format(Date(it))
-            } ?: ""
-        }
+    fun Long.toFormattedDateString() : String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        return sdf.format(Date(this))
     }
+
+    var selectedDateText by remember {mutableStateOf("")}
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = System.currentTimeMillis()
+    )
+
+    var showDatePicker by remember { mutableStateOf(false) }
+
+
 
     // Time pickers state
     val startTimeState = rememberTimePickerState(initialHour = 9, initialMinute = 0, is24Hour = true)
@@ -80,13 +85,13 @@ fun CreateMeetingDialog(
 
     val startTime by remember {
         derivedStateOf {
-            String.format(Locale.getDefault(), "%02d:%02d", startTimeState.hour, startTimeState.minute)
+            String.format(Locale.getDefault(), "%02d:%02d:00", startTimeState.hour, startTimeState.minute)
         }
     }
 
     val endTime by remember {
         derivedStateOf {
-            String.format(Locale.getDefault(), "%02d:%02d", endTimeState.hour, endTimeState.minute)
+            String.format(Locale.getDefault(), "%02d:%02d:00", endTimeState.hour, endTimeState.minute)
         }
     }
 
@@ -157,7 +162,7 @@ fun CreateMeetingDialog(
 
                     // Date picker field
                     OutlinedTextField(
-                        value = selectedDate,
+                        value = selectedDateText,
                         onValueChange = { },
                         label = { Text("Date") },
                         readOnly = true,
@@ -220,12 +225,12 @@ fun CreateMeetingDialog(
                         Button(
                             onClick = {
                                 if (title.isNotBlank() && description.isNotBlank() &&
-                                    selectedDate.isNotBlank()
+                                    selectedDateText.isNotBlank()
                                 ) {
                                     onConfirm(
                                         title.trim(),
                                         description.trim(),
-                                        selectedDate,
+                                        selectedDateText,
                                         startTime,
                                         endTime
                                     )
@@ -247,7 +252,12 @@ fun CreateMeetingDialog(
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
-                TextButton(onClick = { showDatePicker = false }) {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        selectedDateText = it.toFormattedDateString()
+                    }
+                    showDatePicker = false
+                }) {
                     Text("OK")
                 }
             },

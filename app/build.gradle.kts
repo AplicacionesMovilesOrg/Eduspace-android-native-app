@@ -93,4 +93,6 @@ dependencies {
 
     // Hilt Navigation
     implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.androidx.datastore.preferences)
 }

@@ -6,7 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import upc.edu.pe.eduspace.core.data.SessionManager
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Resource
@@ -26,7 +28,8 @@ class ClassroomDetailViewModel @Inject constructor(
     private val classroomsRepository: ClassroomsRepository,
     private val resourcesRepository: ResourcesRepository,
     private val teachersRepository: TeachersRepository,
-    private val meetingsRepository: MeetingsRepository
+    private val meetingsRepository: MeetingsRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _classroomState = MutableStateFlow<UiState<Classroom>>(UiState.Initial)
@@ -57,7 +60,6 @@ class ClassroomDetailViewModel @Inject constructor(
                 val classroom = classroomsRepository.getClassroomById(classroomId)
                 if (classroom != null) {
                     _classroomState.value = UiState.Success(classroom)
-                    // Fetch teacher info after getting classroom
                     getTeacherById(classroom.teacherId)
                 } else {
                     _classroomState.value = UiState.Error("Classroom not found")
@@ -112,7 +114,6 @@ class ClassroomDetailViewModel @Inject constructor(
                     _createResourceState.value = UiState.Error("Failed to create resource. Please try again.")
                 }
             } catch (e: Exception) {
-                // Show specific error message from repository (e.g., duplicate name)
                 val errorMessage = when {
                     e.message?.contains("already exists") == true -> e.message!!
                     else -> "Error creating resource: ${e.message ?: "Unknown error"}"
@@ -175,7 +176,6 @@ class ClassroomDetailViewModel @Inject constructor(
     }
 
     fun createMeeting(
-        administratorId: Int,
         classroomId: Int,
         title: String,
         description: String,
@@ -186,6 +186,13 @@ class ClassroomDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _createMeetingState.value = UiState.Loading
             try {
+                val administratorId = sessionManager.adminIdFlow.firstOrNull()
+
+                if (administratorId == null) {
+                    _createMeetingState.value = UiState.Error("User not authenticated")
+                    return@launch
+                }
+
                 val meeting = CreateMeeting(
                     title = title,
                     description = description,

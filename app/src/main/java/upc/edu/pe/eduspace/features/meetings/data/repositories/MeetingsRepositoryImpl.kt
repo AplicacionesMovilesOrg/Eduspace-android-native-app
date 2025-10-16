@@ -64,8 +64,9 @@ class MeetingsRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 response.body()?.toDomain()
             } else {
-                Log.e("MeetingsRepository", "Error creating meeting: ${response.code()}")
-                null
+                val errorBody = response.errorBody()?.string()
+                Log.e("MeetingsRepository", "Error creating meeting: ${response.code()} - $errorBody")
+                throw Exception("API error: $errorBody")
             }
         } catch (e: Exception) {
             Log.e("MeetingsRepository", "Error creating meeting", e)
