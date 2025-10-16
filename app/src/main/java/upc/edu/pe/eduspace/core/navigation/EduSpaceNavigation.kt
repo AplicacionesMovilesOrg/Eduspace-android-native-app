@@ -35,6 +35,8 @@ import upc.edu.pe.eduspace.features.menu.data.MenuRepositoryImpl
 import upc.edu.pe.eduspace.features.menu.domain.GetMenuUseCase
 import upc.edu.pe.eduspace.features.menu.domain.model.Screen
 import upc.edu.pe.eduspace.features.menu.presentation.SimpleScreen
+import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_area_detail.SharedAreaDetailRoute
+import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_areas.SharedAreasRoute
 import upc.edu.pe.eduspace.features.teachers.presentation.teachers.TeachersRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,7 +113,23 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
-                composable(Screen.SHARED_SPACES.route) { SimpleScreen("Shared Spaces") }
+                composable(Screen.SHARED_SPACES.route) {
+                    SharedAreasRoute(
+                        onNavigateToDetail = { sharedAreaId ->
+                            navController.navigate("shared_area_detail/$sharedAreaId")
+                        }
+                    )
+                }
+                composable(
+                    route = "shared_area_detail/{sharedAreaId}",
+                    arguments = listOf(
+                        navArgument("sharedAreaId") { type = NavType.IntType }
+                    )
+                ) {
+                    SharedAreaDetailRoute(
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
                 composable(Screen.MEETINGS.route) { SimpleScreen("Meetings") }
                 composable(Screen.TEACHERS.route) { TeachersRoute() }
             }
