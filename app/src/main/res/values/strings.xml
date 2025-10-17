@@ -73,7 +73,8 @@
     <string name="classroom_updated">Classroom updated successfully</string>
     <string name="classroom_deleted">Classroom deleted successfully</string>
     <string name="classroom_error">Error loading classroom</string>
-    <string name="delete_classroom_confirm">Are you sure you want to delete this classroom?</string>
+    <string name="delete_classroom_confirm">Are you sure you want to delete \"%1$s\"?</string>
+    <string name="my_classrooms">My Classrooms</string>
 
     <!-- Resources -->
     <string name="resources_title">Resources</string>
@@ -90,7 +91,7 @@
     <string name="resource_deleted">Resource deleted successfully</string>
     <string name="resource_error">Error loading resources</string>
     <string name="resource_already_exists">Resource already exists</string>
-    <string name="delete_resource_confirm">Are you sure you want to delete this resource?</string>
+    <string name="delete_resource_confirm">Are you sure you want to delete \"%1$s\"?</string>
     <string name="resources_count">Resources: %d</string>
 
     <!-- Resource Types -->
@@ -134,6 +135,8 @@
     <string name="teacher_removed">Teacher removed successfully</string>
     <string name="no_teachers_available">No more teachers available to add</string>
     <string name="user_not_authenticated">User not authenticated</string>
+    <string name="participants">Participants (%1$d)</string>
+    <string name="no_participants_yet">No participants yet</string>
 
     <!-- Teachers -->
     <string name="teachers_title">Teachers</string>
@@ -172,7 +175,7 @@
     <string name="shared_space_updated">Shared space updated successfully</string>
     <string name="shared_space_deleted">Shared space deleted successfully</string>
     <string name="shared_space_error">Error loading shared spaces</string>
-    <string name="delete_shared_space_confirm">Are you sure you want to delete this shared space?</string>
+    <string name="delete_shared_space_confirm">Are you sure you want to delete "%1$s"?</string>
 
     <!-- Validation Messages -->
     <string name="field_required">This field is required</string>
@@ -194,4 +197,57 @@
     <!-- Empty States -->
     <string name="no_data_available">No data available</string>
     <string name="start_by_adding">Start by adding a new item</string>
+    <string name="resource_name_placeholder">e.g., %1$s-Room%2$d</string>
+    <string name="resource_name_note">Note: Resource names must be unique across all classrooms</string>
+    <string name="delete_classroom_confirmation_message">Are you sure you want to delete %1$s? This action cannot be undone.</string>
+    <string name="create_shared_area">Create Shared Area</string>
+    <string name="area_type">Area Type</string>
+    <string name="select_area_type">Please select an area type</string>
+    <string name="capacity">Capacity</string>
+    <string name="enter_valid_capacity">Enter a valid number greater than 0</string>
+    <string name="edit_shared_area">Edit Shared Area</string>
+    <string name="last_name_label">Last name</string>
+    <string name="shared_space_type_library">Library</string>
+    <string name="shared_space_type_cafeteria">Cafeteria</string>
+    <string name="shared_space_type_study_room">Study Room</string>
+    <string name="shared_space_type_auditorium">Auditorium</string>
+    <string name="shared_space_type_laboratory">Laboratory</string>
+    <string name="shared_space_type_soccer_field">Soccer Field</string>
+    <string name="shared_space_type_basketball_court">Basketball Court</string>
+    <string name="shared_space_type_gym">Gym</string>
+    <string name="shared_space_type_computer_lab">Computer Lab</string>
+    <string name="shared_space_type_conference_room">Conference Room</string>
+
+    <!-- Additional UI Labels -->
+    <string name="classroom_information">Classroom Information</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="teacher">Teacher</string>
+    <string name="unknown">Unknown</string>
+    <string name="no_resources_yet">No resources yet</string>
+    <string name="add_first_resource">Add your first resource using the button below</string>
+    <string name="no_classrooms_yet">No classrooms yet</string>
+    <string name="create_first_classroom">Create your first classroom using the button below</string>
+    <string name="recent_reports">Recent Reports</string>
+    <string name="no_reports_available">No reports available</string>
+    <string name="date_label">Date: </string>
+    <string name="user_registration">User Registration</string>
+    <string name="log_in">Log In</string>
+    <string name="meeting_details">Meeting Details</string>
+    <string name="no_description">No description</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="participants_count">Participants (%d)</string>
+    <string name="capacity_people">%d people</string>
+    <string name="dni_prefix">DNI: %s</string>
+    <string name="delete_meeting_title">Delete Meeting</string>
+    <string name="delete_meeting_message">Are you sure you want to delete "%1$s"? This action cannot be undone.</string>
+
+    <!-- Screen Titles -->
+    <string name="screen_home">Home</string>
+    <string name="screen_classrooms">Classrooms</string>
+    <string name="screen_shared_spaces">Shared Spaces</string>
+    <string name="screen_meetings">Meetings</string>
+    <string name="screen_teachers">Teachers</string>
+    <string name="screen_logout">Logout</string>
 </resources>

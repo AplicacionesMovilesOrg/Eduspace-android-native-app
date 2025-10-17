@@ -43,10 +43,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -159,7 +161,7 @@ fun EditMeetingDialog(
                         Icon(Icons.Default.Edit, contentDescription = null, tint = primaryBlue)
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "Edit Meeting",
+                            stringResource(R.string.edit_meeting),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryBlue,
                                 fontWeight = FontWeight.SemiBold
@@ -170,7 +172,7 @@ fun EditMeetingDialog(
                     OutlinedTextField(
                         value = title,
                         onValueChange = { title = it },
-                        label = { Text("Title") },
+                        label = { Text(stringResource(R.string.meeting_title)) },
                         singleLine = true,
                         shape = tfShape,
                         colors = tfColors,
@@ -180,7 +182,7 @@ fun EditMeetingDialog(
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Description") },
+                        label = { Text(stringResource(R.string.meeting_description)) },
                         minLines = 2,
                         maxLines = 3,
                         shape = tfShape,
@@ -192,11 +194,11 @@ fun EditMeetingDialog(
                     OutlinedTextField(
                         value = selectedDateText,
                         onValueChange = { },
-                        label = { Text("Date") },
+                        label = { Text(stringResource(R.string.meeting_date)) },
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.CalendarToday, contentDescription = "Select date")
+                                Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.meeting_date))
                             }
                         },
                         shape = tfShape,
@@ -212,11 +214,11 @@ fun EditMeetingDialog(
                         OutlinedTextField(
                             value = startTime,
                             onValueChange = { },
-                            label = { Text("Start Time") },
+                            label = { Text(stringResource(R.string.meeting_start_time)) },
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { showStartTimePicker = true }) {
-                                    Icon(Icons.Default.Schedule, contentDescription = "Select start time")
+                                    Icon(Icons.Default.Schedule, contentDescription = stringResource(R.string.meeting_start_time))
                                 }
                             },
                             shape = tfShape,
@@ -227,11 +229,11 @@ fun EditMeetingDialog(
                         OutlinedTextField(
                             value = endTime,
                             onValueChange = { },
-                            label = { Text("End Time") },
+                            label = { Text(stringResource(R.string.meeting_end_time)) },
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { showEndTimePicker = true }) {
-                                    Icon(Icons.Default.Schedule, contentDescription = "Select end time")
+                                    Icon(Icons.Default.Schedule, contentDescription = stringResource(R.string.meeting_end_time))
                                 }
                             },
                             shape = tfShape,
@@ -247,7 +249,7 @@ fun EditMeetingDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = primaryBlue)
+                            Text(stringResource(R.string.cancel), color = primaryBlue)
                         }
                         Spacer(Modifier.width(8.dp))
                         Button(
@@ -267,7 +269,7 @@ fun EditMeetingDialog(
                             colors = ButtonDefaults.buttonColors(containerColor = primaryBlue),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Save")
+                            Text(stringResource(R.string.save))
                         }
                     }
                 }
@@ -286,12 +288,12 @@ fun EditMeetingDialog(
                     }
                     showDatePicker = false
                 }) {
-                    Text("OK")
+                    Text(stringResource(android.R.string.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         ) {

@@ -35,10 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 
@@ -92,7 +94,7 @@ fun EditClassroomDialog(
                         Icon(Icons.Default.Edit, contentDescription = null, tint = primaryBlue)
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "Edit Classroom",
+                            stringResource(R.string.edit_classroom),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryBlue,
                                 fontWeight = FontWeight.SemiBold
@@ -108,7 +110,7 @@ fun EditClassroomDialog(
                             value = selectedTeacher?.let { "${it.firstName} ${it.lastName}" } ?: "",
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("Select Teacher") },
+                            label = { Text(stringResource(R.string.select_teacher)) },
                             trailingIcon = {
                                 Icon(Icons.Default.ArrowDropDown, contentDescription = null)
                             },
@@ -138,7 +140,7 @@ fun EditClassroomDialog(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Name") },
+                        label = { Text(stringResource(R.string.classroom_name)) },
                         singleLine = true,
                         shape = tfShape,
                         colors = tfColors,
@@ -148,7 +150,7 @@ fun EditClassroomDialog(
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Description") },
+                        label = { Text(stringResource(R.string.classroom_description)) },
                         shape = tfShape,
                         colors = tfColors,
                         modifier = Modifier.fillMaxWidth(),
@@ -163,7 +165,7 @@ fun EditClassroomDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = primaryBlue)
+                            Text(stringResource(R.string.cancel), color = primaryBlue)
                         }
                         Spacer(Modifier.width(8.dp))
                         Button(
@@ -177,7 +179,7 @@ fun EditClassroomDialog(
                             shape = RoundedCornerShape(12.dp),
                             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 10.dp)
                         ) {
-                            Text("Update")
+                            Text(stringResource(R.string.update))
                         }
                     }
                 }

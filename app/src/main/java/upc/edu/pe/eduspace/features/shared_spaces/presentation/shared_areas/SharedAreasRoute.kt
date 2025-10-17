@@ -33,10 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.shared_spaces.domain.models.SharedArea
@@ -61,6 +63,10 @@ fun SharedAreasRoute(
     var selectedSharedArea by remember { mutableStateOf<SharedArea?>(null) }
     var snackMessage by remember { mutableStateOf<String?>(null) }
 
+    val sharedSpaceCreatedMessage = stringResource(R.string.shared_space_created)
+    val sharedSpaceUpdatedMessage = stringResource(R.string.shared_space_updated)
+    val sharedSpaceDeletedMessage = stringResource(R.string.shared_space_deleted)
+
     // Reload data when returning to this screen
     LaunchedEffect(Unit) {
         viewModel.loadSharedAreas()
@@ -70,7 +76,7 @@ fun SharedAreasRoute(
     LaunchedEffect(createState) {
         when (createState) {
             is UiState.Success -> {
-                snackMessage = "Shared area created successfully"
+                snackMessage = sharedSpaceCreatedMessage
                 showCreateDialog = false
                 viewModel.resetCreateState()
             }
@@ -86,7 +92,7 @@ fun SharedAreasRoute(
     LaunchedEffect(updateState) {
         when (updateState) {
             is UiState.Success -> {
-                snackMessage = "Shared area updated successfully"
+                snackMessage = sharedSpaceUpdatedMessage
                 showEditDialog = false
                 selectedSharedArea = null
                 viewModel.resetUpdateState()
@@ -103,7 +109,7 @@ fun SharedAreasRoute(
     LaunchedEffect(deleteState) {
         when (deleteState) {
             is UiState.Success -> {
-                snackMessage = "Shared area deleted successfully"
+                snackMessage = sharedSpaceDeletedMessage
                 showDeleteDialog = false
                 selectedSharedArea = null
                 viewModel.resetDeleteState()
@@ -130,12 +136,12 @@ fun SharedAreasRoute(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add",
+                    contentDescription = stringResource(R.string.add),
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    "Add Area",
+                    stringResource(R.string.add_shared_space),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -163,7 +169,7 @@ fun SharedAreasRoute(
                     val sharedAreas = (sharedAreasState as UiState.Success<List<SharedArea>>).data
                     if (sharedAreas.isEmpty()) {
                         Text(
-                            text = "No shared areas available",
+                            text = stringResource(R.string.no_shared_spaces),
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -204,7 +210,7 @@ fun SharedAreasRoute(
                             color = MaterialTheme.colorScheme.error
                         )
                         Button(onClick = { viewModel.loadSharedAreas() }) {
-                            Text("Retry")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -243,8 +249,8 @@ fun SharedAreasRoute(
 
     if (showDeleteDialog && selectedSharedArea != null) {
         DeleteConfirmationDialog(
-            title = "Delete Shared Area",
-            message = "Are you sure you want to delete \"${selectedSharedArea!!.type.displayName}\"?",
+            title = stringResource(R.string.delete_shared_space),
+            message = stringResource(R.string.delete_shared_space_confirm, stringResource(selectedSharedArea!!.type.displayNameRes)),
             onDismiss = {
                 showDeleteDialog = false
                 selectedSharedArea = null

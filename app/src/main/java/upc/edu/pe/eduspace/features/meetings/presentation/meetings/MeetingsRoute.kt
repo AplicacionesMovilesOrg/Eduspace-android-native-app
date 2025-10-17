@@ -21,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
 import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.MeetingCard
@@ -62,7 +64,7 @@ fun MeetingsRoute(
                     val meetings = (meetingsState as UiState.Success<List<Meeting>>).data
                     if (meetings.isEmpty()) {
                         Text(
-                            text = "No meetings available",
+                            text = stringResource(R.string.no_meetings),
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -96,7 +98,7 @@ fun MeetingsRoute(
                             color = MaterialTheme.colorScheme.error
                         )
                         Button(onClick = { viewModel.loadMeetings() }) {
-                            Text("Retry")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }

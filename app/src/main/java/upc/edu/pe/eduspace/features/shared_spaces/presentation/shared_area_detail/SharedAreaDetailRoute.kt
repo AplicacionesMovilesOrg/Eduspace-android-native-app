@@ -44,10 +44,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.shared_spaces.domain.models.SharedArea
@@ -68,11 +70,14 @@ fun SharedAreaDetailRoute(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var snackMessage by remember { mutableStateOf<String?>(null) }
 
+    val sharedSpaceUpdatedMessage = stringResource(R.string.shared_space_updated)
+    val sharedSpaceDeletedMessage = stringResource(R.string.shared_space_deleted)
+
     // Handle update state
     LaunchedEffect(updateState) {
         when (updateState) {
             is UiState.Success -> {
-                snackMessage = "Shared area updated successfully"
+                snackMessage = sharedSpaceUpdatedMessage
                 showEditDialog = false
                 viewModel.resetUpdateState()
             }
@@ -88,7 +93,7 @@ fun SharedAreaDetailRoute(
     LaunchedEffect(deleteState) {
         when (deleteState) {
             is UiState.Success -> {
-                snackMessage = "Shared area deleted successfully"
+                snackMessage = sharedSpaceDeletedMessage
                 viewModel.resetDeleteState()
                 onNavigateBack()
             }
@@ -106,8 +111,8 @@ fun SharedAreaDetailRoute(
                 title = {
                     Text(
                         when (sharedAreaState) {
-                            is UiState.Success -> (sharedAreaState as UiState.Success<SharedArea>).data.type.displayName
-                            else -> "Area Details"
+                            is UiState.Success -> stringResource((sharedAreaState as UiState.Success<SharedArea>).data.type.displayNameRes)
+                            else -> stringResource(R.string.shared_space_detail)
                         },
                         color = Color.White
                     )
@@ -116,7 +121,7 @@ fun SharedAreaDetailRoute(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                             tint = Color.White
                         )
                     }
@@ -166,7 +171,7 @@ fun SharedAreaDetailRoute(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 Text(
-                                    text = sharedArea.type.displayName,
+                                    text = stringResource(sharedArea.type.displayNameRes),
                                     style = MaterialTheme.typography.headlineMedium,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -180,14 +185,14 @@ fun SharedAreaDetailRoute(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Group,
-                                        contentDescription = "Capacity",
+                                        contentDescription = stringResource(R.string.capacity),
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(24.dp)
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Column {
                                         Text(
-                                            text = "Capacity",
+                                            text = stringResource(R.string.capacity),
                                             style = MaterialTheme.typography.labelMedium,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -204,16 +209,16 @@ fun SharedAreaDetailRoute(
                                 // Description
                                 Column {
                                     Text(
-                                        text = "Description",
+                                        text = stringResource(R.string.shared_space_description),
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = sharedArea.description.ifEmpty { "No description" },
+                                        text = sharedArea.description.ifEmpty { stringResource(R.string.no_data_available) },
                                         style = MaterialTheme.typography.bodyMedium
                                     )
-                                }
+                                 }
                             }
                         }
 
@@ -232,7 +237,7 @@ fun SharedAreaDetailRoute(
                             ) {
                                 Icon(Icons.Default.Edit, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Edit", fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.edit), fontWeight = FontWeight.Bold)
                             }
 
                             Button(
@@ -245,7 +250,7 @@ fun SharedAreaDetailRoute(
                             ) {
                                 Icon(Icons.Default.Delete, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Delete", fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.delete), fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -262,7 +267,7 @@ fun SharedAreaDetailRoute(
                             color = MaterialTheme.colorScheme.error
                         )
                         Button(onClick = { viewModel.loadSharedArea() }) {
-                            Text("Retry")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -289,8 +294,8 @@ fun SharedAreaDetailRoute(
         val sharedArea = (sharedAreaState as? UiState.Success<SharedArea>)?.data
         if (sharedArea != null) {
             DeleteConfirmationDialog(
-                title = "Delete Shared Area",
-                message = "Are you sure you want to delete \"${sharedArea.type.displayName}\"? This action cannot be undone.",
+                title = stringResource(R.string.delete_shared_space),
+                message = stringResource(R.string.delete_shared_space_confirm, stringResource(sharedArea.type.displayNameRes)),
                 onDismiss = { showDeleteDialog = false },
                 onConfirm = {
                     viewModel.deleteSharedArea()

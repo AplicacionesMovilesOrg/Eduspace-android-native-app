@@ -43,10 +43,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import upc.edu.pe.eduspace.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -131,7 +133,7 @@ fun CreateMeetingDialog(
                         Icon(Icons.Default.Event, contentDescription = null, tint = primaryBlue)
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "Create Meeting",
+                            stringResource(R.string.create_meeting),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryBlue,
                                 fontWeight = FontWeight.SemiBold
@@ -142,7 +144,7 @@ fun CreateMeetingDialog(
                     OutlinedTextField(
                         value = title,
                         onValueChange = { title = it },
-                        label = { Text("Title") },
+                        label = { Text(stringResource(R.string.meeting_title)) },
                         singleLine = true,
                         shape = tfShape,
                         colors = tfColors,
@@ -152,7 +154,7 @@ fun CreateMeetingDialog(
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Description") },
+                        label = { Text(stringResource(R.string.meeting_description)) },
                         minLines = 2,
                         maxLines = 3,
                         shape = tfShape,
@@ -164,11 +166,11 @@ fun CreateMeetingDialog(
                     OutlinedTextField(
                         value = selectedDateText,
                         onValueChange = { },
-                        label = { Text("Date") },
+                        label = { Text(stringResource(R.string.meeting_date)) },
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.CalendarToday, contentDescription = "Select date")
+                                Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.meeting_date))
                             }
                         },
                         shape = tfShape,
@@ -184,11 +186,11 @@ fun CreateMeetingDialog(
                         OutlinedTextField(
                             value = startTime,
                             onValueChange = { },
-                            label = { Text("Start Time") },
+                            label = { Text(stringResource(R.string.meeting_start_time)) },
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { showStartTimePicker = true }) {
-                                    Icon(Icons.Default.Schedule, contentDescription = "Select start time")
+                                    Icon(Icons.Default.Schedule, contentDescription = stringResource(R.string.meeting_start_time))
                                 }
                             },
                             shape = tfShape,
@@ -199,11 +201,11 @@ fun CreateMeetingDialog(
                         OutlinedTextField(
                             value = endTime,
                             onValueChange = { },
-                            label = { Text("End Time") },
+                            label = { Text(stringResource(R.string.meeting_end_time)) },
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { showEndTimePicker = true }) {
-                                    Icon(Icons.Default.Schedule, contentDescription = "Select end time")
+                                    Icon(Icons.Default.Schedule, contentDescription = stringResource(R.string.meeting_end_time))
                                 }
                             },
                             shape = tfShape,
@@ -219,7 +221,7 @@ fun CreateMeetingDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = primaryBlue)
+                            Text(stringResource(R.string.cancel), color = primaryBlue)
                         }
                         Spacer(Modifier.width(8.dp))
                         Button(
@@ -239,7 +241,7 @@ fun CreateMeetingDialog(
                             colors = ButtonDefaults.buttonColors(containerColor = primaryBlue),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Create")
+                            Text(stringResource(R.string.create))
                         }
                     }
                 }
@@ -258,12 +260,12 @@ fun CreateMeetingDialog(
                     }
                     showDatePicker = false
                 }) {
-                    Text("OK")
+                    Text(stringResource(android.R.string.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         ) {
@@ -319,10 +321,10 @@ fun TimePickerDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                     TextButton(onClick = onConfirm) {
-                        Text("OK")
+                        Text(stringResource(android.R.string.ok))
                     }
                 }
             }

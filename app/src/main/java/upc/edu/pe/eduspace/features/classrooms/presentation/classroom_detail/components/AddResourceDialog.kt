@@ -35,10 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.features.classrooms.domain.models.ResourceType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,7 +90,7 @@ fun AddResourceDialog(
                         Icon(Icons.Default.Add, contentDescription = null, tint = primaryBlue)
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "Add Resource",
+                            stringResource(R.string.add_resource),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryBlue,
                                 fontWeight = FontWeight.SemiBold
@@ -100,15 +102,15 @@ fun AddResourceDialog(
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text("Resource Name") },
-                            placeholder = { Text("e.g., ${selectedResourceType?.displayName ?: "Resource"}-Room$classroomId") },
+                            label = { Text(stringResource(R.string.resource_name)) },
+                            placeholder = { Text(stringResource(R.string.resource_name_placeholder, selectedResourceType?.let { stringResource(it.displayNameRes) } ?: stringResource(R.string.resource_name), classroomId)) },
                             singleLine = true,
                             shape = tfShape,
                             colors = tfColors,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Text(
-                            text = "Note: Resource names must be unique across all classrooms",
+                            text = stringResource(R.string.resource_name_note),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray,
                             modifier = Modifier.padding(start = 8.dp, top = 4.dp)
@@ -120,10 +122,10 @@ fun AddResourceDialog(
                         onExpandedChange = { expanded = !expanded }
                     ) {
                         OutlinedTextField(
-                            value = selectedResourceType?.displayName ?: "",
+                            value = selectedResourceType?.let { stringResource(it.displayNameRes) } ?: "",
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("Resource Type") },
+                            label = { Text(stringResource(R.string.resource_type)) },
                             trailingIcon = {
                                 Icon(Icons.Default.ArrowDropDown, contentDescription = null)
                             },
@@ -140,7 +142,7 @@ fun AddResourceDialog(
                         ) {
                             ResourceType.getAllTypes().forEach { type ->
                                 DropdownMenuItem(
-                                    text = { Text(type.displayName) },
+                                    text = { Text(stringResource(type.displayNameRes)) },
                                     onClick = {
                                         selectedResourceType = type
                                         expanded = false
@@ -157,7 +159,7 @@ fun AddResourceDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = primaryBlue)
+                            Text(stringResource(R.string.cancel), color = primaryBlue)
                         }
                         Spacer(Modifier.width(8.dp))
                         Button(
@@ -170,14 +172,14 @@ fun AddResourceDialog(
                                     } else {
                                         "${name.trim()}-Room$classroomId"
                                     }
-                                    onSubmit(finalName, type.displayName)
+                                    onSubmit(finalName, type.backendName)
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = primaryBlue),
                             shape = RoundedCornerShape(12.dp),
                             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 10.dp)
                         ) {
-                            Text("Add")
+                            Text(stringResource(R.string.add))
                         }
                     }
                 }

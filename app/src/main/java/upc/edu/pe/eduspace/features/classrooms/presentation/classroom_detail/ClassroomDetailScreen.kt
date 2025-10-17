@@ -42,9 +42,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
@@ -153,7 +155,7 @@ fun ClassroomDetailRoute(
                     Text(
                         when (classroomState) {
                             is UiState.Success -> (classroomState as UiState.Success<Classroom>).data.name
-                            else -> "Classroom Detail"
+                            else -> stringResource(id = R.string.classroom_detail)
                         },
                         color = Color.White
                     )
@@ -162,7 +164,7 @@ fun ClassroomDetailRoute(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(id = R.string.back),
                             tint = Color.White
                         )
                     }
@@ -185,12 +187,12 @@ fun ClassroomDetailRoute(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add resource",
+                    contentDescription = stringResource(id = R.string.add_resource),
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    "Add Resource",
+                    stringResource(id = R.string.add_resource),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -243,7 +245,7 @@ fun ClassroomDetailRoute(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    "Create Meeting for this Classroom",
+                                    stringResource(id = R.string.create_meeting_for_classroom),
                                     fontWeight = FontWeight.Bold
                                 )
                             }
@@ -353,7 +355,8 @@ fun ClassroomDetailRoute(
     if (showDeleteResourceDialog) {
         selectedResource?.let { resource ->
             DeleteConfirmationDialog(
-                classroomName = resource.name,
+                title = stringResource(id = R.string.delete_resource),
+                message = stringResource(id = R.string.delete_resource_confirm, resource.name),
                 onDismiss = { showDeleteResourceDialog = false },
                 onConfirm = {
                     resourcesViewModel.deleteResource(classroomId, resource.id)

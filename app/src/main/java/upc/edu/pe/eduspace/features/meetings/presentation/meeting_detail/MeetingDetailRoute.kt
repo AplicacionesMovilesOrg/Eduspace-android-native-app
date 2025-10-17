@@ -46,10 +46,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
@@ -74,11 +76,16 @@ fun MeetingDetailRoute(
     var showAddTeacherDialog by remember { mutableStateOf(false) }
     var snackMessage by remember { mutableStateOf<String?>(null) }
 
+    val meetingUpdatedMsg = stringResource(R.string.meeting_updated)
+    val meetingDeletedMsg = stringResource(R.string.meeting_deleted)
+    val teacherAddedMsg = stringResource(R.string.teacher_added)
+    val noTeachersAvailableMsg = stringResource(id = R.string.no_teachers_available)
+
     // Handle update state
     LaunchedEffect(updateState) {
         when (updateState) {
             is UiState.Success -> {
-                snackMessage = "Meeting updated successfully"
+                snackMessage = meetingUpdatedMsg
                 showEditDialog = false
                 viewModel.resetUpdateState()
             }
@@ -94,7 +101,7 @@ fun MeetingDetailRoute(
     LaunchedEffect(deleteState) {
         when (deleteState) {
             is UiState.Success -> {
-                snackMessage = "Meeting deleted successfully"
+                snackMessage = meetingDeletedMsg
                 viewModel.resetDeleteState()
                 onNavigateBack()
             }
@@ -110,7 +117,7 @@ fun MeetingDetailRoute(
     LaunchedEffect(addTeacherState) {
         when (addTeacherState) {
             is UiState.Success -> {
-                snackMessage = "Teacher added successfully"
+                snackMessage = teacherAddedMsg
                 showAddTeacherDialog = false
                 viewModel.resetAddTeacherState()
             }
@@ -129,7 +136,7 @@ fun MeetingDetailRoute(
                     Text(
                         when (meetingState) {
                             is UiState.Success -> (meetingState as UiState.Success<Meeting>).data.title
-                            else -> "Meeting Details"
+                            else -> stringResource(R.string.meeting_details)
                         },
                         color = Color.White
                     )
@@ -138,7 +145,7 @@ fun MeetingDetailRoute(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                             tint = Color.White
                         )
                     }
@@ -209,13 +216,13 @@ fun MeetingDetailRoute(
                                 // Description
                                 Column {
                                     Text(
-                                        text = "Description",
+                                        text = stringResource(R.string.description),
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = meeting.description.ifEmpty { "No description" },
+                                        text = meeting.description.ifEmpty { stringResource(R.string.no_description) },
                                         style = MaterialTheme.typography.bodyMedium
                                     )
                                 }
@@ -229,7 +236,7 @@ fun MeetingDetailRoute(
                                 ) {
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = "Date",
+                                            text = stringResource(R.string.date),
                                             style = MaterialTheme.typography.labelMedium,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -253,7 +260,7 @@ fun MeetingDetailRoute(
 
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = "Time",
+                                            text = stringResource(R.string.time),
                                             style = MaterialTheme.typography.labelMedium,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -295,7 +302,7 @@ fun MeetingDetailRoute(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "Participants (${meeting.teachers.size})",
+                                        text = stringResource(id = R.string.participants, meeting.teachers.size),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -307,7 +314,7 @@ fun MeetingDetailRoute(
                                             if (state is UiState.Success) {
                                                 if (state.data.isEmpty()) {
                                                     // If the filtered list is empty, show snackbar
-                                                    snackMessage = "No hay más profesores disponibles para agregar"
+                                                    snackMessage = noTeachersAvailableMsg
                                                 } else {
                                                     // If there are available teachers, show the dialog
                                                     showAddTeacherDialog = true
@@ -328,13 +335,13 @@ fun MeetingDetailRoute(
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Add", style = MaterialTheme.typography.labelMedium)
+                                        Text(stringResource(id = R.string.add), style = MaterialTheme.typography.labelMedium)
                                     }
                                 }
 
                                 if (meeting.teachers.isEmpty()) {
                                     Text(
-                                        text = "No participants yet",
+                                        text = stringResource(id = R.string.no_participants_yet),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = Color(0xFF666666)
                                     )
@@ -402,7 +409,7 @@ fun MeetingDetailRoute(
                             ) {
                                 Icon(Icons.Default.Edit, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Edit", fontWeight = FontWeight.Bold)
+                                Text(stringResource(id = R.string.edit), fontWeight = FontWeight.Bold)
                             }
 
                             Button(
@@ -415,7 +422,7 @@ fun MeetingDetailRoute(
                             ) {
                                 Icon(Icons.Default.Delete, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Delete", fontWeight = FontWeight.Bold)
+                                Text(stringResource(id = R.string.delete), fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -432,7 +439,7 @@ fun MeetingDetailRoute(
                             color = MaterialTheme.colorScheme.error
                         )
                         Button(onClick = { viewModel.loadMeeting() }) {
-                            Text("Retry")
+                            Text(stringResource(id = R.string.retry))
                         }
                     }
                 }
@@ -459,8 +466,8 @@ fun MeetingDetailRoute(
         val meeting = (meetingState as? UiState.Success<Meeting>)?.data
         if (meeting != null) {
             DeleteConfirmationDialog(
-                title = "Delete Meeting",
-                message = "Are you sure you want to delete \"${meeting.title}\"? This action cannot be undone.",
+                title = stringResource(id = R.string.delete_meeting_title),
+                message = stringResource(id = R.string.delete_meeting_message, meeting.title),
                 onDismiss = { showDeleteDialog = false },
                 onConfirm = {
                     viewModel.deleteMeeting()

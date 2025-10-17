@@ -20,9 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import upc.edu.pe.eduspace.R
 
 @Composable
 fun ClassroomsHeader(classroomCount: Int) {
@@ -51,7 +53,7 @@ fun ClassroomsHeader(classroomCount: Int) {
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    "My Classrooms",
+                    stringResource(id = R.string.my_classrooms),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold

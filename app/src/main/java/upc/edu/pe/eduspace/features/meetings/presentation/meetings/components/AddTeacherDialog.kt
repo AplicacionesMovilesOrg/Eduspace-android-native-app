@@ -34,10 +34,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 
 @Composable
@@ -75,7 +77,7 @@ fun AddTeacherDialog(
                         Icon(Icons.Default.PersonAdd, contentDescription = null, tint = primaryBlue)
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "Add Participant",
+                            stringResource(R.string.add_teacher_to_meeting),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryBlue,
                                 fontWeight = FontWeight.SemiBold
@@ -84,7 +86,7 @@ fun AddTeacherDialog(
                     }
 
                     Text(
-                        "Select a teacher to add to this meeting:",
+                        stringResource(R.string.select_teacher),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFF666666)
                     )
@@ -147,7 +149,7 @@ fun AddTeacherDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = primaryBlue)
+                            Text(stringResource(R.string.cancel), color = primaryBlue)
                         }
                         Spacer(Modifier.width(8.dp))
                         Button(
@@ -160,7 +162,7 @@ fun AddTeacherDialog(
                             colors = ButtonDefaults.buttonColors(containerColor = primaryBlue),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Add")
+                            Text(stringResource(R.string.add))
                         }
                     }
                 }

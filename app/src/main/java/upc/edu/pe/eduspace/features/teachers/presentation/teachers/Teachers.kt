@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
@@ -71,6 +73,8 @@ fun TeachersRoute(
     var snack by remember { mutableStateOf<String?>(null) }
     var selectedTeacher by remember { mutableStateOf<Teacher?>(null) }
 
+    val teacherCreatedMessage = stringResource(R.string.teacher_created)
+
     // Reload data when returning to this screen
     LaunchedEffect(Unit) {
         viewModel.getAllTeachers()
@@ -80,7 +84,7 @@ fun TeachersRoute(
     LaunchedEffect(createState) {
         when (createState) {
             is UiState.Success -> {
-                snack = "Teacher created successfully"
+                snack = teacherCreatedMessage
                 showDialog = false
                 viewModel.resetCreateState()
             }
@@ -156,12 +160,12 @@ private fun TeachersContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add",
+                    contentDescription = stringResource(R.string.add),
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    "Add Teacher",
+                    stringResource(R.string.add_teacher),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -189,7 +193,7 @@ private fun TeachersContent(
                     val teachers = teachersState.data
                     if (teachers.isEmpty()) {
                         Text(
-                            text = "No teachers available",
+                            text = stringResource(R.string.no_teachers),
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -221,7 +225,7 @@ private fun TeachersContent(
                             color = MaterialTheme.colorScheme.error
                         )
                         Button(onClick = onRetry) {
-                            Text("Retry")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -380,10 +384,10 @@ private fun TeacherDetailDialog(
 
                     // Details section
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        DetailRow(label = "Email", value = teacher.email)
-                        DetailRow(label = "DNI", value = teacher.dni)
-                        DetailRow(label = "Address", value = teacher.address)
-                        DetailRow(label = "Phone", value = teacher.phone)
+                        DetailRow(label = stringResource(R.string.teacher_email), value = teacher.email)
+                        DetailRow(label = stringResource(R.string.teacher_dni), value = teacher.dni)
+                        DetailRow(label = stringResource(R.string.teacher_address), value = teacher.address)
+                        DetailRow(label = stringResource(R.string.teacher_phone), value = teacher.phone)
                     }
 
                     // Close button
@@ -398,7 +402,7 @@ private fun TeacherDetailDialog(
                             ),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Close", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.close), fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -485,7 +489,7 @@ private fun AddTeacherDialogStyled(
                         Icon(Icons.Default.PersonAdd, contentDescription = null, tint = primaryBlue)
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "Add teacher",
+                            stringResource(R.string.add_teacher),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryBlue,
                                 fontWeight = FontWeight.SemiBold
@@ -493,17 +497,17 @@ private fun AddTeacherDialogStyled(
                         )
                     }
 
-                    OutlinedTextField(firstName, { firstName = it }, label = { Text("Name") }, singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(lastName,  { lastName  = it }, label = { Text("Last name") }, singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(email,     { email     = it }, label = { Text("Email") },   singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions.Default)
-                    OutlinedTextField(dni,       { dni       = it }, label = { Text("DNI") },     singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(address,   { address   = it }, label = { Text("Address") }, singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(phone,     { phone     = it }, label = { Text("Phone") },  singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(username,  { username  = it }, label = { Text("Username") },   singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(firstName, { firstName = it }, label = { Text(stringResource(R.string.teacher_first_name)) }, singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(lastName,  { lastName  = it }, label = { Text(stringResource(R.string.last_name_label)) }, singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(email,     { email     = it }, label = { Text(stringResource(R.string.teacher_email)) },   singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions.Default)
+                    OutlinedTextField(dni,       { dni       = it }, label = { Text(stringResource(R.string.teacher_dni)) },     singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(address,   { address   = it }, label = { Text(stringResource(R.string.teacher_address)) }, singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(phone,     { phone     = it }, label = { Text(stringResource(R.string.teacher_phone)) },  singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(username,  { username  = it }, label = { Text(stringResource(R.string.username)) },   singleLine = true, shape = tfShape, colors = tfColors, modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Password") },
+                        label = { Text(stringResource(R.string.password)) },
                         singleLine = true,
                         shape = tfShape,
                         colors = tfColors,
@@ -519,7 +523,7 @@ private fun AddTeacherDialogStyled(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = primaryBlue)
+                            Text(stringResource(R.string.cancel), color = primaryBlue)
                         }
                         Spacer(Modifier.width(8.dp))
                         Button(
@@ -537,7 +541,7 @@ private fun AddTeacherDialogStyled(
                             shape = RoundedCornerShape(12.dp),
                             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 10.dp)
                         ) {
-                            Text("Add")
+                            Text(stringResource(R.string.add))
                         }
                     }
                 }

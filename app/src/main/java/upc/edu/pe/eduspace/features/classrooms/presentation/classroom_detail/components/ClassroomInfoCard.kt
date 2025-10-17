@@ -29,9 +29,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
@@ -89,7 +91,7 @@ fun ClassroomInfoCard(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Text(
-                    "Classroom Information",
+                    stringResource(R.string.classroom_information),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -103,7 +105,7 @@ fun ClassroomInfoCard(
             // Name field with icon
             InfoRowEnhanced(
                 icon = Icons.Default.MeetingRoom,
-                label = "Name",
+                label = stringResource(R.string.name),
                 value = classroom.name,
                 iconColor = Color(0xFF4CAF50)
             )
@@ -113,7 +115,7 @@ fun ClassroomInfoCard(
             // Description field with icon
             InfoRowEnhanced(
                 icon = Icons.Default.Description,
-                label = "Description",
+                label = stringResource(R.string.description),
                 value = classroom.description,
                 iconColor = Color(0xFF2196F3)
             )
@@ -126,7 +128,7 @@ fun ClassroomInfoCard(
                     val teacher = (teacherState as UiState.Success<Teacher>).data
                     InfoRowEnhanced(
                         icon = Icons.Default.Person,
-                        label = "Teacher",
+                        label = stringResource(R.string.teacher),
                         value = "${teacher.firstName} ${teacher.lastName}",
                         iconColor = Color(0xFFFF9800)
                     )
@@ -134,24 +136,24 @@ fun ClassroomInfoCard(
                 is UiState.Loading -> {
                     InfoRowEnhanced(
                         icon = Icons.Default.Person,
-                        label = "Teacher",
-                        value = "Loading...",
+                        label = stringResource(R.string.teacher),
+                        value = stringResource(R.string.loading),
                         iconColor = Color(0xFFBDBDBD)
                     )
                 }
                 is UiState.Error -> {
                     InfoRowEnhanced(
                         icon = Icons.Default.Person,
-                        label = "Teacher",
-                        value = "Unknown",
+                        label = stringResource(R.string.teacher),
+                        value = stringResource(R.string.unknown),
                         iconColor = Color(0xFFFF5252)
                     )
                 }
                 else -> {
                     InfoRowEnhanced(
                         icon = Icons.Default.Person,
-                        label = "Teacher",
-                        value = "Loading...",
+                        label = stringResource(R.string.teacher),
+                        value = stringResource(R.string.loading),
                         iconColor = Color(0xFFBDBDBD)
                     )
                 }

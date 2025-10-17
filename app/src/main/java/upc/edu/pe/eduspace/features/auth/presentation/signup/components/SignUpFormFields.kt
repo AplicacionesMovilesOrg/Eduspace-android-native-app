@@ -25,11 +25,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import upc.edu.pe.eduspace.R
 
 @Composable
 fun SignUpFormFields(
@@ -70,7 +72,7 @@ fun SignUpFormFields(
         value = firstName,
         onValueChange = onFirstNameChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("First Name") },
+        placeholder = { Text(stringResource(R.string.teacher_first_name)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Person,
@@ -93,7 +95,7 @@ fun SignUpFormFields(
         value = lastName,
         onValueChange = onLastNameChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Last Name") },
+        placeholder = { Text(stringResource(R.string.teacher_last_name)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Person,
@@ -116,7 +118,7 @@ fun SignUpFormFields(
         value = phone,
         onValueChange = onPhoneChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Phone") },
+        placeholder = { Text(stringResource(R.string.teacher_phone)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Call,
@@ -140,7 +142,7 @@ fun SignUpFormFields(
         value = email,
         onValueChange = onEmailChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Email") },
+        placeholder = { Text(stringResource(R.string.email)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Email,
@@ -164,7 +166,7 @@ fun SignUpFormFields(
         value = username,
         onValueChange = onUsernameChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Username") },
+        placeholder = { Text(stringResource(R.string.username)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.AccountCircle,
@@ -187,7 +189,7 @@ fun SignUpFormFields(
         value = password,
         onValueChange = onPasswordChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Password") },
+        placeholder = { Text(stringResource(R.string.password)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Lock,
@@ -227,7 +229,7 @@ fun SignUpFormFields(
         value = dni,
         onValueChange = onDniChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("DNI") },
+        placeholder = { Text(stringResource(R.string.teacher_dni)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Badge,
@@ -251,7 +253,7 @@ fun SignUpFormFields(
         value = address,
         onValueChange = onAddressChange,
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text("Address") },
+        placeholder = { Text(stringResource(R.string.teacher_address)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Home,

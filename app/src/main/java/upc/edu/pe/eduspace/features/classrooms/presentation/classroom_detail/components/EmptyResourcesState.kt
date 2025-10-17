@@ -23,9 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import upc.edu.pe.eduspace.R
 
 @Composable
 fun EmptyResourcesState() {
@@ -61,7 +63,7 @@ fun EmptyResourcesState() {
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                "No resources yet",
+                stringResource(R.string.no_resources_yet),
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -69,7 +71,7 @@ fun EmptyResourcesState() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "Add your first resource using the button below",
+                stringResource(R.string.add_first_resource),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFF9E9E9E),
                 textAlign = TextAlign.Center

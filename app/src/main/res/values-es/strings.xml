@@ -1,6 +1,11 @@
 <resources>
-    <!-- App name -->
-    <string name="app_name">Eduspace</string>
+    <!-- Screen Titles -->
+    <string name="screen_home">Inicio</string>
+    <string name="screen_classrooms">Aulas</string>
+    <string name="screen_shared_spaces">Espacios Compartidos</string>
+    <string name="screen_meetings">Reuniones</string>
+    <string name="screen_teachers">Profesores</string>
+    <string name="screen_logout">Cerrar Sesión</string>
 
     <!-- Common -->
     <string name="loading">Cargando…</string>
@@ -10,7 +15,7 @@
     <string name="save">Guardar</string>
     <string name="delete">Eliminar</string>
     <string name="edit">Editar</string>
-    <string name="add">Agregar</string>
+    <string name="add">Añadir</string>
     <string name="back">Atrás</string>
     <string name="confirm">Confirmar</string>
     <string name="close">Cerrar</string>
@@ -27,17 +32,17 @@
     <string name="sign_up">Registrarse</string>
     <string name="email">Correo Electrónico</string>
     <string name="password">Contraseña</string>
-    <string name="username">Nombre de Usuario</string>
+    <string name="username">Nombre de usuario</string>
     <string name="dont_have_account">¿No tienes una cuenta?</string>
     <string name="already_have_account">¿Ya tienes una cuenta?</string>
-    <string name="welcome_back">¡Bienvenido de Nuevo!</string>
+    <string name="welcome_back">¡Bienvenido de nuevo!</string>
     <string name="create_account">Crear Cuenta</string>
     <string name="invalid_email">Formato de correo inválido</string>
     <string name="password_too_short">La contraseña debe tener al menos 6 caracteres</string>
-    <string name="fields_required">Por favor completa todos los campos</string>
-    <string name="login_failed">Error al iniciar sesión</string>
-    <string name="signup_failed">Error al registrarse</string>
-    <string name="email_already_registered">El correo ya está registrado</string>
+    <string name="fields_required">Por favor, rellene todos los campos</string>
+    <string name="login_failed">Falló el inicio de sesión</string>
+    <string name="signup_failed">Falló el registro</string>
+    <string name="email_already_registered">El correo electrónico ya está registrado</string>
     <string name="invalid_credentials">Credenciales inválidas</string>
 
     <!-- Navigation Drawer -->
@@ -55,12 +60,12 @@
     <!-- Home -->
     <string name="home_title">Inicio</string>
     <string name="home_welcome">¡Bienvenido a Eduspace!</string>
-    <string name="home_subtitle">Administra tu espacio educativo</string>
+    <string name="home_subtitle">Gestiona tu espacio educativo</string>
 
     <!-- Classrooms -->
     <string name="classrooms_title">Aulas</string>
     <string name="classroom_detail">Detalle del Aula</string>
-    <string name="add_classroom">Agregar Aula</string>
+    <string name="add_classroom">Añadir Aula</string>
     <string name="edit_classroom">Editar Aula</string>
     <string name="delete_classroom">Eliminar Aula</string>
     <string name="classroom_name">Nombre del Aula</string>
@@ -69,28 +74,29 @@
     <string name="select_teacher">Selecciona un profesor</string>
     <string name="no_classrooms">No hay aulas disponibles</string>
     <string name="no_classrooms_subtitle">Crea tu primera aula para empezar</string>
-    <string name="classroom_created">Aula creada exitosamente</string>
-    <string name="classroom_updated">Aula actualizada exitosamente</string>
-    <string name="classroom_deleted">Aula eliminada exitosamente</string>
+    <string name="classroom_created">Aula creada con éxito</string>
+    <string name="classroom_updated">Aula actualizada con éxito</string>
+    <string name="classroom_deleted">Aula eliminada con éxito</string>
     <string name="classroom_error">Error al cargar el aula</string>
-    <string name="delete_classroom_confirm">¿Estás seguro de que quieres eliminar esta aula?</string>
+    <string name="delete_classroom_confirm">¿Estás seguro de que quieres eliminar \"%1$s\"?</string>
+    <string name="my_classrooms">Mis Aulas</string>
 
     <!-- Resources -->
     <string name="resources_title">Recursos</string>
-    <string name="add_resource">Agregar Recurso</string>
+    <string name="add_resource">Añadir Recurso</string>
     <string name="edit_resource">Editar Recurso</string>
     <string name="delete_resource">Eliminar Recurso</string>
     <string name="resource_name">Nombre del Recurso</string>
     <string name="resource_type">Tipo de Recurso</string>
     <string name="select_resource_type">Selecciona el tipo de recurso</string>
     <string name="no_resources">No hay recursos disponibles</string>
-    <string name="no_resources_subtitle">Agrega recursos a esta aula</string>
-    <string name="resource_created">Recurso creado exitosamente</string>
-    <string name="resource_updated">Recurso actualizado exitosamente</string>
-    <string name="resource_deleted">Recurso eliminado exitosamente</string>
-    <string name="resource_error">Error al cargar recursos</string>
+    <string name="no_resources_subtitle">Añade recursos a esta aula</string>
+    <string name="resource_created">Recurso creado con éxito</string>
+    <string name="resource_updated">Recurso actualizado con éxito</string>
+    <string name="resource_deleted">Recurso eliminado con éxito</string>
+    <string name="resource_error">Error al cargar los recursos</string>
     <string name="resource_already_exists">El recurso ya existe</string>
-    <string name="delete_resource_confirm">¿Estás seguro de que quieres eliminar este recurso?</string>
+    <string name="delete_resource_confirm">¿Estás seguro de que quieres eliminar \"%1$s\"?</string>
     <string name="resources_count">Recursos: %d</string>
 
     <!-- Resource Types -->
@@ -108,7 +114,7 @@
     <!-- Meetings -->
     <string name="meetings_title">Reuniones</string>
     <string name="meeting_detail">Detalle de la Reunión</string>
-    <string name="add_meeting">Agregar Reunión</string>
+    <string name="add_meeting">Añadir Reunión</string>
     <string name="create_meeting">Crear Reunión</string>
     <string name="edit_meeting">Editar Reunión</string>
     <string name="delete_meeting">Eliminar Reunión</string>
@@ -121,38 +127,40 @@
     <string name="meeting_participants">Participantes</string>
     <string name="no_meetings">No hay reuniones disponibles</string>
     <string name="no_meetings_subtitle">Crea tu primera reunión para empezar</string>
-    <string name="meeting_created">Reunión creada exitosamente</string>
-    <string name="meeting_updated">Reunión actualizada exitosamente</string>
-    <string name="meeting_deleted">Reunión eliminada exitosamente</string>
+    <string name="meeting_created">Reunión creada con éxito</string>
+    <string name="meeting_updated">Reunión actualizada con éxito</string>
+    <string name="meeting_deleted">Reunión eliminada con éxito</string>
     <string name="meeting_error">Error al cargar la reunión</string>
     <string name="delete_meeting_confirm">¿Estás seguro de que quieres eliminar esta reunión?</string>
     <string name="create_meeting_for_classroom">Crear Reunión para esta Aula</string>
-    <string name="add_teacher_to_meeting">Agregar Profesor</string>
+    <string name="add_teacher_to_meeting">Añadir Profesor</string>
     <string name="remove_teacher_from_meeting">Eliminar Profesor</string>
-    <string name="no_participants">Sin participantes aún</string>
-    <string name="teacher_added">Profesor agregado exitosamente</string>
-    <string name="teacher_removed">Profesor eliminado exitosamente</string>
-    <string name="no_teachers_available">No hay más profesores disponibles para agregar</string>
+    <string name="no_participants">Aún no hay participantes</string>
+    <string name="teacher_added">Profesor añadido con éxito</string>
+    <string name="teacher_removed">Profesor eliminado con éxito</string>
+    <string name="no_teachers_available">No hay más profesores disponibles para añadir</string>
     <string name="user_not_authenticated">Usuario no autenticado</string>
+    <string name="participants">Participantes (%1$d)</string>
+    <string name="no_participants_yet">Aún no hay participantes</string>
 
     <!-- Teachers -->
     <string name="teachers_title">Profesores</string>
-    <string name="add_teacher">Agregar Profesor</string>
+    <string name="add_teacher">Añadir Profesor</string>
     <string name="edit_teacher">Editar Profesor</string>
     <string name="delete_teacher">Eliminar Profesor</string>
     <string name="teacher_name">Nombre</string>
-    <string name="teacher_first_name">Nombres</string>
-    <string name="teacher_last_name">Apellidos</string>
-    <string name="teacher_email">Correo</string>
+    <string name="teacher_first_name">Nombre</string>
+    <string name="teacher_last_name">Apellido</string>
+    <string name="teacher_email">Correo Electrónico</string>
     <string name="teacher_phone">Teléfono</string>
     <string name="teacher_dni">DNI</string>
     <string name="teacher_address">Dirección</string>
     <string name="no_teachers">No hay profesores disponibles</string>
-    <string name="no_teachers_subtitle">Agrega tu primer profesor para empezar</string>
-    <string name="teacher_created">Profesor creado exitosamente</string>
-    <string name="teacher_updated">Profesor actualizado exitosamente</string>
-    <string name="teacher_deleted">Profesor eliminado exitosamente</string>
-    <string name="teacher_error">Error al cargar profesores</string>
+    <string name="no_teachers_subtitle">Añade tu primer profesor para empezar</string>
+    <string name="teacher_created">Profesor creado con éxito</string>
+    <string name="teacher_updated">Profesor actualizado con éxito</string>
+    <string name="teacher_deleted">Profesor eliminado con éxito</string>
+    <string name="teacher_error">Error al cargar los profesores</string>
     <string name="delete_teacher_confirm">¿Estás seguro de que quieres eliminar este profesor?</string>
     <string name="teacher_info">Información del Profesor</string>
     <string name="teacher_not_found">Profesor no encontrado</string>
@@ -160,7 +168,7 @@
     <!-- Shared Spaces -->
     <string name="shared_spaces_title">Espacios Compartidos</string>
     <string name="shared_space_detail">Detalle del Espacio Compartido</string>
-    <string name="add_shared_space">Agregar Espacio Compartido</string>
+    <string name="add_shared_space">Añadir Espacio Compartido</string>
     <string name="edit_shared_space">Editar Espacio Compartido</string>
     <string name="delete_shared_space">Eliminar Espacio Compartido</string>
     <string name="shared_space_name">Nombre del Espacio</string>
@@ -168,30 +176,75 @@
     <string name="shared_space_capacity">Capacidad</string>
     <string name="no_shared_spaces">No hay espacios compartidos disponibles</string>
     <string name="no_shared_spaces_subtitle">Crea tu primer espacio compartido para empezar</string>
-    <string name="shared_space_created">Espacio compartido creado exitosamente</string>
-    <string name="shared_space_updated">Espacio compartido actualizado exitosamente</string>
-    <string name="shared_space_deleted">Espacio compartido eliminado exitosamente</string>
-    <string name="shared_space_error">Error al cargar espacios compartidos</string>
-    <string name="delete_shared_space_confirm">¿Estás seguro de que quieres eliminar este espacio compartido?</string>
+    <string name="shared_space_created">Espacio compartido creado con éxito</string>
+    <string name="shared_space_updated">Espacio compartido actualizado con éxito</string>
+    <string name="shared_space_deleted">Espacio compartido eliminado con éxito</string>
+    <string name="shared_space_error">Error al cargar los espacios compartidos</string>
+    <string name="delete_shared_space_confirm">¿Estás seguro de que quieres eliminar "%1$s"?</string>
 
     <!-- Validation Messages -->
     <string name="field_required">Este campo es requerido</string>
-    <string name="invalid_format">Formato inválido</string>
+    <string name="invalid_format">Formato no válido</string>
     <string name="min_length">Longitud mínima: %d caracteres</string>
     <string name="max_length">Longitud máxima: %d caracteres</string>
 
     <!-- Error Messages -->
-    <string name="network_error">Error de red. Por favor verifica tu conexión</string>
-    <string name="server_error">Error del servidor. Por favor intenta más tarde</string>
+    <string name="network_error">Error de red. Por favor, comprueba tu conexión</string>
+    <string name="server_error">Error del servidor. Por favor, inténtalo de nuevo más tarde</string>
     <string name="unknown_error">Ocurrió un error desconocido</string>
-    <string name="failed_to_load">Error al cargar datos</string>
-    <string name="operation_failed">Operación fallida. Por favor intenta de nuevo</string>
+    <string name="failed_to_load">Error al cargar los datos</string>
+    <string name="operation_failed">La operación falló. Por favor, inténtalo de nuevo</string>
 
     <!-- Success Messages -->
-    <string name="operation_successful">Operación completada exitosamente</string>
-    <string name="changes_saved">Cambios guardados exitosamente</string>
+    <string name="operation_successful">Operación completada con éxito</string>
+    <string name="changes_saved">Cambios guardados con éxito</string>
 
     <!-- Empty States -->
     <string name="no_data_available">No hay datos disponibles</string>
-    <string name="start_by_adding">Comienza agregando un nuevo elemento</string>
+    <string name="start_by_adding">Empieza añadiendo un nuevo elemento</string>
+    <string name="resource_name_placeholder">ej., %1$s-Sala%2$d</string>
+    <string name="resource_name_note">Nota: Los nombres de los recursos deben ser únicos en todas las aulas</string>
+    <string name="delete_classroom_confirmation_message">¿Estás seguro de que quieres eliminar %1$s? Esta acción no se puede deshacer.</string>
+    <string name="create_shared_area">Crear Área Compartida</string>
+    <string name="area_type">Tipo de Área</string>
+    <string name="select_area_type">Por favor, selecciona un tipo de área</string>
+    <string name="capacity">Capacidad</string>
+    <string name="enter_valid_capacity">Introduce un número válido mayor que 0</string>
+    <string name="edit_shared_area">Editar Área Compartida</string>
+    <string name="last_name_label">Apellido</string>
+    <string name="shared_space_type_library">Biblioteca</string>
+    <string name="shared_space_type_cafeteria">Cafetería</string>
+    <string name="shared_space_type_study_room">Sala de Estudio</string>
+    <string name="shared_space_type_auditorium">Auditorio</string>
+    <string name="shared_space_type_laboratory">Laboratorio</string>
+    <string name="shared_space_type_soccer_field">Campo de Fútbol</string>
+    <string name="shared_space_type_basketball_court">Cancha de Baloncesto</string>
+    <string name="shared_space_type_gym">Gimnasio</string>
+    <string name="shared_space_type_computer_lab">Laboratorio de Computación</string>
+    <string name="shared_space_type_conference_room">Sala de Conferencias</string>
+
+    <!-- Additional UI Labels -->
+    <string name="classroom_information">Información del Aula</string>
+    <string name="name">Nombre</string>
+    <string name="description">Descripción</string>
+    <string name="teacher">Profesor</string>
+    <string name="unknown">Desconocido</string>
+    <string name="no_resources_yet">Aún no hay recursos</string>
+    <string name="add_first_resource">Añade tu primer recurso usando el botón de abajo</string>
+    <string name="no_classrooms_yet">Aún no hay aulas</string>
+    <string name="create_first_classroom">Crea tu primera aula usando el botón de abajo</string>
+    <string name="recent_reports">Reportes Recientes</string>
+    <string name="no_reports_available">No hay reportes disponibles</string>
+    <string name="date_label">Fecha: </string>
+    <string name="user_registration">Registro de Usuario</string>
+    <string name="log_in">Iniciar Sesión</string>
+    <string name="meeting_details">Detalles de la Reunión</string>
+    <string name="no_description">Sin descripción</string>
+    <string name="date">Fecha</string>
+    <string name="time">Hora</string>
+    <string name="participants_count">Participantes (%d)</string>
+    <string name="capacity_people">%d personas</string>
+    <string name="dni_prefix">DNI: %s</string>
+    <string name="delete_meeting_title">Eliminar Reunión</string>
+    <string name="delete_meeting_message">¿Estás seguro de que quieres eliminar "%1$s"? Esta acción no se puede deshacer.</string>
 </resources>

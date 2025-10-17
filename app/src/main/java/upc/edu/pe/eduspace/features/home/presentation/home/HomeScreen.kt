@@ -29,10 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.home.domain.models.ReportResource
 
@@ -87,7 +89,7 @@ fun HomeScreen(
 
                     item {
                         Text(
-                            text = "Recent Reports",
+                            text = stringResource(R.string.recent_reports),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -106,7 +108,7 @@ fun HomeScreen(
                                 colors = CardDefaults.cardColors(containerColor = Color.White)
                             ) {
                                 Text(
-                                    text = "No reports available",
+                                    text = stringResource(R.string.no_reports_available),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = Color(0xFF666666),
                                     modifier = Modifier.padding(32.dp)
@@ -177,7 +179,7 @@ fun WelcomeCard(firstName: String, lastName: String) {
                 Spacer(Modifier.height(20.dp))
 
                 Text(
-                    text = "Welcome Back!",
+                    text = stringResource(R.string.welcome_back),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold
                     ),
@@ -265,7 +267,7 @@ fun ReportCard(report: ReportResource) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Date: ",
+                    text = stringResource(R.string.date_label),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color(0xFF9E9E9E),
                     fontWeight = FontWeight.Medium

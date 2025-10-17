@@ -8,10 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import upc.edu.pe.eduspace.R
 
 @Composable
 fun DeleteConfirmationDialog(
-    classroomName: String,
+    title: String,
+    message: String,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
@@ -19,24 +22,24 @@ fun DeleteConfirmationDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Delete Classroom",
+                text = title,
                 style = MaterialTheme.typography.titleLarge.copy(color = Color(0xFFD32F2F))
             )
         },
         text = {
-            Text("Are you sure you want to delete '$classroomName'? This action cannot be undone.")
+            Text(message)
         },
         confirmButton = {
             Button(
                 onClick = onConfirm,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F))
             ) {
-                Text("Delete")
+                Text(stringResource(R.string.delete))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

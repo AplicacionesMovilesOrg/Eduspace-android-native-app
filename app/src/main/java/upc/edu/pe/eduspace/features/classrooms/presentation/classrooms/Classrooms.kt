@@ -32,9 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
@@ -157,7 +159,8 @@ fun ClassroomsRoute(
     if (showDeleteDialog) {
         selectedClassroom?.let { classroom ->
             DeleteConfirmationDialog(
-                classroomName = classroom.name,
+                title = stringResource(id = R.string.delete_classroom),
+                message = stringResource(id = R.string.delete_classroom_confirm, classroom.name),
                 onDismiss = { showDeleteDialog = false },
                 onConfirm = {
                     viewModel.deleteClassroom(classroom.id)
@@ -198,12 +201,12 @@ private fun ClassroomsContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add classroom",
+                    contentDescription = stringResource(id = R.string.add_classroom),
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    "Add Classroom",
+                    stringResource(id = R.string.add_classroom),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.Bold
                     )

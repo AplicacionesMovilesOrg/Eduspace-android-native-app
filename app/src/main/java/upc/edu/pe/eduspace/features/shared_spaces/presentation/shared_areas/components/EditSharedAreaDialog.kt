@@ -21,8 +21,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.features.shared_spaces.domain.models.SharedArea
 import upc.edu.pe.eduspace.features.shared_spaces.domain.models.SharedSpaceType
 
@@ -42,7 +44,7 @@ fun EditSharedAreaDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit Shared Area") },
+        title = { Text(stringResource(R.string.edit_shared_area)) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -54,16 +56,16 @@ fun EditSharedAreaDialog(
                     onExpandedChange = { expanded = !expanded }
                 ) {
                     OutlinedTextField(
-                        value = selectedType.displayName,
+                        value = stringResource(selectedType.displayNameRes),
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Area Type") },
+                        label = { Text(stringResource(R.string.area_type)) },
                         trailingIcon = {
                             Icon(Icons.Default.ArrowDropDown, contentDescription = null)
                         },
                         isError = typeError,
                         supportingText = if (typeError) {
-                            { Text("Please select an area type") }
+                            { Text(stringResource(R.string.select_area_type)) }
                         } else null,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -75,7 +77,7 @@ fun EditSharedAreaDialog(
                     ) {
                         SharedSpaceType.entries.forEach { type ->
                             DropdownMenuItem(
-                                text = { Text(type.displayName) },
+                                text = { Text(stringResource(type.displayNameRes)) },
                                 onClick = {
                                     selectedType = type
                                     typeError = false
@@ -92,10 +94,10 @@ fun EditSharedAreaDialog(
                         capacity = it
                         capacityError = it.toIntOrNull()?.let { num -> num <= 0 } ?: true
                     },
-                    label = { Text("Capacity") },
+                    label = { Text(stringResource(R.string.capacity)) },
                     isError = capacityError,
                     supportingText = if (capacityError) {
-                        { Text("Enter a valid number greater than 0") }
+                        { Text(stringResource(R.string.enter_valid_capacity)) }
                     } else null,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
@@ -105,7 +107,7 @@ fun EditSharedAreaDialog(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description") },
+                    label = { Text(stringResource(R.string.shared_space_description)) },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
                     maxLines = 5
@@ -122,12 +124,12 @@ fun EditSharedAreaDialog(
                     }
                 }
             ) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

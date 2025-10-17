@@ -17,10 +17,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.utils.UiState
 
 @Composable
@@ -70,7 +72,7 @@ fun SignUpCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "User Registration",
+                text = stringResource(R.string.user_registration),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1976D2)
@@ -148,7 +150,7 @@ private fun SignUpButton(
             )
         ) {
             Text(
-                text = "Sign Up",
+                text = stringResource(R.string.sign_up),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -160,12 +162,12 @@ private fun SignUpButton(
 private fun LoginLink(onClick: () -> Unit) {
     TextButton(onClick = onClick) {
         Text(
-            text = "Already have an account?  ",
+            text = stringResource(R.string.already_have_account) + "  ",
             color = Color(0xFF424242),
             fontSize = 14.sp
         )
         Text(
-            text = "Log In",
+            text = stringResource(R.string.log_in),
             color = Color(0xFF1976D2),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold

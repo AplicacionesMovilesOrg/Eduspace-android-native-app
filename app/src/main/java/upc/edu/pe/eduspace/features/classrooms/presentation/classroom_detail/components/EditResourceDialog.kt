@@ -35,10 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Resource
 import upc.edu.pe.eduspace.features.classrooms.domain.models.ResourceType
 
@@ -91,7 +93,7 @@ fun EditResourceDialog(
                         Icon(Icons.Default.Edit, contentDescription = null, tint = primaryBlue)
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "Edit Resource",
+                            stringResource(R.string.edit_resource),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 color = primaryBlue,
                                 fontWeight = FontWeight.SemiBold
@@ -102,7 +104,7 @@ fun EditResourceDialog(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Resource Name") },
+                        label = { Text(stringResource(R.string.resource_name)) },
                         singleLine = true,
                         shape = tfShape,
                         colors = tfColors,
@@ -114,10 +116,10 @@ fun EditResourceDialog(
                         onExpandedChange = { expanded = !expanded }
                     ) {
                         OutlinedTextField(
-                            value = selectedResourceType.displayName,
+                            value = stringResource(selectedResourceType.displayNameRes),
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("Resource Type") },
+                            label = { Text(stringResource(R.string.resource_type)) },
                             trailingIcon = {
                                 Icon(Icons.Default.ArrowDropDown, contentDescription = null)
                             },
@@ -134,7 +136,7 @@ fun EditResourceDialog(
                         ) {
                             ResourceType.getAllTypes().forEach { type ->
                                 DropdownMenuItem(
-                                    text = { Text(type.displayName) },
+                                    text = { Text(stringResource(type.displayNameRes)) },
                                     onClick = {
                                         selectedResourceType = type
                                         expanded = false
@@ -151,20 +153,20 @@ fun EditResourceDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = primaryBlue)
+                            Text(stringResource(R.string.cancel), color = primaryBlue)
                         }
                         Spacer(Modifier.width(8.dp))
                         Button(
                             onClick = {
                                 if (name.isNotBlank()) {
-                                    onSubmit(name.trim(), selectedResourceType.displayName)
+                                    onSubmit(name.trim(), selectedResourceType.backendName)
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = primaryBlue),
                             shape = RoundedCornerShape(12.dp),
                             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 10.dp)
                         ) {
-                            Text("Update")
+                            Text(stringResource(R.string.update))
                         }
                     }
                 }
