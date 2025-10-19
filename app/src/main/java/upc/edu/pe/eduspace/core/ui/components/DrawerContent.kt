@@ -2,6 +2,7 @@ package upc.edu.pe.eduspace.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,19 +45,19 @@ fun DrawerHeader() {
     val gradient = Brush.verticalGradient(
         colors = listOf(Color(0xFF1FA2FF), Color(0xFF12D8FA), Color(0xFFA6FFCB))
     )
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(140.dp)
+            .height(80.dp)
             .clip(RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp))
-            .background(gradient)
-            .padding(start = 18.dp, top = 28.dp, end = 18.dp, bottom = 8.dp)
+            .background(gradient),
+        contentAlignment = Alignment.Center
     ) {
-        Text(stringResource(R.string.menu), color = Color.White, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(12.dp))
-        HorizontalDivider(
-            color = Color.White.copy(alpha = .7f),
-            thickness = 1.dp
+        Text(
+            text = stringResource(R.string.app_name),
+            color = Color.White,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -69,16 +70,22 @@ fun DrawerMenu(
     languagePreferences: LanguagePreferences,
     currentLanguage: String
 ) {
-    Column(Modifier.fillMaxSize()) {
-        // Menu items
-        Column(Modifier.weight(1f)) {
-            DrawerHeader()
-            Spacer(Modifier.height(8.dp))
-            items.forEach { item ->
-                val selected = item.screen == current
+    val primaryCyan = Color(0xFF1FA2FF)
+    val textColorDark = Color(0xFF161616)
 
-                val primaryCyan = Color(0xFF1FA2FF)
-                val textColorDark = Color(0xFF161616)
+    // Separate logout from normal navigation items
+    val navigationItems = items.filter { it.screen != Screen.LOGOUT }
+    val logoutItem = items.find { it.screen == Screen.LOGOUT }
+
+    Column(Modifier.fillMaxSize()) {
+        DrawerHeader()
+
+        Spacer(Modifier.height(8.dp))
+
+        // Navigation items
+        Column(Modifier.weight(1f)) {
+            navigationItems.forEach { item ->
+                val selected = item.screen == current
 
                 NavigationDrawerItem(
                     label = { Text(item.screen.getLocalizedLabel()) },
@@ -86,10 +93,10 @@ fun DrawerMenu(
                     onClick = { onClick(item) },
                     icon = { Icon(item.icon, contentDescription = null) },
                     colors = NavigationDrawerItemDefaults.colors(
-                        unselectedTextColor = if (item.isDanger) Color(0xFFDA1E28) else textColorDark,
-                        unselectedIconColor = if (item.isDanger) Color(0xFFDA1E28) else textColorDark,
-                        selectedTextColor = if (item.isDanger) Color(0xFFDA1E28) else primaryCyan,
-                        selectedIconColor = if (item.isDanger) Color(0xFFDA1E28) else primaryCyan,
+                        unselectedTextColor = textColorDark,
+                        unselectedIconColor = textColorDark,
+                        selectedTextColor = primaryCyan,
+                        selectedIconColor = primaryCyan,
                         selectedContainerColor = primaryCyan.copy(alpha = 0.12f)
                     ),
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
@@ -97,8 +104,28 @@ fun DrawerMenu(
             }
         }
 
+        // Logout at bottom
+        if (logoutItem != null) {
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            Spacer(Modifier.height(4.dp))
+            NavigationDrawerItem(
+                label = { Text(logoutItem.screen.getLocalizedLabel()) },
+                selected = false,
+                onClick = { onClick(logoutItem) },
+                icon = { Icon(logoutItem.icon, contentDescription = null) },
+                colors = NavigationDrawerItemDefaults.colors(
+                    unselectedTextColor = Color(0xFFDA1E28),
+                    unselectedIconColor = Color(0xFFDA1E28),
+                    selectedTextColor = Color(0xFFDA1E28),
+                    selectedIconColor = Color(0xFFDA1E28),
+                    selectedContainerColor = Color(0xFFDA1E28).copy(alpha = 0.12f)
+                ),
+                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+
         // Language selector at bottom
-        Spacer(Modifier.height(12.dp))
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
         Spacer(Modifier.height(8.dp))
         LanguageSelector(
