@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android.application)
@@ -7,6 +9,13 @@ plugins {
 
     alias(libs.plugins.ksp) // ksp
     alias(libs.plugins.hilt) // Hilt
+}
+
+// Load .env file
+val envFile = rootProject.file(".env")
+val envProperties = Properties()
+if (envFile.exists()) {
+    envProperties.load(FileInputStream(envFile))
 }
 
 android {
@@ -21,6 +30,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Add API_BASE_URL to BuildConfig
+        buildConfigField("String", "API_BASE_URL", "\"${envProperties.getProperty("API_BASE_URL", "https://eduspace-platform-production-e783.up.railway.app/api/v1/")}\"")
     }
 
     buildTypes {
@@ -43,6 +55,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
