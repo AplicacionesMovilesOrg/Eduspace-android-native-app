@@ -44,7 +44,7 @@ class TeachersRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTeacherById(id: Int): Teacher? = withContext(Dispatchers.IO) {
+    override suspend fun getTeacherById(id: String): Teacher? = withContext(Dispatchers.IO) {
         try {
             val response = service.getTeacherById(id)
 

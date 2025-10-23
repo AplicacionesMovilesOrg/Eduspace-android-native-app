@@ -37,7 +37,7 @@ class ClassroomsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getClassroomById(id: Int): Classroom? = withContext(Dispatchers.IO) {
+    override suspend fun getClassroomById(id: String): Classroom? = withContext(Dispatchers.IO) {
         try {
             val response = service.getClassroomById(id)
 
@@ -55,7 +55,7 @@ class ClassroomsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getClassroomsByTeacherId(teacherId: Int): List<Classroom> = withContext(Dispatchers.IO) {
+    override suspend fun getClassroomsByTeacherId(teacherId: String): List<Classroom> = withContext(Dispatchers.IO) {
         try {
             val response = service.getClassroomsByTeacherId(teacherId)
 
@@ -101,7 +101,7 @@ class ClassroomsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateClassroom(id: Int, input: UpdateClassroom): Classroom? = withContext(Dispatchers.IO) {
+    override suspend fun updateClassroom(id: String, input: UpdateClassroom): Classroom? = withContext(Dispatchers.IO) {
         try {
             val request = UpdateClassroomRequestDto(
                 id = id,
@@ -129,7 +129,7 @@ class ClassroomsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteClassroom(id: Int): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun deleteClassroom(id: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val response = service.deleteClassroom(id)
 

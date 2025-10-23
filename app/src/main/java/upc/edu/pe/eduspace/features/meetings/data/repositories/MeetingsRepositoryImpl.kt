@@ -32,7 +32,7 @@ class MeetingsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMeetingById(id: Int): Meeting? = withContext(Dispatchers.IO) {
+    override suspend fun getMeetingById(id: String): Meeting? = withContext(Dispatchers.IO) {
         return@withContext try {
             val response = service.getMeetingById(id)
             if (response.isSuccessful) {
@@ -48,8 +48,8 @@ class MeetingsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createMeeting(
-        administratorId: Int,
-        classroomId: Int,
+        administratorId: String,
+        classroomId: String,
         meeting: CreateMeeting
     ): Meeting? = withContext(Dispatchers.IO) {
         return@withContext try {
@@ -99,7 +99,7 @@ class MeetingsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteMeeting(id: Int): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun deleteMeeting(id: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
             val response = service.deleteMeeting(id)
             if (response.isSuccessful) {
@@ -114,7 +114,7 @@ class MeetingsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addTeacherToMeeting(meetingId: Int, teacherId: Int): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun addTeacherToMeeting(meetingId: String, teacherId: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
             val response = service.addTeacherToMeeting(meetingId, teacherId)
             if (response.isSuccessful) {

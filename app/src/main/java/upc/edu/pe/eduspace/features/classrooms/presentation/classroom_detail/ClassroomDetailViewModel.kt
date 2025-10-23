@@ -36,7 +36,7 @@ class ClassroomDetailViewModel @Inject constructor(
     private val _createMeetingState = MutableStateFlow<UiState<Meeting>>(UiState.Initial)
     val createMeetingState: StateFlow<UiState<Meeting>> = _createMeetingState.asStateFlow()
 
-    fun getClassroomById(classroomId: Int) {
+    fun getClassroomById(classroomId: String) {
         viewModelScope.launch {
             _classroomState.value = UiState.Loading
             try {
@@ -54,7 +54,7 @@ class ClassroomDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadTeacherById(teacherId: Int) {
+    private suspend fun loadTeacherById(teacherId: String) {
         _teacherState.value = UiState.Loading
         try {
             val teacher = teachersRepository.getTeacherById(teacherId)
@@ -69,7 +69,7 @@ class ClassroomDetailViewModel @Inject constructor(
     }
 
     fun createMeeting(
-        classroomId: Int,
+        classroomId: String,
         title: String,
         description: String,
         date: String,

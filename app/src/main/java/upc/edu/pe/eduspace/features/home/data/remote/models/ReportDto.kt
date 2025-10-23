@@ -3,10 +3,10 @@ package upc.edu.pe.eduspace.features.home.data.remote.models
 import upc.edu.pe.eduspace.features.home.domain.models.ReportResource
 
 data class ReportDto(
-    val id: Int,
+    val id: String,
     val kindOfReport: String,
     val description: String,
-    val resourceId: Int,
+    val resourceId: String,
     val createdAt: String,
     val status: String
 )

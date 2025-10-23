@@ -32,7 +32,7 @@ import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.Me
 
 @Composable
 fun MeetingsRoute(
-    onNavigateToDetail: (Int) -> Unit,
+    onNavigateToDetail: (String) -> Unit,
     viewModel: MeetingsViewModel = hiltViewModel()
 ) {
     val meetingsState by viewModel.meetingsState.collectAsStateWithLifecycle()

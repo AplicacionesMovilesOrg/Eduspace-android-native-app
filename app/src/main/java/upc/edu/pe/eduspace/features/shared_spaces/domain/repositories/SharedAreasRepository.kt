@@ -6,8 +6,8 @@ import upc.edu.pe.eduspace.features.shared_spaces.domain.models.UpdateSharedArea
 
 interface SharedAreasRepository {
     suspend fun getAllSharedAreas(): List<SharedArea>
-    suspend fun getSharedAreaById(id: Int): SharedArea?
+    suspend fun getSharedAreaById(id: String): SharedArea?
     suspend fun createSharedArea(sharedArea: CreateSharedArea): SharedArea?
     suspend fun updateSharedArea(sharedArea: UpdateSharedArea): SharedArea?
-    suspend fun deleteSharedArea(id: Int): Boolean
+    suspend fun deleteSharedArea(id: String): Boolean
 }

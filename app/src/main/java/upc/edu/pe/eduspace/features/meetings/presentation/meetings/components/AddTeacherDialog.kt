@@ -46,7 +46,7 @@ import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 fun AddTeacherDialog(
     teachers: List<Teacher>,
     onDismiss: () -> Unit,
-    onConfirm: (teacherId: Int) -> Unit
+    onConfirm: (teacherId: String) -> Unit
 ) {
     var selectedTeacher by remember { mutableStateOf<Teacher?>(null) }
 

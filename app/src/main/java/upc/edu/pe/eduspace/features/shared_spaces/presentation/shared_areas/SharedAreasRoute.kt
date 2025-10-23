@@ -49,7 +49,7 @@ import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_areas.comp
 
 @Composable
 fun SharedAreasRoute(
-    onNavigateToDetail: (Int) -> Unit,
+    onNavigateToDetail: (String) -> Unit,
     viewModel: SharedAreasViewModel = hiltViewModel()
 ) {
     val sharedAreasState by viewModel.sharedAreasState.collectAsStateWithLifecycle()

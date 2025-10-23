@@ -5,7 +5,7 @@ import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 interface TeachersRepository {
     suspend fun getAllTeachers(): List<Teacher>
 
-    suspend fun getTeacherById(id: Int): Teacher?
+    suspend fun getTeacherById(id: String): Teacher?
 
     suspend fun createTeacher(input: CreateTeacher): Teacher?
 }

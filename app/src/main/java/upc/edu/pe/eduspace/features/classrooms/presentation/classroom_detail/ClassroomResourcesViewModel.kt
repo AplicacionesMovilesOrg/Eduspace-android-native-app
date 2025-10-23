@@ -31,7 +31,7 @@ class ClassroomResourcesViewModel @Inject constructor(
     private val _deleteResourceState = MutableStateFlow<UiState<Boolean>>(UiState.Initial)
     val deleteResourceState: StateFlow<UiState<Boolean>> = _deleteResourceState.asStateFlow()
 
-    fun getResourcesByClassroomId(classroomId: Int) {
+    fun getResourcesByClassroomId(classroomId: String) {
         viewModelScope.launch {
             _resourcesState.value = UiState.Loading
             try {
@@ -43,7 +43,7 @@ class ClassroomResourcesViewModel @Inject constructor(
         }
     }
 
-    fun createResource(classroomId: Int, name: String, kindOfResource: String) {
+    fun createResource(classroomId: String, name: String, kindOfResource: String) {
         viewModelScope.launch {
             _createResourceState.value = UiState.Loading
             try {
@@ -68,7 +68,7 @@ class ClassroomResourcesViewModel @Inject constructor(
         }
     }
 
-    fun updateResource(classroomId: Int, resourceId: Int, name: String, kindOfResource: String) {
+    fun updateResource(classroomId: String, resourceId: String, name: String, kindOfResource: String) {
         viewModelScope.launch {
             _updateResourceState.value = UiState.Loading
             try {
@@ -91,7 +91,7 @@ class ClassroomResourcesViewModel @Inject constructor(
         }
     }
 
-    fun deleteResource(classroomId: Int, resourceId: Int) {
+    fun deleteResource(classroomId: String, resourceId: String) {
         viewModelScope.launch {
             _deleteResourceState.value = UiState.Loading
             try {

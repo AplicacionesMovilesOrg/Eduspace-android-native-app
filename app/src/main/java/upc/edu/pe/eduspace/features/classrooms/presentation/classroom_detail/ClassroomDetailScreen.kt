@@ -63,7 +63,7 @@ import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.Cr
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassroomDetailRoute(
-    classroomId: Int,
+    classroomId: String,
     onNavigateBack: () -> Unit,
     viewModel: ClassroomDetailViewModel = hiltViewModel(),
     resourcesViewModel: ClassroomResourcesViewModel = hiltViewModel()

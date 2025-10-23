@@ -66,7 +66,7 @@ class SharedAreasViewModel @Inject constructor(
         }
     }
 
-    fun updateSharedArea(id: Int, type: SharedSpaceType, capacity: Int, description: String) {
+    fun updateSharedArea(id: String, type: SharedSpaceType, capacity: Int, description: String) {
         viewModelScope.launch {
             _updateState.value = UiState.Loading
             try {
@@ -84,7 +84,7 @@ class SharedAreasViewModel @Inject constructor(
         }
     }
 
-    fun deleteSharedArea(id: Int) {
+    fun deleteSharedArea(id: String) {
         viewModelScope.launch {
             _deleteState.value = UiState.Loading
             try {

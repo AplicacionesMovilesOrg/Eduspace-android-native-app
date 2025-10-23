@@ -17,7 +17,7 @@ class ResourcesRepositoryImpl @Inject constructor(
     private val service: ResourcesService
 ) : ResourcesRepository {
 
-    override suspend fun getResourcesByClassroomId(classroomId: Int): List<Resource> = withContext(Dispatchers.IO) {
+    override suspend fun getResourcesByClassroomId(classroomId: String): List<Resource> = withContext(Dispatchers.IO) {
         try {
             Log.d("ResourcesRepository", "Fetching resources for classroom $classroomId")
             val response = service.getResourcesByClassroomId(classroomId)
@@ -47,7 +47,7 @@ class ResourcesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getResourceById(classroomId: Int, resourceId: Int): Resource? = withContext(Dispatchers.IO) {
+    override suspend fun getResourceById(classroomId: String, resourceId: String): Resource? = withContext(Dispatchers.IO) {
         try {
             val response = service.getResourceById(classroomId, resourceId)
             if (!response.isSuccessful) {
@@ -63,7 +63,7 @@ class ResourcesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createResource(classroomId: Int, input: CreateResource): Resource? = withContext(Dispatchers.IO) {
+    override suspend fun createResource(classroomId: String, input: CreateResource): Resource? = withContext(Dispatchers.IO) {
         try {
             val request = CreateResourceRequestDto(
                 name = input.name,
@@ -106,7 +106,7 @@ class ResourcesRepositoryImpl @Inject constructor(
 
     class DuplicateResourceException(message: String) : Exception(message)
 
-    override suspend fun updateResource(classroomId: Int, resourceId: Int, input: UpdateResource): Resource? = withContext(Dispatchers.IO) {
+    override suspend fun updateResource(classroomId: String, resourceId: String, input: UpdateResource): Resource? = withContext(Dispatchers.IO) {
         try {
             val request = UpdateResourceRequestDto(
                 id = input.id,
@@ -134,7 +134,7 @@ class ResourcesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteResource(classroomId: Int, resourceId: Int): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun deleteResource(classroomId: String, resourceId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val response = service.deleteResource(classroomId, resourceId)
 

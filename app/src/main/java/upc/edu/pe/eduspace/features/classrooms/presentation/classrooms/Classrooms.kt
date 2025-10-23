@@ -51,7 +51,7 @@ import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassroomsRoute(
-    onClassroomClick: (Int) -> Unit = {},
+    onClassroomClick: (String) -> Unit = {},
     viewModel: ClassroomsViewModel = hiltViewModel()
 ) {
     val classroomsState by viewModel.classroomsState.collectAsState()
@@ -183,7 +183,7 @@ private fun ClassroomsContent(
     classroomsState: UiState<List<Classroom>>,
     teachersState: UiState<List<Teacher>>,
     onAddClick: () -> Unit,
-    onClassroomClick: (Int) -> Unit,
+    onClassroomClick: (String) -> Unit,
     onEditClick: (Classroom) -> Unit,
     onDeleteClick: (Classroom) -> Unit
 ) {

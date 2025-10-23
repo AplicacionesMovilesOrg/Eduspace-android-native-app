@@ -46,9 +46,9 @@ import upc.edu.pe.eduspace.features.classrooms.domain.models.ResourceType
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddResourceDialog(
-    classroomId: Int,
+    classroomId: String,
     onDismiss: () -> Unit,
-    onSubmit: (name: String, kindOfResource: String) -> Unit
+    onSubmit: (String, String) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var selectedResourceType by remember { mutableStateOf<ResourceType?>(null) }

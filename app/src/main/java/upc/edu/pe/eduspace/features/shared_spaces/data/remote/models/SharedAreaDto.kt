@@ -6,7 +6,7 @@ import upc.edu.pe.eduspace.features.shared_spaces.domain.models.SharedSpaceType
 
 data class SharedAreaDto(
     @SerializedName("id")
-    val id: Int?,
+    val id: String?,
     @SerializedName("name")
     val name: String?,
     @SerializedName("capacity")
@@ -16,7 +16,7 @@ data class SharedAreaDto(
 ) {
     fun toDomain(): SharedArea {
         return SharedArea(
-            id = id ?: 0,
+            id = id ?: "",
             type = SharedSpaceType.fromString(name ?: ""),
             capacity = capacity ?: 0,
             description = description ?: ""
@@ -35,7 +35,7 @@ data class CreateSharedAreaRequestDto(
 
 data class UpdateSharedAreaRequestDto(
     @SerializedName("id")
-    val id: Int,
+    val id: String,
     @SerializedName("name")
     val name: String,
     @SerializedName("capacity")

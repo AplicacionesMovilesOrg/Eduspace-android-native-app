@@ -26,7 +26,7 @@ class MeetingDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val meetingId: Int = savedStateHandle.get<Int>("meetingId") ?: 0
+    private val meetingId: String = savedStateHandle.get<String>("meetingId") ?: ""
 
     private val _meetingState = MutableStateFlow<UiState<Meeting>>(UiState.Initial)
     val meetingState: StateFlow<UiState<Meeting>> = _meetingState.asStateFlow()
@@ -159,7 +159,7 @@ class MeetingDetailViewModel @Inject constructor(
         }
     }
 
-    fun addTeacherToMeeting(teacherId: Int) {
+    fun addTeacherToMeeting(teacherId: String) {
         viewModelScope.launch {
             _addTeacherState.value = UiState.Loading
             try {

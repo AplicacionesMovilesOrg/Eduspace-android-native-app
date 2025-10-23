@@ -48,7 +48,7 @@ import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 fun CreateClassroomDialog(
     teachers: List<Teacher>,
     onDismiss: () -> Unit,
-    onSubmit: (teacherId: Int, name: String, description: String) -> Unit
+    onSubmit: (teacherId: String, name: String, description: String) -> Unit
 ) {
     var selectedTeacher by remember { mutableStateOf<Teacher?>(null) }
     var expanded by remember { mutableStateOf(false) }

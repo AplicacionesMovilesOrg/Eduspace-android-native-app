@@ -16,23 +16,23 @@ interface ClassroomsService {
     suspend fun getAllClassrooms(): Response<List<ClassroomDto>>
 
     @GET("classrooms/{id}")
-    suspend fun getClassroomById(@Path("id") id: Int): Response<ClassroomDto>
+    suspend fun getClassroomById(@Path("id") id: String): Response<ClassroomDto>
 
     @GET("classrooms/teachers/{teacherId}")
-    suspend fun getClassroomsByTeacherId(@Path("teacherId") teacherId: Int): Response<List<ClassroomDto>>
+    suspend fun getClassroomsByTeacherId(@Path("teacherId") teacherId: String): Response<List<ClassroomDto>>
 
     @POST("classrooms/teachers/{teacherId}")
     suspend fun createClassroom(
-        @Path("teacherId") teacherId: Int,
+        @Path("teacherId") teacherId: String,
         @Body body: CreateClassroomRequestDto
     ): Response<ClassroomDto>
 
     @PUT("classrooms/{id}")
     suspend fun updateClassroom(
-        @Path("id") id: Int,
+        @Path("id") id: String,
         @Body body: UpdateClassroomRequestDto
     ): Response<ClassroomDto>
 
     @DELETE("classrooms/{id}")
-    suspend fun deleteClassroom(@Path("id") id: Int): Response<Unit>
+    suspend fun deleteClassroom(@Path("id") id: String): Response<Unit>
 }
