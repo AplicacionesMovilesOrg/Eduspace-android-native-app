@@ -78,7 +78,6 @@ class ClassroomsRepositoryImpl @Inject constructor(
     override suspend fun createClassroom(input: CreateClassroom): Classroom? = withContext(Dispatchers.IO) {
         try {
             val request = CreateClassroomRequestDto(
-                teacherId = input.teacherId,
                 name = input.name,
                 description = input.description
             )
@@ -131,13 +130,18 @@ class ClassroomsRepositoryImpl @Inject constructor(
 
     override suspend fun deleteClassroom(id: String): Boolean = withContext(Dispatchers.IO) {
         try {
+            Log.d("ClassroomsRepository", "Attempting to delete classroom with id: $id")
             val response = service.deleteClassroom(id)
 
             if (!response.isSuccessful) {
+                val errorBody = response.errorBody()?.string() ?: "No error body"
                 Log.e("ClassroomsRepository", "Error deleting classroom: ${response.message()}")
+                Log.e("ClassroomsRepository", "Error code: ${response.code()}")
+                Log.e("ClassroomsRepository", "Error body: $errorBody")
                 return@withContext false
             }
 
+            Log.d("ClassroomsRepository", "Classroom deleted successfully")
             return@withContext true
         } catch (e: Exception) {
             Log.e("ClassroomsRepository", "Exception deleting classroom", e)

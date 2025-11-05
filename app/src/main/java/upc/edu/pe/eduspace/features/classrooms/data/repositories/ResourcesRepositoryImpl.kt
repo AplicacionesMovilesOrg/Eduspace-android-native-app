@@ -94,7 +94,7 @@ class ResourcesRepositoryImpl @Inject constructor(
 
             val dto = response.body()
             Log.d("ResourcesRepository", "Resource created successfully: $dto")
-            return@withContext dto?.toDomain()
+            return@withContext dto?.toDomain(fallbackClassroomId = classroomId)
         } catch (e: DuplicateResourceException) {
             Log.e("ResourcesRepository", "Duplicate resource name: ${e.message}", e)
             throw e // Re-throw to be caught by ViewModel
@@ -127,7 +127,7 @@ class ResourcesRepositoryImpl @Inject constructor(
 
             val dto = response.body()
             Log.d("ResourcesRepository", "Resource updated successfully: $dto")
-            return@withContext dto?.toDomain()
+            return@withContext dto?.toDomain(fallbackClassroomId = classroomId)
         } catch (e: Exception) {
             Log.e("ResourcesRepository", "Exception updating resource: ${e.message}", e)
             return@withContext null
@@ -150,13 +150,12 @@ class ResourcesRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun ResourceDto.toDomain(): Resource? {
+    private fun ResourceDto.toDomain(fallbackClassroomId: String? = null): Resource? {
         val id = this.id ?: return null
         val name = this.name ?: return null
         val kindOfResource = this.kindOfResource ?: return null
 
-        // Try to get classroomId from direct field first, then from nested classroom object
-        val classroomId = this.classroomId ?: this.classroom?.id ?: run {
+        val classroomId = this.classroomId ?: this.classroom?.id ?: fallbackClassroomId ?: run {
             Log.w("ResourcesRepository", "Could not find classroomId in DTO: $this")
             return null
         }

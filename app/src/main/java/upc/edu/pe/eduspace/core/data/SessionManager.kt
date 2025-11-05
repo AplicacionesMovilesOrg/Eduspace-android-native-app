@@ -22,14 +22,20 @@ class SessionManager @Inject constructor(@param:ApplicationContext private val c
         val ADMIN_ID_KEY = stringPreferencesKey("admin_id")
         val IS_LOGGED_IN_KEY = booleanPreferencesKey("is_logged_in")
         val USER_EMAIL_KEY = stringPreferencesKey("user_email")
+        val AUTH_TOKEN_KEY = stringPreferencesKey("auth_token")
     }
 
-    suspend fun saveSession(adminId: String, email: String) {
+    suspend fun saveSession(adminId: String, email: String, token: String) {
         context.dataStore.edit { preferences ->
             preferences[ADMIN_ID_KEY] = adminId
             preferences[IS_LOGGED_IN_KEY] = true
             preferences[USER_EMAIL_KEY] = email
+            preferences[AUTH_TOKEN_KEY] = token
         }
+    }
+
+    val authTokenFlow: Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[AUTH_TOKEN_KEY]
     }
 
     suspend fun clearSession() {

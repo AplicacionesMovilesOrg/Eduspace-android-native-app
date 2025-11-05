@@ -1,5 +1,6 @@
 package upc.edu.pe.eduspace.features.meetings.data.remote.models
 
+import com.google.gson.annotations.SerializedName
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
 import upc.edu.pe.eduspace.features.meetings.domain.models.TeacherInfo
 
@@ -10,16 +11,18 @@ data class MeetingDto(
     val date: String?,
     val start: String?,
     val end: String?,
-    val administrator: AdministratorDto?,
-    val classroom: ClassroomRefDto?,
+    @SerializedName("administratorId")
+    val administratorId: AdministratorIdDto?,
+    @SerializedName("classroomId")
+    val classroomId: ClassroomIdDto?,
     val teachers: List<TeacherInfoDto>?
 )
 
-data class AdministratorDto(
+data class AdministratorIdDto(
     val administratorId: String?
 )
 
-data class ClassroomRefDto(
+data class ClassroomIdDto(
     val classroomId: String?
 )
 
@@ -56,8 +59,8 @@ fun MeetingDto.toDomain(): Meeting {
         date = date ?: "",
         start = start ?: "",
         end = end ?: "",
-        administratorId = administrator?.administratorId ?: "",
-        classroomId = classroom?.classroomId ?: "",
+        administratorId = administratorId?.administratorId ?: "",
+        classroomId = classroomId?.classroomId ?: "",
         teachers = teachers?.map { it.toDomain() } ?: emptyList()
     )
 }

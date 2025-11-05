@@ -24,6 +24,7 @@ class AuthRepositoryImpl @Inject constructor(private val service: AuthService) :
                         id = authResponse.id,
                         name = authResponse.username,
                         email = authResponse.username,
+                        token = authResponse.token
                     )
                     return@withContext Resource.Success(user)
                 }
