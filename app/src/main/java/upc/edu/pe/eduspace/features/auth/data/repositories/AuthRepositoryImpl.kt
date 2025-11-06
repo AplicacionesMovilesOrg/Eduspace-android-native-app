@@ -20,11 +20,16 @@ class AuthRepositoryImpl @Inject constructor(private val service: AuthService) :
             val response = service.signIn(SignInRequestDto(username, password))
             if (response.isSuccessful) {
                 response.body()?.let { authResponse ->
+                    if (authResponse.role != "RoleAdmin") {
+                        return@withContext Resource.Error("Solo los administradores pueden acceder a esta aplicación")
+                    }
+
                     val user = User(
                         id = authResponse.id,
                         name = authResponse.username,
                         email = authResponse.username,
-                        token = authResponse.token
+                        token = authResponse.token,
+                        role = authResponse.role
                     )
                     return@withContext Resource.Success(user)
                 }
