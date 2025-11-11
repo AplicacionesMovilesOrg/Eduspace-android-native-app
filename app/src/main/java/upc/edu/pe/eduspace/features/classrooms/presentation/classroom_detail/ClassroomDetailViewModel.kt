@@ -87,6 +87,7 @@ class ClassroomDetailViewModel @Inject constructor(
                 }
 
                 val meeting = CreateMeeting(
+                    classroomId = classroomId,
                     title = title,
                     description = description,
                     date = date,
