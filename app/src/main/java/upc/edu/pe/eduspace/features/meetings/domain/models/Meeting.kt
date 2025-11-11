@@ -19,6 +19,7 @@ data class TeacherInfo(
 )
 
 data class CreateMeeting(
+    val classroomId: String,
     val title: String,
     val description: String,
     val date: String,

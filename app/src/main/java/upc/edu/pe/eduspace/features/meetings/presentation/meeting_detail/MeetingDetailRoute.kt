@@ -54,10 +54,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
+import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
 import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.AddTeacherDialog
 import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.DeleteConfirmationDialog
 import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.EditMeetingDialog
+private fun <T> UiState<T>.getOrNull(): T? = (this as? UiState.Success)?.data
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,6 +72,7 @@ fun MeetingDetailRoute(
     val deleteState by viewModel.deleteState.collectAsStateWithLifecycle()
     val addTeacherState by viewModel.addTeacherState.collectAsStateWithLifecycle()
     val availableTeachersState by viewModel.availableTeachers.collectAsStateWithLifecycle()
+    val classroomsState by viewModel.classrooms.collectAsStateWithLifecycle()
 
     var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -81,6 +84,10 @@ fun MeetingDetailRoute(
     val teacherAddedMsg = stringResource(R.string.teacher_added)
     val noTeachersAvailableMsg = stringResource(id = R.string.no_teachers_available)
 
+
+    LaunchedEffect(Unit) {
+        viewModel.getAllClassrooms()
+    }
     // Handle update state
     LaunchedEffect(updateState) {
         when (updateState) {
@@ -89,13 +96,16 @@ fun MeetingDetailRoute(
                 showEditDialog = false
                 viewModel.resetUpdateState()
             }
+
             is UiState.Error -> {
                 snackMessage = (updateState as UiState.Error).message
                 viewModel.resetUpdateState()
             }
+
             else -> {}
         }
     }
+
 
     // Handle delete state
     LaunchedEffect(deleteState) {
@@ -105,10 +115,12 @@ fun MeetingDetailRoute(
                 viewModel.resetDeleteState()
                 onNavigateBack()
             }
+
             is UiState.Error -> {
                 snackMessage = (deleteState as UiState.Error).message
                 viewModel.resetDeleteState()
             }
+
             else -> {}
         }
     }
@@ -121,10 +133,12 @@ fun MeetingDetailRoute(
                 showAddTeacherDialog = false
                 viewModel.resetAddTeacherState()
             }
+
             is UiState.Error -> {
                 snackMessage = (addTeacherState as UiState.Error).message
                 viewModel.resetAddTeacherState()
             }
+
             else -> {}
         }
     }
@@ -172,8 +186,18 @@ fun MeetingDetailRoute(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
+
                 is UiState.Success -> {
                     val meeting = (meetingState as UiState.Success<Meeting>).data
+                    val classrooms: List<Classroom> = classroomsState.getOrNull() ?: emptyList()
+
+
+                    val classroomForMeeting: Classroom? = meeting?.let { m ->
+                        classrooms.find { it.id == m.classroomId }
+                    }
+
+
+
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -213,7 +237,7 @@ fun MeetingDetailRoute(
 
                                 HorizontalDivider()
 
-                                // Description
+                                // Description and classroom
                                 Column {
                                     Text(
                                         text = stringResource(R.string.description),
@@ -225,6 +249,9 @@ fun MeetingDetailRoute(
                                         text = meeting.description.ifEmpty { stringResource(R.string.no_description) },
                                         style = MaterialTheme.typography.bodyMedium
                                     )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(text = "Aula: ${classroomForMeeting?.name ?: "Sin asignar"}")
+
                                 }
 
                                 HorizontalDivider()
@@ -302,7 +329,10 @@ fun MeetingDetailRoute(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = stringResource(id = R.string.participants, meeting.teachers.size),
+                                        text = stringResource(
+                                            id = R.string.participants,
+                                            meeting.teachers.size
+                                        ),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -335,7 +365,10 @@ fun MeetingDetailRoute(
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text(stringResource(id = R.string.add), style = MaterialTheme.typography.labelMedium)
+                                        Text(
+                                            stringResource(id = R.string.add),
+                                            style = MaterialTheme.typography.labelMedium
+                                        )
                                     }
                                 }
 
@@ -371,8 +404,12 @@ fun MeetingDetailRoute(
                                                         ),
                                                     contentAlignment = Alignment.Center
                                                 ) {
-                                                    val initials = (teacher.firstName.firstOrNull()?.toString().orEmpty() +
-                                                            teacher.lastName.firstOrNull()?.toString().orEmpty()).uppercase()
+                                                    val initials =
+                                                        (teacher.firstName.firstOrNull()?.toString()
+                                                            .orEmpty() +
+                                                                teacher.lastName.firstOrNull()
+                                                                    ?.toString()
+                                                                    .orEmpty()).uppercase()
                                                     Text(
                                                         text = initials,
                                                         color = Color.White,
@@ -409,7 +446,10 @@ fun MeetingDetailRoute(
                             ) {
                                 Icon(Icons.Default.Edit, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text(stringResource(id = R.string.edit), fontWeight = FontWeight.Bold)
+                                Text(
+                                    stringResource(id = R.string.edit),
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
 
                             Button(
@@ -422,11 +462,15 @@ fun MeetingDetailRoute(
                             ) {
                                 Icon(Icons.Default.Delete, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text(stringResource(id = R.string.delete), fontWeight = FontWeight.Bold)
+                                Text(
+                                    stringResource(id = R.string.delete),
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }
                 }
+
                 is UiState.Error -> {
                     Column(
                         modifier = Modifier.align(Alignment.Center),
@@ -443,6 +487,7 @@ fun MeetingDetailRoute(
                         }
                     }
                 }
+
                 else -> {}
             }
         }
@@ -451,16 +496,22 @@ fun MeetingDetailRoute(
     // Dialogs
     if (showEditDialog) {
         val meeting = (meetingState as? UiState.Success<Meeting>)?.data
-        if (meeting != null) {
+//        val classroomsList =
+        val classrooms = (classroomsState as? UiState.Success)?.data
+
+        if (meeting != null && classrooms != null) {
             EditMeetingDialog(
                 meeting = meeting,
+                classrooms = classrooms,
                 onDismiss = { showEditDialog = false },
-                onConfirm = { title, description, date, start, end ->
-                    viewModel.updateMeeting(title, description, date, start, end)
+                onConfirm = { classroomId, title, description, date, start, end ->
+                    viewModel.updateMeeting(classroomId, title, description, date, start, end)
                 }
             )
         }
     }
+
+
 
     if (showDeleteDialog) {
         val meeting = (meetingState as? UiState.Success<Meeting>)?.data
@@ -489,6 +540,7 @@ fun MeetingDetailRoute(
                     }
                 )
             }
+
             is UiState.Error -> {
                 // Show error if teachers failed to load
                 LaunchedEffect(state) {
@@ -496,6 +548,7 @@ fun MeetingDetailRoute(
                     showAddTeacherDialog = false
                 }
             }
+
             is UiState.Success -> {
                 // Pass the FILTERED list to the dialog
                 AddTeacherDialog(
@@ -506,6 +559,7 @@ fun MeetingDetailRoute(
                     }
                 )
             }
+
             else -> {}
         }
     }
