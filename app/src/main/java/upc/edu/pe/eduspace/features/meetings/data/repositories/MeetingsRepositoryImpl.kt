@@ -62,10 +62,14 @@ class MeetingsRepositoryImpl @Inject constructor(
             )
             val response = service.createMeeting(administratorId, classroomId, dto)
             if (response.isSuccessful) {
+                Log.e( "MeetingsRepository", "Created meeting data: $dto")
                 response.body()?.toDomain()
             } else {
                 val errorBody = response.errorBody()?.string()
-                Log.e("MeetingsRepository", "Error creating meeting: ${response.code()} - $errorBody")
+                Log.e(
+                    "MeetingsRepository",
+                    "Error creating meeting: ${response.code()} - $errorBody"
+                )
                 throw Exception("API error: $errorBody")
             }
         } catch (e: Exception) {
@@ -91,6 +95,8 @@ class MeetingsRepositoryImpl @Inject constructor(
                 response.body()?.toDomain()
             } else {
                 Log.e("MeetingsRepository", "Error updating meeting: ${response.code()}")
+                //mostrar datos del meeting que fallo
+                Log.e("MeetingsRepository", "Failed meeting data: $dto")
                 null
             }
         } catch (e: Exception) {
@@ -98,6 +104,7 @@ class MeetingsRepositoryImpl @Inject constructor(
             null
         }
     }
+
 
     override suspend fun deleteMeeting(id: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
@@ -114,18 +121,22 @@ class MeetingsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addTeacherToMeeting(meetingId: String, teacherId: String): Boolean = withContext(Dispatchers.IO) {
-        return@withContext try {
-            val response = service.addTeacherToMeeting(meetingId, teacherId)
-            if (response.isSuccessful) {
-                true
-            } else {
-                Log.e("MeetingsRepository", "Error adding teacher to meeting: ${response.code()}")
+    override suspend fun addTeacherToMeeting(meetingId: String, teacherId: String): Boolean =
+        withContext(Dispatchers.IO) {
+            return@withContext try {
+                val response = service.addTeacherToMeeting(meetingId, teacherId)
+                if (response.isSuccessful) {
+                    true
+                } else {
+                    Log.e(
+                        "MeetingsRepository",
+                        "Error adding teacher to meeting: ${response.code()}"
+                    )
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("MeetingsRepository", "Error adding teacher to meeting", e)
                 false
             }
-        } catch (e: Exception) {
-            Log.e("MeetingsRepository", "Error adding teacher to meeting", e)
-            false
         }
-    }
 }
