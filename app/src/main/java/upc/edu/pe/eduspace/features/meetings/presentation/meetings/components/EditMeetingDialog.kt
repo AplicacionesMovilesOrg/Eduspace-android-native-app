@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Schedule
@@ -22,7 +23,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import upc.edu.pe.eduspace.R
+import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -59,11 +63,17 @@ import java.util.TimeZone
 @Composable
 fun EditMeetingDialog(
     meeting: Meeting,
+    classrooms: List<Classroom>,
     onDismiss: () -> Unit,
-    onConfirm: (title: String, description: String, date: String, start: String, end: String) -> Unit
+    onConfirm: (classroomId: String, title: String, description: String, date: String, start: String, end: String) -> Unit
 ) {
     var title by remember { mutableStateOf(meeting.title) }
     var description by remember { mutableStateOf(meeting.description) }
+
+    // Classroom dropdown
+    val initialClassroom = classrooms.find { it.id == meeting.classroomId }
+    var selectedClassroom by remember { mutableStateOf(initialClassroom) }
+    var expanded by remember { mutableStateOf(false) }
 
     val sdf = remember {
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
@@ -107,21 +117,40 @@ fun EditMeetingDialog(
         }
     }
 
+
     // Time pickers state with initial values
-    val startTimeState = rememberTimePickerState(initialHour = initialStartHour, initialMinute = initialStartMinute, is24Hour = true)
-    val endTimeState = rememberTimePickerState(initialHour = initialEndHour, initialMinute = initialEndMinute, is24Hour = true)
+    val startTimeState = rememberTimePickerState(
+        initialHour = initialStartHour,
+        initialMinute = initialStartMinute,
+        is24Hour = true
+    )
+    val endTimeState = rememberTimePickerState(
+        initialHour = initialEndHour,
+        initialMinute = initialEndMinute,
+        is24Hour = true
+    )
     var showStartTimePicker by remember { mutableStateOf(false) }
     var showEndTimePicker by remember { mutableStateOf(false) }
 
     val startTime by remember {
         derivedStateOf {
-            String.format(Locale.getDefault(), "%02d:%02d:00", startTimeState.hour, startTimeState.minute)
+            String.format(
+                Locale.getDefault(),
+                "%02d:%02d:00",
+                startTimeState.hour,
+                startTimeState.minute
+            )
         }
     }
 
     val endTime by remember {
         derivedStateOf {
-            String.format(Locale.getDefault(), "%02d:%02d:00", endTimeState.hour, endTimeState.minute)
+            String.format(
+                Locale.getDefault(),
+                "%02d:%02d:00",
+                endTimeState.hour,
+                endTimeState.minute
+            )
         }
     }
 
@@ -198,7 +227,10 @@ fun EditMeetingDialog(
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.meeting_date))
+                                Icon(
+                                    Icons.Default.CalendarToday,
+                                    contentDescription = stringResource(R.string.meeting_date)
+                                )
                             }
                         },
                         shape = tfShape,
@@ -218,7 +250,10 @@ fun EditMeetingDialog(
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { showStartTimePicker = true }) {
-                                    Icon(Icons.Default.Schedule, contentDescription = stringResource(R.string.meeting_start_time))
+                                    Icon(
+                                        Icons.Default.Schedule,
+                                        contentDescription = stringResource(R.string.meeting_start_time)
+                                    )
                                 }
                             },
                             shape = tfShape,
@@ -233,13 +268,51 @@ fun EditMeetingDialog(
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { showEndTimePicker = true }) {
-                                    Icon(Icons.Default.Schedule, contentDescription = stringResource(R.string.meeting_end_time))
+                                    Icon(
+                                        Icons.Default.Schedule,
+                                        contentDescription = stringResource(R.string.meeting_end_time)
+                                    )
                                 }
                             },
                             shape = tfShape,
                             colors = tfColors,
                             modifier = Modifier.weight(1f)
                         )
+                    }
+
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded }
+                    ) {
+                        OutlinedTextField(
+                            value = selectedClassroom?.let { "${ it.name } " } ?: "",
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text(stringResource(R.string.select_classroom)) },
+                            trailingIcon = {
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                            },
+                            shape = tfShape,
+                            colors = tfColors,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            classrooms.forEach { classroom ->
+                                DropdownMenuItem(
+                                    text = { Text(classroom.name) },
+                                    onClick = {
+                                        selectedClassroom = classroom
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
                     }
 
                     Spacer(Modifier.height(4.dp))
@@ -254,10 +327,12 @@ fun EditMeetingDialog(
                         Spacer(Modifier.width(8.dp))
                         Button(
                             onClick = {
-                                if (title.isNotBlank() && description.isNotBlank() &&
+                                val classroom = selectedClassroom
+                                if (classroom!= null && title.isNotBlank() && description.isNotBlank() &&
                                     selectedDateText.isNotBlank()
                                 ) {
                                     onConfirm(
+                                        classroom.id,
                                         title.trim(),
                                         description.trim(),
                                         selectedDateText,

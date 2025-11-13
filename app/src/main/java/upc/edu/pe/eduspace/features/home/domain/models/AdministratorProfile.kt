@@ -1,7 +1,7 @@
 package upc.edu.pe.eduspace.features.home.domain.models
 
 data class AdministratorProfile(
-    val id: Int,
+    val id: String,
     val firstName: String,
     val lastName: String,
     val email: String,

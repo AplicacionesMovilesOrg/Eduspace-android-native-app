@@ -46,8 +46,8 @@ class LoginViewModel @Inject constructor(
             when (resource) {
                 is Resource.Success -> {
                     val user = resource.data as User
-                    // Save complete session
-                    sessionManager.saveSession(user.id, username.value)
+                    // Save complete session with token
+                    sessionManager.saveSession(user.id, username.value, user.token)
                     _user.value = UiState.Success(user)
                 }
                 is Resource.Error -> _user.value = UiState.Error(resource.message as String)

@@ -13,7 +13,7 @@ interface TeachersService {
     suspend fun getAllTeachers(): Response<List<TeacherDto>>
 
     @GET("teachers-profiles/{id}")
-    suspend fun getTeacherById(@Path("id") id: Int): Response<TeacherDto>
+    suspend fun getTeacherById(@Path("id") id: String): Response<TeacherDto>
 
     @POST("teachers-profiles")
     suspend fun createTeacher(@Body body: CreateTeacherRequestDto): Response<TeacherDto>

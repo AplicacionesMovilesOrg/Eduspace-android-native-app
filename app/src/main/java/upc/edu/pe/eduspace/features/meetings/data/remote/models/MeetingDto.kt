@@ -1,30 +1,33 @@
 package upc.edu.pe.eduspace.features.meetings.data.remote.models
 
+import com.google.gson.annotations.SerializedName
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
 import upc.edu.pe.eduspace.features.meetings.domain.models.TeacherInfo
 
 data class MeetingDto(
-    val meetingId: Int?,
+    val meetingId: String?,
     val title: String?,
     val description: String?,
     val date: String?,
     val start: String?,
     val end: String?,
-    val administrator: AdministratorDto?,
-    val classroom: ClassroomRefDto?,
+    @SerializedName("administratorId")
+    val administratorId: AdministratorIdDto?,
+    @SerializedName("classroomId")
+    val classroomId: ClassroomIdDto?,
     val teachers: List<TeacherInfoDto>?
 )
 
-data class AdministratorDto(
-    val administratorId: Int?
+data class AdministratorIdDto(
+    val administratorId: String?
 )
 
-data class ClassroomRefDto(
-    val classroomId: Int?
+data class ClassroomIdDto(
+    val classroomId: String?
 )
 
 data class TeacherInfoDto(
-    val id: Int?,
+    val id: String?,
     val firstName: String?,
     val lastName: String?
 )
@@ -38,33 +41,33 @@ data class CreateMeetingRequestDto(
 )
 
 data class UpdateMeetingRequestDto(
-    val meetingId: Int,
+    val meetingId: String,
     val title: String,
     val description: String,
     val date: String,
     val start: String,
     val end: String,
-    val administratorId: Int,
-    val classroomId: Int
+    val administratorId: String,
+    val classroomId: String
 )
 
 fun MeetingDto.toDomain(): Meeting {
     return Meeting(
-        meetingId = meetingId ?: 0,
+        meetingId = meetingId ?: "",
         title = title ?: "",
         description = description ?: "",
         date = date ?: "",
         start = start ?: "",
         end = end ?: "",
-        administratorId = administrator?.administratorId ?: 0,
-        classroomId = classroom?.classroomId ?: 0,
+        administratorId = administratorId?.administratorId ?: "",
+        classroomId = classroomId?.classroomId ?: "",
         teachers = teachers?.map { it.toDomain() } ?: emptyList()
     )
 }
 
 fun TeacherInfoDto.toDomain(): TeacherInfo {
     return TeacherInfo(
-        id = id ?: 0,
+        id = id ?: "",
         firstName = firstName ?: "",
         lastName = lastName ?: ""
     )

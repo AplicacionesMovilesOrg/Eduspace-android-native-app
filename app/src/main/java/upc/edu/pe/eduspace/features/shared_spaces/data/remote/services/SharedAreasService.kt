@@ -16,17 +16,17 @@ interface SharedAreasService {
     suspend fun getAllSharedAreas(): Response<List<SharedAreaDto>>
 
     @GET("shared-area/{id}")
-    suspend fun getSharedAreaById(@Path("id") id: Int): Response<SharedAreaDto>
+    suspend fun getSharedAreaById(@Path("id") id: String): Response<SharedAreaDto>
 
     @POST("shared-area")
     suspend fun createSharedArea(@Body request: CreateSharedAreaRequestDto): Response<SharedAreaDto>
 
     @PUT("shared-area/{id}")
     suspend fun updateSharedArea(
-        @Path("id") id: Int,
+        @Path("id") id: String,
         @Body request: UpdateSharedAreaRequestDto
     ): Response<SharedAreaDto>
 
     @DELETE("shared-area/{id}")
-    suspend fun deleteSharedArea(@Path("id") id: Int): Response<Unit>
+    suspend fun deleteSharedArea(@Path("id") id: String): Response<Unit>
 }

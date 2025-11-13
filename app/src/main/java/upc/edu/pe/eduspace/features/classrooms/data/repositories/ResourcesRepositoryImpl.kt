@@ -17,7 +17,7 @@ class ResourcesRepositoryImpl @Inject constructor(
     private val service: ResourcesService
 ) : ResourcesRepository {
 
-    override suspend fun getResourcesByClassroomId(classroomId: Int): List<Resource> = withContext(Dispatchers.IO) {
+    override suspend fun getResourcesByClassroomId(classroomId: String): List<Resource> = withContext(Dispatchers.IO) {
         try {
             Log.d("ResourcesRepository", "Fetching resources for classroom $classroomId")
             val response = service.getResourcesByClassroomId(classroomId)
@@ -47,7 +47,7 @@ class ResourcesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getResourceById(classroomId: Int, resourceId: Int): Resource? = withContext(Dispatchers.IO) {
+    override suspend fun getResourceById(classroomId: String, resourceId: String): Resource? = withContext(Dispatchers.IO) {
         try {
             val response = service.getResourceById(classroomId, resourceId)
             if (!response.isSuccessful) {
@@ -63,7 +63,7 @@ class ResourcesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createResource(classroomId: Int, input: CreateResource): Resource? = withContext(Dispatchers.IO) {
+    override suspend fun createResource(classroomId: String, input: CreateResource): Resource? = withContext(Dispatchers.IO) {
         try {
             val request = CreateResourceRequestDto(
                 name = input.name,
@@ -94,7 +94,7 @@ class ResourcesRepositoryImpl @Inject constructor(
 
             val dto = response.body()
             Log.d("ResourcesRepository", "Resource created successfully: $dto")
-            return@withContext dto?.toDomain()
+            return@withContext dto?.toDomain(fallbackClassroomId = classroomId)
         } catch (e: DuplicateResourceException) {
             Log.e("ResourcesRepository", "Duplicate resource name: ${e.message}", e)
             throw e // Re-throw to be caught by ViewModel
@@ -106,7 +106,7 @@ class ResourcesRepositoryImpl @Inject constructor(
 
     class DuplicateResourceException(message: String) : Exception(message)
 
-    override suspend fun updateResource(classroomId: Int, resourceId: Int, input: UpdateResource): Resource? = withContext(Dispatchers.IO) {
+    override suspend fun updateResource(classroomId: String, resourceId: String, input: UpdateResource): Resource? = withContext(Dispatchers.IO) {
         try {
             val request = UpdateResourceRequestDto(
                 id = input.id,
@@ -127,14 +127,14 @@ class ResourcesRepositoryImpl @Inject constructor(
 
             val dto = response.body()
             Log.d("ResourcesRepository", "Resource updated successfully: $dto")
-            return@withContext dto?.toDomain()
+            return@withContext dto?.toDomain(fallbackClassroomId = classroomId)
         } catch (e: Exception) {
             Log.e("ResourcesRepository", "Exception updating resource: ${e.message}", e)
             return@withContext null
         }
     }
 
-    override suspend fun deleteResource(classroomId: Int, resourceId: Int): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun deleteResource(classroomId: String, resourceId: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val response = service.deleteResource(classroomId, resourceId)
 
@@ -150,13 +150,12 @@ class ResourcesRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun ResourceDto.toDomain(): Resource? {
+    private fun ResourceDto.toDomain(fallbackClassroomId: String? = null): Resource? {
         val id = this.id ?: return null
         val name = this.name ?: return null
         val kindOfResource = this.kindOfResource ?: return null
 
-        // Try to get classroomId from direct field first, then from nested classroom object
-        val classroomId = this.classroomId ?: this.classroom?.id ?: run {
+        val classroomId = this.classroomId ?: this.classroom?.id ?: fallbackClassroomId ?: run {
             Log.w("ResourcesRepository", "Could not find classroomId in DTO: $this")
             return null
         }

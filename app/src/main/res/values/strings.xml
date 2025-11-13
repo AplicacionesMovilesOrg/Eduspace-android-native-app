@@ -197,7 +197,7 @@
     <!-- Empty States -->
     <string name="no_data_available">No data available</string>
     <string name="start_by_adding">Start by adding a new item</string>
-    <string name="resource_name_placeholder">e.g., %1$s-Room%2$d</string>
+    <string name="resource_name_placeholder">e.g., %1$s 1</string>
     <string name="resource_name_note">Note: Resource names must be unique across all classrooms</string>
     <string name="delete_classroom_confirmation_message">Are you sure you want to delete %1$s? This action cannot be undone.</string>
     <string name="create_shared_area">Create Shared Area</string>
@@ -250,4 +250,5 @@
     <string name="screen_meetings">Meetings</string>
     <string name="screen_teachers">Teachers</string>
     <string name="screen_logout">Logout</string>
+    <string name="select_classroom">Select a classroom</string>
 </resources>

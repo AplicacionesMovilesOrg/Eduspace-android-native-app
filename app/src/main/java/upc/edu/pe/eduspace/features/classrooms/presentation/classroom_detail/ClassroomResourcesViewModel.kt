@@ -31,7 +31,7 @@ class ClassroomResourcesViewModel @Inject constructor(
     private val _deleteResourceState = MutableStateFlow<UiState<Boolean>>(UiState.Initial)
     val deleteResourceState: StateFlow<UiState<Boolean>> = _deleteResourceState.asStateFlow()
 
-    fun getResourcesByClassroomId(classroomId: Int) {
+    fun getResourcesByClassroomId(classroomId: String) {
         viewModelScope.launch {
             _resourcesState.value = UiState.Loading
             try {
@@ -43,7 +43,7 @@ class ClassroomResourcesViewModel @Inject constructor(
         }
     }
 
-    fun createResource(classroomId: Int, name: String, kindOfResource: String) {
+    fun createResource(classroomId: String, name: String, kindOfResource: String) {
         viewModelScope.launch {
             _createResourceState.value = UiState.Loading
             try {
@@ -54,7 +54,14 @@ class ClassroomResourcesViewModel @Inject constructor(
                 val resource = resourcesRepository.createResource(classroomId, input)
                 if (resource != null) {
                     _createResourceState.value = UiState.Success(resource)
-                    getResourcesByClassroomId(classroomId)
+
+                    val currentState = _resourcesState.value
+                    if (currentState is UiState.Success) {
+                        val updatedList = currentState.data + resource
+                        _resourcesState.value = UiState.Success(updatedList)
+                    } else {
+                        getResourcesByClassroomId(classroomId)
+                    }
                 } else {
                     _createResourceState.value = UiState.Error("Failed to create resource. Please try again.")
                 }
@@ -68,7 +75,7 @@ class ClassroomResourcesViewModel @Inject constructor(
         }
     }
 
-    fun updateResource(classroomId: Int, resourceId: Int, name: String, kindOfResource: String) {
+    fun updateResource(classroomId: String, resourceId: String, name: String, kindOfResource: String) {
         viewModelScope.launch {
             _updateResourceState.value = UiState.Loading
             try {
@@ -81,7 +88,16 @@ class ClassroomResourcesViewModel @Inject constructor(
                 val resource = resourcesRepository.updateResource(classroomId, resourceId, input)
                 if (resource != null) {
                     _updateResourceState.value = UiState.Success(resource)
-                    getResourcesByClassroomId(classroomId)
+
+                    val currentState = _resourcesState.value
+                    if (currentState is UiState.Success) {
+                        val updatedList = currentState.data.map {
+                            if (it.id == resourceId) resource else it
+                        }
+                        _resourcesState.value = UiState.Success(updatedList)
+                    } else {
+                        getResourcesByClassroomId(classroomId)
+                    }
                 } else {
                     _updateResourceState.value = UiState.Error("Error updating resource")
                 }
@@ -91,14 +107,21 @@ class ClassroomResourcesViewModel @Inject constructor(
         }
     }
 
-    fun deleteResource(classroomId: Int, resourceId: Int) {
+    fun deleteResource(classroomId: String, resourceId: String) {
         viewModelScope.launch {
             _deleteResourceState.value = UiState.Loading
             try {
                 val success = resourcesRepository.deleteResource(classroomId, resourceId)
                 if (success) {
                     _deleteResourceState.value = UiState.Success(true)
-                    getResourcesByClassroomId(classroomId)
+
+                    val currentState = _resourcesState.value
+                    if (currentState is UiState.Success) {
+                        val updatedList = currentState.data.filter { it.id != resourceId }
+                        _resourcesState.value = UiState.Success(updatedList)
+                    } else {
+                        getResourcesByClassroomId(classroomId)
+                    }
                 } else {
                     _deleteResourceState.value = UiState.Error("Error deleting resource")
                 }

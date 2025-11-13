@@ -100,10 +100,10 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                 composable(
                     route = "classroom_detail/{classroomId}",
                     arguments = listOf(
-                        navArgument("classroomId") { type = NavType.IntType }
+                        navArgument("classroomId") { type = NavType.StringType }
                     )
                 ) { backStackEntry ->
-                    val classroomId = backStackEntry.arguments?.getInt("classroomId") ?: 0
+                    val classroomId = backStackEntry.arguments?.getString("classroomId") ?: ""
                     ClassroomDetailRoute(
                         classroomId = classroomId,
                         onNavigateBack = { navController.popBackStack() }
@@ -119,7 +119,7 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                 composable(
                     route = "shared_area_detail/{sharedAreaId}",
                     arguments = listOf(
-                        navArgument("sharedAreaId") { type = NavType.IntType }
+                        navArgument("sharedAreaId") { type = NavType.StringType }
                     )
                 ) {
                     SharedAreaDetailRoute(
@@ -136,7 +136,7 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                 composable(
                     route = "meeting_detail/{meetingId}",
                     arguments = listOf(
-                        navArgument("meetingId") { type = NavType.IntType }
+                        navArgument("meetingId") { type = NavType.StringType }
                     )
                 ) {
                     MeetingDetailRoute(

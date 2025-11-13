@@ -50,7 +50,7 @@ fun EditClassroomDialog(
     classroom: Classroom,
     teachers: List<Teacher>,
     onDismiss: () -> Unit,
-    onSubmit: (teacherId: Int, name: String, description: String) -> Unit
+    onSubmit: (teacherId: String, name: String, description: String) -> Unit
 ) {
     val initialTeacher = teachers.find { it.id == classroom.teacherId }
     var selectedTeacher by remember { mutableStateOf(initialTeacher) }

@@ -44,7 +44,7 @@ class TeachersRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTeacherById(id: Int): Teacher? = withContext(Dispatchers.IO) {
+    override suspend fun getTeacherById(id: String): Teacher? = withContext(Dispatchers.IO) {
         try {
             val response = service.getTeacherById(id)
 
@@ -83,8 +83,11 @@ class TeachersRepositoryImpl @Inject constructor(
             val response = service.createTeacher(req)
 
             if (!response.isSuccessful) {
+                val errorBody = response.errorBody()?.string() ?: "No error body"
                 val errorMsg = "Failed to create teacher: ${response.message()}"
                 Log.e("TeachersRepository", errorMsg)
+                Log.e("TeachersRepository", "Error body: $errorBody")
+                Log.e("TeachersRepository", "Request: $req")
                 throw Exception(errorMsg)
             }
 

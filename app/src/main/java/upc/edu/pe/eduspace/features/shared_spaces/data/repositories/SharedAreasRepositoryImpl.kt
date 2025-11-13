@@ -31,7 +31,7 @@ class SharedAreasRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSharedAreaById(id: Int): SharedArea? = withContext(Dispatchers.IO) {
+    override suspend fun getSharedAreaById(id: String): SharedArea? = withContext(Dispatchers.IO) {
         try {
             val response = sharedAreasService.getSharedAreaById(id)
             if (response.isSuccessful) {
@@ -89,7 +89,7 @@ class SharedAreasRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun deleteSharedArea(id: Int): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun deleteSharedArea(id: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val response = sharedAreasService.deleteSharedArea(id)
             if (response.isSuccessful) {

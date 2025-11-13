@@ -21,7 +21,7 @@ class SharedAreaDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val sharedAreaId: Int = savedStateHandle.get<Int>("sharedAreaId") ?: 0
+    private val sharedAreaId: String = savedStateHandle.get<String>("sharedAreaId") ?: ""
 
     private val _sharedAreaState = MutableStateFlow<UiState<SharedArea>>(UiState.Initial)
     val sharedAreaState: StateFlow<UiState<SharedArea>> = _sharedAreaState.asStateFlow()

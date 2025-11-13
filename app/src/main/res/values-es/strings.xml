@@ -202,7 +202,7 @@
     <!-- Empty States -->
     <string name="no_data_available">No hay datos disponibles</string>
     <string name="start_by_adding">Empieza añadiendo un nuevo elemento</string>
-    <string name="resource_name_placeholder">ej., %1$s-Sala%2$d</string>
+    <string name="resource_name_placeholder">ej., %1$s 1</string>
     <string name="resource_name_note">Nota: Los nombres de los recursos deben ser únicos en todas las aulas</string>
     <string name="delete_classroom_confirmation_message">¿Estás seguro de que quieres eliminar %1$s? Esta acción no se puede deshacer.</string>
     <string name="create_shared_area">Crear Área Compartida</string>
@@ -247,4 +247,5 @@
     <string name="dni_prefix">DNI: %s</string>
     <string name="delete_meeting_title">Eliminar Reunión</string>
     <string name="delete_meeting_message">¿Estás seguro de que quieres eliminar "%1$s"? Esta acción no se puede deshacer.</string>
+    <string name="select_classroom">Selecciona un salón</string>
 </resources>

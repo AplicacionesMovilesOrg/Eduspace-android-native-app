@@ -63,7 +63,7 @@ import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.Cr
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassroomDetailRoute(
-    classroomId: Int,
+    classroomId: String,
     onNavigateBack: () -> Unit,
     viewModel: ClassroomDetailViewModel = hiltViewModel(),
     resourcesViewModel: ClassroomResourcesViewModel = hiltViewModel()
@@ -95,10 +95,12 @@ fun ClassroomDetailRoute(
                 showAddResourceDialog = false
                 resourcesViewModel.resetCreateResourceState()
             }
+
             is UiState.Error -> {
                 snackMessage = (createResourceState as UiState.Error).message
                 resourcesViewModel.resetCreateResourceState()
             }
+
             else -> {}
         }
     }
@@ -110,10 +112,12 @@ fun ClassroomDetailRoute(
                 showEditResourceDialog = false
                 resourcesViewModel.resetUpdateResourceState()
             }
+
             is UiState.Error -> {
                 snackMessage = (updateResourceState as UiState.Error).message
                 resourcesViewModel.resetUpdateResourceState()
             }
+
             else -> {}
         }
     }
@@ -125,10 +129,12 @@ fun ClassroomDetailRoute(
                 showDeleteResourceDialog = false
                 resourcesViewModel.resetDeleteResourceState()
             }
+
             is UiState.Error -> {
                 snackMessage = (deleteResourceState as UiState.Error).message
                 resourcesViewModel.resetDeleteResourceState()
             }
+
             else -> {}
         }
     }
@@ -140,10 +146,12 @@ fun ClassroomDetailRoute(
                 showCreateMeetingDialog = false
                 viewModel.resetCreateMeetingState()
             }
+
             is UiState.Error -> {
                 snackMessage = (createMeetingState as UiState.Error).message
                 viewModel.resetCreateMeetingState()
             }
+
             else -> {}
         }
     }
@@ -214,6 +222,7 @@ fun ClassroomDetailRoute(
                 is UiState.Loading -> {
                     CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
+
                 is UiState.Success -> {
                     val classroom = (classroomState as UiState.Success<Classroom>).data
                     LazyColumn(
@@ -272,6 +281,7 @@ fun ClassroomDetailRoute(
                                     }
                                 }
                             }
+
                             is UiState.Success -> {
                                 val resources = state.data
                                 if (resources.isEmpty()) {
@@ -294,11 +304,16 @@ fun ClassroomDetailRoute(
                                     }
                                 }
                             }
+
                             is UiState.Error -> {
                                 item {
                                     Card(
                                         modifier = Modifier.fillMaxWidth(),
-                                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE))
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = Color(
+                                                0xFFFFEBEE
+                                            )
+                                        )
                                     ) {
                                         Box(
                                             modifier = Modifier
@@ -314,10 +329,12 @@ fun ClassroomDetailRoute(
                                     }
                                 }
                             }
+
                             else -> {}
                         }
                     }
                 }
+
                 is UiState.Error -> {
                     Text(
                         text = (classroomState as UiState.Error).message,
@@ -325,6 +342,7 @@ fun ClassroomDetailRoute(
                         color = Color.Red
                     )
                 }
+
                 else -> {}
             }
         }
@@ -346,7 +364,12 @@ fun ClassroomDetailRoute(
                 resource = resource,
                 onDismiss = { showEditResourceDialog = false },
                 onSubmit = { name, kindOfResource ->
-                    resourcesViewModel.updateResource(classroomId, resource.id, name, kindOfResource)
+                    resourcesViewModel.updateResource(
+                        classroomId,
+                        resource.id,
+                        name,
+                        kindOfResource
+                    )
                 }
             )
         }
@@ -369,8 +392,9 @@ fun ClassroomDetailRoute(
         val classroom = (classroomState as? UiState.Success<Classroom>)?.data
         if (classroom != null) {
             CreateMeetingDialog(
+                classrooms = listOf(classroom),
                 onDismiss = { showCreateMeetingDialog = false },
-                onConfirm = { title, description, date, start, end ->
+                onConfirm = { classroomId, title, description, date, start, end ->
                     viewModel.createMeeting(classroom.id, title, description, date, start, end)
                 }
             )

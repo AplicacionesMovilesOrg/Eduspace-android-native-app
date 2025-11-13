@@ -1,5 +1,6 @@
 package upc.edu.pe.eduspace.features.meetings.presentation.meeting_detail
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import upc.edu.pe.eduspace.core.utils.UiState
+import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
+import upc.edu.pe.eduspace.features.classrooms.domain.repositories.ClassroomsRepository
+import upc.edu.pe.eduspace.features.home.domain.repositories.HomeRepository
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
 import upc.edu.pe.eduspace.features.meetings.domain.models.UpdateMeeting
 import upc.edu.pe.eduspace.features.meetings.domain.repositories.MeetingsRepository
@@ -23,13 +27,18 @@ import javax.inject.Inject
 class MeetingDetailViewModel @Inject constructor(
     private val repository: MeetingsRepository,
     private val teachersRepository: TeachersRepository,
+    private val classroomRepository: ClassroomsRepository,
+    private val homeRepository: HomeRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val meetingId: Int = savedStateHandle.get<Int>("meetingId") ?: 0
+    private val meetingId: String = savedStateHandle.get<String>("meetingId") ?: ""
 
     private val _meetingState = MutableStateFlow<UiState<Meeting>>(UiState.Initial)
     val meetingState: StateFlow<UiState<Meeting>> = _meetingState.asStateFlow()
+
+    private val _classrooms = MutableStateFlow<UiState<List<Classroom>>>(UiState.Initial)
+    val classrooms: StateFlow<UiState<List<Classroom>>> = _classrooms.asStateFlow()
 
     private val _updateState = MutableStateFlow<UiState<Meeting>>(UiState.Initial)
     val updateState: StateFlow<UiState<Meeting>> = _updateState.asStateFlow()
@@ -47,6 +56,24 @@ class MeetingDetailViewModel @Inject constructor(
      * A StateFlow that combines the list of all teachers and the meeting's current participants
      * to expose publicly only the teachers that have NOT been added to the meeting yet.
      */
+    private fun logMeeting(meeting: Meeting) {
+    Log.d("MeetingDetailVM", "meetingId=${meeting.meetingId}")
+    Log.d("MeetingDetailVM", "title=${meeting.title}")
+    Log.d("MeetingDetailVM", "description=${meeting.description}")
+    Log.d("MeetingDetailVM", "date=${meeting.date}")
+    Log.d("MeetingDetailVM", "start=${meeting.start}")
+    Log.d("MeetingDetailVM", "end=${meeting.end}")
+    Log.d("MeetingDetailVM", "administratorId=${meeting.administratorId}")
+    Log.d("MeetingDetailVM", "classroomId=${meeting.classroomId}")
+    Log.d("MeetingDetailVM", "teachers_count=${meeting.teachers.size}")
+    meeting.teachers.forEachIndexed { index, t ->
+        Log.d("MeetingDetailVM", "teacher[$index].id=${t.id}")
+        Log.d("MeetingDetailVM", "teacher[$index].firstName=${t.firstName}")
+        Log.d("MeetingDetailVM", "teacher[$index].lastName=${t.lastName}")
+    }
+}
+
+
     val availableTeachers: StateFlow<UiState<List<Teacher>>> =
         _meetingState.combine(_teachers) { meetingState, teachersState ->
             // Check that both flows have loaded successfully
@@ -105,7 +132,48 @@ class MeetingDetailViewModel @Inject constructor(
         }
     }
 
+
+//    fun updateMeeting(
+//        classroomId: String,
+//        title: String,
+//        description: String,
+//        date: String,
+//        start: String,
+//        end: String
+//    ) {
+//        viewModelScope.launch {
+//            _updateState.value = UiState.Loading
+//            try {
+//                val currentMeeting = (_meetingState.value as? UiState.Success)?.data
+//                if (currentMeeting != null) {
+//                    val updateMeeting = UpdateMeeting(
+//                        meetingId = currentMeeting.meetingId,
+//                        title = title,
+//                        description = description,
+//                        date = date,
+//                        start = start,
+//                        end = end,
+//                        administratorId = currentMeeting.administratorId,
+//                        classroomId = classroomId
+//                    )
+//                    val result = repository.updateMeeting(updateMeeting)
+//                    if (result != null) {
+//                        _updateState.value = UiState.Success(result)
+//                        loadMeeting() // Reload to get updated data
+//                    } else {
+//                        _updateState.value = UiState.Error("Error updating meeting")
+//                    }
+//                } else {
+//                    _updateState.value = UiState.Error("Meeting data not available")
+//                }
+//            } catch (e: Exception) {
+//                _updateState.value = UiState.Error(e.message ?: "Unknown error")
+//            }
+//        }
+//    }
+
     fun updateMeeting(
+        classroomId: String,
         title: String,
         description: String,
         date: String,
@@ -115,8 +183,28 @@ class MeetingDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _updateState.value = UiState.Loading
             try {
-                val currentMeeting = (_meetingState.value as? UiState.Success)?.data
+                // Intentar obtener la fuente más fiable: primero desde el repositorio
+                val meetingFromRepo = try { repository.getMeetingById(meetingId) } catch (e: Exception) { null }
+
+                // Si no hay resultado del repo, usar el estado local
+                val currentMeeting = meetingFromRepo ?: (_meetingState.value as? UiState.Success)?.data
+
                 if (currentMeeting != null) {
+                    // Obtener administratorId del meeting; si está vacío, intentar fallback al servicio de home
+                    var adminId = currentMeeting.administratorId
+                    if (adminId.isBlank()) {
+                        adminId = try {
+                            homeRepository.getAdministratorProfiles().id
+                        } catch (e: Exception) {
+                            ""
+                        }
+                    }
+
+                    if (adminId.isBlank()) {
+                        _updateState.value = UiState.Error("Administrator id not available")
+                        return@launch
+                    }
+
                     val updateMeeting = UpdateMeeting(
                         meetingId = currentMeeting.meetingId,
                         title = title,
@@ -124,9 +212,10 @@ class MeetingDetailViewModel @Inject constructor(
                         date = date,
                         start = start,
                         end = end,
-                        administratorId = currentMeeting.administratorId,
-                        classroomId = currentMeeting.classroomId
+                        administratorId = adminId,
+                        classroomId = classroomId
                     )
+
                     val result = repository.updateMeeting(updateMeeting)
                     if (result != null) {
                         _updateState.value = UiState.Success(result)
@@ -142,7 +231,6 @@ class MeetingDetailViewModel @Inject constructor(
             }
         }
     }
-
     fun deleteMeeting() {
         viewModelScope.launch {
             _deleteState.value = UiState.Loading
@@ -159,7 +247,7 @@ class MeetingDetailViewModel @Inject constructor(
         }
     }
 
-    fun addTeacherToMeeting(teacherId: Int) {
+    fun addTeacherToMeeting(teacherId: String) {
         viewModelScope.launch {
             _addTeacherState.value = UiState.Loading
             try {
@@ -178,11 +266,12 @@ class MeetingDetailViewModel @Inject constructor(
 
                         if (teacherToAdd != null) {
                             // 2. Convert Teacher to TeacherInfo (Meeting uses TeacherInfo)
-                            val teacherInfo = upc.edu.pe.eduspace.features.meetings.domain.models.TeacherInfo(
-                                id = teacherToAdd.id,
-                                firstName = teacherToAdd.firstName,
-                                lastName = teacherToAdd.lastName
-                            )
+                            val teacherInfo =
+                                upc.edu.pe.eduspace.features.meetings.domain.models.TeacherInfo(
+                                    id = teacherToAdd.id,
+                                    firstName = teacherToAdd.firstName,
+                                    lastName = teacherToAdd.lastName
+                                )
 
                             // 3. Get current participants list and add the new one
                             val currentMeeting = currentMeetingState.data
@@ -215,4 +304,17 @@ class MeetingDetailViewModel @Inject constructor(
     fun resetAddTeacherState() {
         _addTeacherState.value = UiState.Initial
     }
+
+    fun getAllClassrooms() {
+        viewModelScope.launch {
+            _classrooms.value = UiState.Loading
+            try {
+                val classroomsList = classroomRepository.getAllClassrooms()
+                _classrooms.value = UiState.Success(classroomsList)
+            } catch (e: Exception) {
+                _classrooms.value = UiState.Error(e.message ?: "Unknown error loading classrooms")
+            }
+        }
+    }
+
 }
