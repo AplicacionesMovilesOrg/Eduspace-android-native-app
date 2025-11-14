@@ -65,11 +65,6 @@ class MeetingsRepositoryImpl @Inject constructor(
                 end = meeting.end
             )
 
-            Log.d(
-                "MeetingsRepository",
-                "createMeeting -> adminId='$administratorId', classroomId='$classroomId', body=$dto"
-            )
-
             val response = service.createMeeting(administratorId, classroomId, dto)
             if (response.isSuccessful) {
                 response.body()?.toDomain()
