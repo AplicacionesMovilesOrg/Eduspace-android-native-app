@@ -4,10 +4,12 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import upc.edu.pe.eduspace.features.teachers.data.remote.models.CreateTeacherRequestDto
+import upc.edu.pe.eduspace.features.teachers.data.remote.models.UpdateTeacherRequestDto
 import upc.edu.pe.eduspace.features.teachers.data.remote.services.TeachersService
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.CreateTeacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.TeachersRepository
+import upc.edu.pe.eduspace.features.teachers.domain.repositories.UpdateTeacher
 import javax.inject.Inject
 
 class TeachersRepositoryImpl @Inject constructor(
@@ -107,6 +109,60 @@ class TeachersRepositoryImpl @Inject constructor(
             )
         } catch (e: Exception) {
             Log.e("TeachersRepository", "Error creating teacher", e)
+            throw e
+        }
+    }
+
+    override suspend fun updateTeacher(id: String, input: UpdateTeacher): Teacher? = withContext(Dispatchers.IO) {
+        try {
+            val req = UpdateTeacherRequestDto(
+                firstName = input.firstName,
+                lastName = input.lastName,
+                email = input.email,
+                dni = input.dni,
+                address = input.address,
+                phone = input.phone
+            )
+
+            val response = service.updateTeacher(id, req)
+
+            if (!response.isSuccessful) {
+                val errorMsg = "Failed to update teacher: ${response.message()}"
+                Log.e("TeachersRepository", errorMsg)
+                throw Exception(errorMsg)
+            }
+
+            val dto = response.body() ?: throw Exception("Empty response body")
+            val teacherId = dto.id ?: throw Exception("Teacher ID is null")
+
+            Log.d("TeachersRepository", "Teacher updated successfully with id: $teacherId")
+
+            return@withContext Teacher(
+                id = teacherId,
+                firstName = dto.firstName.orEmpty(),
+                lastName  = dto.lastName.orEmpty(),
+                email     = dto.email.orEmpty(),
+                dni       = dto.dni.orEmpty(),
+                address   = dto.address.orEmpty(),
+                phone     = dto.phone.orEmpty()
+            )
+        } catch (e: Exception) {
+            Log.e("TeachersRepository", "Error updating teacher", e)
+            throw e
+        }
+    }
+
+    override suspend fun deleteTeacher(id: String): Unit = withContext(Dispatchers.IO) {
+        try {
+            val response = service.deleteTeacher(id)
+            if (!response.isSuccessful) {
+                val errorMsg = "Failed to delete teacher: ${response.message()}"
+                Log.e("TeachersRepository", errorMsg)
+                throw Exception(errorMsg)
+            }
+            Log.d("TeachersRepository", "Teacher deleted successfully with id: $id")
+        } catch (e: Exception) {
+            Log.e("TeachersRepository", "Error deleting teacher", e)
             throw e
         }
     }

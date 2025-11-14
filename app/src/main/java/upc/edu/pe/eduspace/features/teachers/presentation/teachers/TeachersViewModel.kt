@@ -11,6 +11,7 @@ import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.CreateTeacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.TeachersRepository
+import upc.edu.pe.eduspace.features.teachers.domain.repositories.UpdateTeacher
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +24,12 @@ class TeachersViewModel @Inject constructor(
 
     private val _createState = MutableStateFlow<UiState<Teacher>>(UiState.Initial)
     val createState: StateFlow<UiState<Teacher>> = _createState.asStateFlow()
+
+    private val _updateState = MutableStateFlow<UiState<Unit>>(UiState.Initial)
+    val updateState: StateFlow<UiState<Unit>> = _updateState.asStateFlow()
+
+    private val _deleteState = MutableStateFlow<UiState<Unit>>(UiState.Initial)
+    val deleteState: StateFlow<UiState<Unit>> = _deleteState.asStateFlow()
 
     fun getAllTeachers() {
         viewModelScope.launch {
@@ -52,6 +59,38 @@ class TeachersViewModel @Inject constructor(
                 _createState.value = UiState.Error(e.message ?: "Error creating teacher")
             }
         }
+    }
+
+    fun updateTeacher(id: String, input: UpdateTeacher) {
+        viewModelScope.launch {
+            _updateState.value = UiState.Loading
+            try {
+                repository.updateTeacher(id, input)
+                _updateState.value = UiState.Success(Unit)
+            } catch (e: Exception) {
+                _updateState.value = UiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun deleteTeacher(id: String) {
+        viewModelScope.launch {
+            _deleteState.value = UiState.Loading
+            try {
+                repository.deleteTeacher(id)
+                _deleteState.value = UiState.Success(Unit)
+            } catch (e: Exception) {
+                _deleteState.value = UiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun resetUpdateState() {
+        _updateState.value = UiState.Initial
+    }
+
+    fun resetDeleteState() {
+        _deleteState.value = UiState.Initial
     }
 
     fun resetCreateState() {
