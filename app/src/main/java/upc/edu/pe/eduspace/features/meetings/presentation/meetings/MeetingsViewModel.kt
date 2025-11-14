@@ -104,24 +104,15 @@ class MeetingsViewModel @Inject constructor(
         viewModelScope.launch {
             _createState.value = UiState.Loading
             try {
-                val adminId = fetchAdminId()
-                Log.d("MeetingsVM", "createMeeting adminId='$adminId'")
-                if (adminId.isBlank()) {
-                    _createState.value =
-                        UiState.Error("No se pudo obtener el id del administrador. Revisa logs y que el servicio de perfiles devuelva datos.")
-                    return@launch
-                }
-
-//                val classroomId = fetchClassroomId()
-//                Log.d("MeetingsVM", "createMeeting classroomId='$classroomId'")
-//                if (classroomId.isBlank()) {
-//                    _createState.value =
-//                        UiState.Error("No se pudo obtener el id del aula. Revisa logs y que el servicio de aulas devuelva datos.")
-//                    return@launch
-//                }
-
-                val meeting = CreateMeeting(classroomId, title, description, date, start, end)
-                val result = repository.createMeeting(adminId, classroomId, meeting)
+                val meeting = CreateMeeting(
+                    classroomId,
+                    title,
+                    description,
+                    date,
+                    start,
+                    end
+                )
+                val result = repository.createMeeting(classroomId, meeting)
                 if (result != null) {
                     _createState.value = UiState.Success(result)
                     loadMeetings()

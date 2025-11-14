@@ -3,6 +3,7 @@ package upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -206,17 +207,18 @@ fun ClassroomDetailRoute(
                     )
                 )
             }
-        }
+        },
+        containerColor = Color.Transparent
     ) { padding ->
         Box(
             Modifier
-                .padding(padding)
                 .fillMaxSize()
                 .background(
                     Brush.linearGradient(
                         listOf(Color(0xFF7EC0EE), Color(0xFFF5E682))
                     )
                 )
+                .padding(padding)
         ) {
             when (classroomState) {
                 is UiState.Loading -> {
@@ -228,8 +230,12 @@ fun ClassroomDetailRoute(
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                            .padding(horizontal = 12.dp, vertical = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(
+                            top = 0.dp,
+                            bottom = 88.dp
+                        )
                     ) {
                         item {
                             ClassroomInfoCard(

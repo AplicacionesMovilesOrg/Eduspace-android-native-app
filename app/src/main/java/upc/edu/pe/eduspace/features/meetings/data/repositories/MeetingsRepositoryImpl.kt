@@ -3,6 +3,7 @@ package upc.edu.pe.eduspace.features.meetings.data.repositories
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import upc.edu.pe.eduspace.features.home.domain.repositories.HomeRepository
 import upc.edu.pe.eduspace.features.meetings.data.remote.models.CreateMeetingRequestDto
 import upc.edu.pe.eduspace.features.meetings.data.remote.models.UpdateMeetingRequestDto
 import upc.edu.pe.eduspace.features.meetings.data.remote.models.toDomain
@@ -14,7 +15,8 @@ import upc.edu.pe.eduspace.features.meetings.domain.repositories.MeetingsReposit
 import javax.inject.Inject
 
 class MeetingsRepositoryImpl @Inject constructor(
-    private val service: MeetingsService
+    private val service: MeetingsService,
+    private val homeRepository: HomeRepository
 ) : MeetingsRepository {
 
     override suspend fun getAllMeetings(): List<Meeting> = withContext(Dispatchers.IO) {
@@ -48,11 +50,13 @@ class MeetingsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createMeeting(
-        administratorId: String,
         classroomId: String,
         meeting: CreateMeeting
     ): Meeting? = withContext(Dispatchers.IO) {
         return@withContext try {
+            val adminProfile = homeRepository.getAdministratorProfiles()
+            val administratorId = adminProfile.id
+
             val dto = CreateMeetingRequestDto(
                 title = meeting.title,
                 description = meeting.description,
@@ -60,9 +64,14 @@ class MeetingsRepositoryImpl @Inject constructor(
                 start = meeting.start,
                 end = meeting.end
             )
+
+            Log.d(
+                "MeetingsRepository",
+                "createMeeting -> adminId='$administratorId', classroomId='$classroomId', body=$dto"
+            )
+
             val response = service.createMeeting(administratorId, classroomId, dto)
             if (response.isSuccessful) {
-                Log.e( "MeetingsRepository", "Created meeting data: $dto")
                 response.body()?.toDomain()
             } else {
                 val errorBody = response.errorBody()?.string()
@@ -95,7 +104,6 @@ class MeetingsRepositoryImpl @Inject constructor(
                 response.body()?.toDomain()
             } else {
                 Log.e("MeetingsRepository", "Error updating meeting: ${response.code()}")
-                //mostrar datos del meeting que fallo
                 Log.e("MeetingsRepository", "Failed meeting data: $dto")
                 null
             }

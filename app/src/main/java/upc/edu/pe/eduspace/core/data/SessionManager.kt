@@ -34,6 +34,11 @@ class SessionManager @Inject constructor(@param:ApplicationContext private val c
         }
     }
 
+    suspend fun saveAdminId(adminId: String) {
+        context.dataStore.edit { prefs ->
+            prefs[ADMIN_ID_KEY] = adminId
+        }
+    }
     val authTokenFlow: Flow<String?> = context.dataStore.data.map { preferences ->
         preferences[AUTH_TOKEN_KEY]
     }
@@ -50,6 +55,9 @@ class SessionManager @Inject constructor(@param:ApplicationContext private val c
 
     val isLoggedInFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[IS_LOGGED_IN_KEY] ?: false
+    }
+    val userEmailFlow: Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[USER_EMAIL_KEY]
     }
 }
 
