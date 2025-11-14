@@ -19,11 +19,13 @@ data class MeetingDto(
 )
 
 data class AdministratorIdDto(
-    val administratorId: String?
+    @SerializedName("administratorIdentifier")
+    val administratorIdentifier: String?
 )
 
 data class ClassroomIdDto(
-    val classroomId: String?
+    @SerializedName("classroomIdentifier")
+    val classroomIdentifier: String?
 )
 
 data class TeacherInfoDto(
@@ -59,8 +61,8 @@ fun MeetingDto.toDomain(): Meeting {
         date = date ?: "",
         start = start ?: "",
         end = end ?: "",
-        administratorId = administratorId?.administratorId ?: "",
-        classroomId = classroomId?.classroomId ?: "",
+        administratorId = administratorId?.administratorIdentifier ?: "",
+        classroomId = classroomId?.classroomIdentifier ?: "",
         teachers = teachers?.map { it.toDomain() } ?: emptyList()
     )
 }

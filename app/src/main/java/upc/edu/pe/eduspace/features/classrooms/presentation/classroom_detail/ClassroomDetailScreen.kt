@@ -3,6 +3,7 @@ package upc.edu.pe.eduspace.features.classrooms.presentation.classroom_detail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -95,10 +96,12 @@ fun ClassroomDetailRoute(
                 showAddResourceDialog = false
                 resourcesViewModel.resetCreateResourceState()
             }
+
             is UiState.Error -> {
                 snackMessage = (createResourceState as UiState.Error).message
                 resourcesViewModel.resetCreateResourceState()
             }
+
             else -> {}
         }
     }
@@ -110,10 +113,12 @@ fun ClassroomDetailRoute(
                 showEditResourceDialog = false
                 resourcesViewModel.resetUpdateResourceState()
             }
+
             is UiState.Error -> {
                 snackMessage = (updateResourceState as UiState.Error).message
                 resourcesViewModel.resetUpdateResourceState()
             }
+
             else -> {}
         }
     }
@@ -125,10 +130,12 @@ fun ClassroomDetailRoute(
                 showDeleteResourceDialog = false
                 resourcesViewModel.resetDeleteResourceState()
             }
+
             is UiState.Error -> {
                 snackMessage = (deleteResourceState as UiState.Error).message
                 resourcesViewModel.resetDeleteResourceState()
             }
+
             else -> {}
         }
     }
@@ -140,10 +147,12 @@ fun ClassroomDetailRoute(
                 showCreateMeetingDialog = false
                 viewModel.resetCreateMeetingState()
             }
+
             is UiState.Error -> {
                 snackMessage = (createMeetingState as UiState.Error).message
                 viewModel.resetCreateMeetingState()
             }
+
             else -> {}
         }
     }
@@ -198,29 +207,35 @@ fun ClassroomDetailRoute(
                     )
                 )
             }
-        }
+        },
+        containerColor = Color.Transparent
     ) { padding ->
         Box(
             Modifier
-                .padding(padding)
                 .fillMaxSize()
                 .background(
                     Brush.linearGradient(
                         listOf(Color(0xFF7EC0EE), Color(0xFFF5E682))
                     )
                 )
+                .padding(padding)
         ) {
             when (classroomState) {
                 is UiState.Loading -> {
                     CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
+
                 is UiState.Success -> {
                     val classroom = (classroomState as UiState.Success<Classroom>).data
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                            .padding(horizontal = 12.dp, vertical = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(
+                            top = 0.dp,
+                            bottom = 88.dp
+                        )
                     ) {
                         item {
                             ClassroomInfoCard(
@@ -272,6 +287,7 @@ fun ClassroomDetailRoute(
                                     }
                                 }
                             }
+
                             is UiState.Success -> {
                                 val resources = state.data
                                 if (resources.isEmpty()) {
@@ -294,11 +310,16 @@ fun ClassroomDetailRoute(
                                     }
                                 }
                             }
+
                             is UiState.Error -> {
                                 item {
                                     Card(
                                         modifier = Modifier.fillMaxWidth(),
-                                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE))
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = Color(
+                                                0xFFFFEBEE
+                                            )
+                                        )
                                     ) {
                                         Box(
                                             modifier = Modifier
@@ -314,10 +335,12 @@ fun ClassroomDetailRoute(
                                     }
                                 }
                             }
+
                             else -> {}
                         }
                     }
                 }
+
                 is UiState.Error -> {
                     Text(
                         text = (classroomState as UiState.Error).message,
@@ -325,6 +348,7 @@ fun ClassroomDetailRoute(
                         color = Color.Red
                     )
                 }
+
                 else -> {}
             }
         }
@@ -346,7 +370,12 @@ fun ClassroomDetailRoute(
                 resource = resource,
                 onDismiss = { showEditResourceDialog = false },
                 onSubmit = { name, kindOfResource ->
-                    resourcesViewModel.updateResource(classroomId, resource.id, name, kindOfResource)
+                    resourcesViewModel.updateResource(
+                        classroomId,
+                        resource.id,
+                        name,
+                        kindOfResource
+                    )
                 }
             )
         }
@@ -369,8 +398,9 @@ fun ClassroomDetailRoute(
         val classroom = (classroomState as? UiState.Success<Classroom>)?.data
         if (classroom != null) {
             CreateMeetingDialog(
+                classrooms = listOf(classroom),
                 onDismiss = { showCreateMeetingDialog = false },
-                onConfirm = { title, description, date, start, end ->
+                onConfirm = { classroomId, title, description, date, start, end ->
                     viewModel.createMeeting(classroom.id, title, description, date, start, end)
                 }
             )

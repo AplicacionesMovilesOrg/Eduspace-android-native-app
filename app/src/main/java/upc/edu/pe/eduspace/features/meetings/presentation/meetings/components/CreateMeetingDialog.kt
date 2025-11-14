@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Schedule
@@ -22,7 +23,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import upc.edu.pe.eduspace.R
+import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -57,19 +61,20 @@ import java.util.TimeZone
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateMeetingDialog(
+    classrooms: List<Classroom>,
     onDismiss: () -> Unit,
-    onConfirm: (title: String, description: String, date: String, start: String, end: String) -> Unit
+    onConfirm: (classroomId:String,title: String, description: String, date: String, start: String, end: String) -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
-    fun Long.toFormattedDateString() : String {
+    fun Long.toFormattedDateString(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         return sdf.format(Date(this))
     }
 
-    var selectedDateText by remember {mutableStateOf("")}
+    var selectedDateText by remember { mutableStateOf("") }
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis()
@@ -78,22 +83,36 @@ fun CreateMeetingDialog(
     var showDatePicker by remember { mutableStateOf(false) }
 
 
-
     // Time pickers state
-    val startTimeState = rememberTimePickerState(initialHour = 9, initialMinute = 0, is24Hour = true)
+    val startTimeState =
+        rememberTimePickerState(initialHour = 9, initialMinute = 0, is24Hour = true)
     val endTimeState = rememberTimePickerState(initialHour = 11, initialMinute = 0, is24Hour = true)
     var showStartTimePicker by remember { mutableStateOf(false) }
     var showEndTimePicker by remember { mutableStateOf(false) }
 
+
+    var selectedClassroom by remember { mutableStateOf<Classroom?>(null) }
+    var expanded by remember { mutableStateOf(false) }
+
     val startTime by remember {
         derivedStateOf {
-            String.format(Locale.getDefault(), "%02d:%02d:00", startTimeState.hour, startTimeState.minute)
+            String.format(
+                Locale.getDefault(),
+                "%02d:%02d:00",
+                startTimeState.hour,
+                startTimeState.minute
+            )
         }
     }
 
     val endTime by remember {
         derivedStateOf {
-            String.format(Locale.getDefault(), "%02d:%02d:00", endTimeState.hour, endTimeState.minute)
+            String.format(
+                Locale.getDefault(),
+                "%02d:%02d:00",
+                endTimeState.hour,
+                endTimeState.minute
+            )
         }
     }
 
@@ -128,7 +147,8 @@ fun CreateMeetingDialog(
                         .navigationBarsPadding()
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                )
+                {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Event, contentDescription = null, tint = primaryBlue)
                         Spacer(Modifier.width(8.dp))
@@ -170,7 +190,10 @@ fun CreateMeetingDialog(
                         readOnly = true,
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.meeting_date))
+                                Icon(
+                                    Icons.Default.CalendarToday,
+                                    contentDescription = stringResource(R.string.meeting_date)
+                                )
                             }
                         },
                         shape = tfShape,
@@ -190,7 +213,10 @@ fun CreateMeetingDialog(
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { showStartTimePicker = true }) {
-                                    Icon(Icons.Default.Schedule, contentDescription = stringResource(R.string.meeting_start_time))
+                                    Icon(
+                                        Icons.Default.Schedule,
+                                        contentDescription = stringResource(R.string.meeting_start_time)
+                                    )
                                 }
                             },
                             shape = tfShape,
@@ -205,7 +231,10 @@ fun CreateMeetingDialog(
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { showEndTimePicker = true }) {
-                                    Icon(Icons.Default.Schedule, contentDescription = stringResource(R.string.meeting_end_time))
+                                    Icon(
+                                        Icons.Default.Schedule,
+                                        contentDescription = stringResource(R.string.meeting_end_time)
+                                    )
                                 }
                             },
                             shape = tfShape,
@@ -213,6 +242,41 @@ fun CreateMeetingDialog(
                             modifier = Modifier.weight(1f)
                         )
                     }
+
+                    ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded })
+                        {
+                            OutlinedTextField(
+                                value = selectedClassroom?.name
+                                    ?: "",
+                                onValueChange = {},
+                                readOnly = true,
+                                label = { Text(stringResource(R.string.select_classroom)) },
+                                trailingIcon = {
+                                    Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                                },
+                                shape = tfShape,
+                                colors = tfColors,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .menuAnchor()
+                            )
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                classrooms.forEach { classroom ->
+                                    DropdownMenuItem(
+                                        text = { Text(classroom.name) },
+                                        onClick = {
+                                            selectedClassroom = classroom
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
 
                     Spacer(Modifier.height(4.dp))
 
@@ -230,6 +294,7 @@ fun CreateMeetingDialog(
                                     selectedDateText.isNotBlank()
                                 ) {
                                     onConfirm(
+                                        selectedClassroom?.id?:"",
                                         title.trim(),
                                         description.trim(),
                                         selectedDateText,
@@ -243,53 +308,55 @@ fun CreateMeetingDialog(
                         ) {
                             Text(stringResource(R.string.create))
                         }
+
+
                     }
                 }
             }
-        }
-    }
 
-    // Date Picker Dialog
-    if (showDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    datePickerState.selectedDateMillis?.let {
-                        selectedDateText = it.toFormattedDateString()
+            // Date Picker Dialog
+            if (showDatePicker) {
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                selectedDateText = it.toFormattedDateString()
+                            }
+                            showDatePicker = false
+                        }) {
+                            Text(stringResource(android.R.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDatePicker = false }) {
+                            Text(stringResource(R.string.cancel))
+                        }
                     }
-                    showDatePicker = false
-                }) {
-                    Text(stringResource(android.R.string.ok))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) {
-                    Text(stringResource(R.string.cancel))
+                ) {
+                    DatePicker(state = datePickerState)
                 }
             }
-        ) {
-            DatePicker(state = datePickerState)
-        }
-    }
 
-    // Start Time Picker Dialog
-    if (showStartTimePicker) {
-        TimePickerDialog(
-            onDismiss = { showStartTimePicker = false },
-            onConfirm = { showStartTimePicker = false }
-        ) {
-            TimePicker(state = startTimeState)
-        }
-    }
+            // Start Time Picker Dialog
+            if (showStartTimePicker) {
+                TimePickerDialog(
+                    onDismiss = { showStartTimePicker = false },
+                    onConfirm = { showStartTimePicker = false }
+                ) {
+                    TimePicker(state = startTimeState)
+                }
+            }
 
-    // End Time Picker Dialog
-    if (showEndTimePicker) {
-        TimePickerDialog(
-            onDismiss = { showEndTimePicker = false },
-            onConfirm = { showEndTimePicker = false }
-        ) {
-            TimePicker(state = endTimeState)
+            // End Time Picker Dialog
+            if (showEndTimePicker) {
+                TimePickerDialog(
+                    onDismiss = { showEndTimePicker = false },
+                    onConfirm = { showEndTimePicker = false }
+                ) {
+                    TimePicker(state = endTimeState)
+                }
+            }
         }
     }
 }

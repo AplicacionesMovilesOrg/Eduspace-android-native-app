@@ -10,7 +10,6 @@ interface MeetingsRepository {
     suspend fun getMeetingById(id: String): Meeting?
 
     suspend fun createMeeting(
-        administratorId: String,
         classroomId: String,
         meeting: CreateMeeting
     ): Meeting?

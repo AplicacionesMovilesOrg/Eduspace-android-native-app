@@ -23,22 +23,30 @@ class SessionManager @Inject constructor(@param:ApplicationContext private val c
         val IS_LOGGED_IN_KEY = booleanPreferencesKey("is_logged_in")
         val USER_EMAIL_KEY = stringPreferencesKey("user_email")
         val AUTH_TOKEN_KEY = stringPreferencesKey("auth_token")
-        val USERNAME_KEY = stringPreferencesKey("username")
     }
 
-
-    suspend fun saveSession(adminId: String, email: String, token: String, username: String) {
+    suspend fun saveSession(adminId: String, email: String, token: String) {
         context.dataStore.edit { preferences ->
             preferences[ADMIN_ID_KEY] = adminId
             preferences[IS_LOGGED_IN_KEY] = true
             preferences[USER_EMAIL_KEY] = email
             preferences[AUTH_TOKEN_KEY] = token
-            preferences[USERNAME_KEY] = username
         }
     }
 
+    suspend fun saveAdminId(adminId: String) {
+        context.dataStore.edit { prefs ->
+            prefs[ADMIN_ID_KEY] = adminId
+        }
+    }
     val authTokenFlow: Flow<String?> = context.dataStore.data.map { preferences ->
         preferences[AUTH_TOKEN_KEY]
+    }
+
+    suspend fun clearSession() {
+        context.dataStore.edit { preferences ->
+            preferences.clear()
+        }
     }
 
     val adminIdFlow: Flow<String?> = context.dataStore.data.map { preferences ->
@@ -48,20 +56,7 @@ class SessionManager @Inject constructor(@param:ApplicationContext private val c
     val isLoggedInFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[IS_LOGGED_IN_KEY] ?: false
     }
-
-
     val userEmailFlow: Flow<String?> = context.dataStore.data.map { preferences ->
         preferences[USER_EMAIL_KEY]
-    }
-
-
-    val usernameFlow: Flow<String?> = context.dataStore.data.map { preferences ->
-        preferences[USERNAME_KEY]
-    }
-
-    suspend fun clearSession() {
-        context.dataStore.edit { preferences ->
-            preferences.clear()
-        }
     }
 }

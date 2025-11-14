@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import upc.edu.pe.eduspace.core.data.SessionManager
 import upc.edu.pe.eduspace.core.utils.UiState
@@ -79,21 +78,15 @@ class ClassroomDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _createMeetingState.value = UiState.Loading
             try {
-                val administratorId = sessionManager.adminIdFlow.firstOrNull()
-
-                if (administratorId == null) {
-                    _createMeetingState.value = UiState.Error("User not authenticated")
-                    return@launch
-                }
-
                 val meeting = CreateMeeting(
+                    classroomId = classroomId,
                     title = title,
                     description = description,
                     date = date,
                     start = start,
                     end = end
                 )
-                val result = meetingsRepository.createMeeting(administratorId, classroomId, meeting)
+                val result = meetingsRepository.createMeeting(classroomId, meeting)
                 if (result != null) {
                     _createMeetingState.value = UiState.Success(result)
                 } else {

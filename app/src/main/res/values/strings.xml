@@ -250,4 +250,5 @@
     <string name="screen_meetings">Meetings</string>
     <string name="screen_teachers">Teachers</string>
     <string name="screen_logout">Logout</string>
+    <string name="select_classroom">Select a classroom</string>
 </resources>

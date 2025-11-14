@@ -3,6 +3,7 @@ package upc.edu.pe.eduspace.features.meetings.data.repositories
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import upc.edu.pe.eduspace.features.home.domain.repositories.HomeRepository
 import upc.edu.pe.eduspace.features.meetings.data.remote.models.CreateMeetingRequestDto
 import upc.edu.pe.eduspace.features.meetings.data.remote.models.UpdateMeetingRequestDto
 import upc.edu.pe.eduspace.features.meetings.data.remote.models.toDomain
@@ -14,7 +15,8 @@ import upc.edu.pe.eduspace.features.meetings.domain.repositories.MeetingsReposit
 import javax.inject.Inject
 
 class MeetingsRepositoryImpl @Inject constructor(
-    private val service: MeetingsService
+    private val service: MeetingsService,
+    private val homeRepository: HomeRepository
 ) : MeetingsRepository {
 
     override suspend fun getAllMeetings(): List<Meeting> = withContext(Dispatchers.IO) {
@@ -48,11 +50,13 @@ class MeetingsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createMeeting(
-        administratorId: String,
         classroomId: String,
         meeting: CreateMeeting
     ): Meeting? = withContext(Dispatchers.IO) {
         return@withContext try {
+            val adminProfile = homeRepository.getAdministratorProfiles()
+            val administratorId = adminProfile.id
+
             val dto = CreateMeetingRequestDto(
                 title = meeting.title,
                 description = meeting.description,
@@ -60,12 +64,21 @@ class MeetingsRepositoryImpl @Inject constructor(
                 start = meeting.start,
                 end = meeting.end
             )
+
+            Log.d(
+                "MeetingsRepository",
+                "createMeeting -> adminId='$administratorId', classroomId='$classroomId', body=$dto"
+            )
+
             val response = service.createMeeting(administratorId, classroomId, dto)
             if (response.isSuccessful) {
                 response.body()?.toDomain()
             } else {
                 val errorBody = response.errorBody()?.string()
-                Log.e("MeetingsRepository", "Error creating meeting: ${response.code()} - $errorBody")
+                Log.e(
+                    "MeetingsRepository",
+                    "Error creating meeting: ${response.code()} - $errorBody"
+                )
                 throw Exception("API error: $errorBody")
             }
         } catch (e: Exception) {
@@ -91,6 +104,7 @@ class MeetingsRepositoryImpl @Inject constructor(
                 response.body()?.toDomain()
             } else {
                 Log.e("MeetingsRepository", "Error updating meeting: ${response.code()}")
+                Log.e("MeetingsRepository", "Failed meeting data: $dto")
                 null
             }
         } catch (e: Exception) {
@@ -98,6 +112,7 @@ class MeetingsRepositoryImpl @Inject constructor(
             null
         }
     }
+
 
     override suspend fun deleteMeeting(id: String): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
@@ -114,18 +129,22 @@ class MeetingsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addTeacherToMeeting(meetingId: String, teacherId: String): Boolean = withContext(Dispatchers.IO) {
-        return@withContext try {
-            val response = service.addTeacherToMeeting(meetingId, teacherId)
-            if (response.isSuccessful) {
-                true
-            } else {
-                Log.e("MeetingsRepository", "Error adding teacher to meeting: ${response.code()}")
+    override suspend fun addTeacherToMeeting(meetingId: String, teacherId: String): Boolean =
+        withContext(Dispatchers.IO) {
+            return@withContext try {
+                val response = service.addTeacherToMeeting(meetingId, teacherId)
+                if (response.isSuccessful) {
+                    true
+                } else {
+                    Log.e(
+                        "MeetingsRepository",
+                        "Error adding teacher to meeting: ${response.code()}"
+                    )
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("MeetingsRepository", "Error adding teacher to meeting", e)
                 false
             }
-        } catch (e: Exception) {
-            Log.e("MeetingsRepository", "Error adding teacher to meeting", e)
-            false
         }
-    }
 }

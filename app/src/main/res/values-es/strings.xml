@@ -247,4 +247,5 @@
     <string name="dni_prefix">DNI: %s</string>
     <string name="delete_meeting_title">Eliminar Reunión</string>
     <string name="delete_meeting_message">¿Estás seguro de que quieres eliminar "%1$s"? Esta acción no se puede deshacer.</string>
+    <string name="select_classroom">Selecciona un salón</string>
 </resources>

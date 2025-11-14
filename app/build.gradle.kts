@@ -32,7 +32,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Add API_BASE_URL to BuildConfig
-        buildConfigField("String", "API_BASE_URL", "\"${envProperties.getProperty("API_BASE_URL", "https://eduspace-platform-production-e783.up.railway.app/api/v1/")}\"")
+        buildConfigField("String", "API_BASE_URL", "\"${envProperties.getProperty("API_BASE_URL", "https://eduspace-platform-production-4062.up.railway.app/api/v1/")}\"")
     }
 
     buildTypes {
