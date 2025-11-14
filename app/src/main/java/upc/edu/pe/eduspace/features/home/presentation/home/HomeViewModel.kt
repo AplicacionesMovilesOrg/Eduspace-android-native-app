@@ -3,9 +3,9 @@ package upc.edu.pe.eduspace.features.home.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import upc.edu.pe.eduspace.core.data.SessionManager
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.home.domain.models.UserHome
 import upc.edu.pe.eduspace.features.home.domain.repositories.HomeRepository
@@ -13,17 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: HomeRepository,
-    private val sessionManager: SessionManager
+    private val repository: HomeRepository
 ) : ViewModel() {
-
-
-    val usernameState: StateFlow<String?> = sessionManager.usernameFlow
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            null
-        )
 
     private val _homeState = MutableStateFlow<UiState<UserHome>>(UiState.Loading)
     val homeState: StateFlow<UiState<UserHome>> = _homeState

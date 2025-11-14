@@ -21,7 +21,6 @@ class LoginViewModel @Inject constructor(
     private val sessionManager: SessionManager,
     private val homeRepository: HomeRepository
 ) : ViewModel() {
-
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username
 
