@@ -89,8 +89,17 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
             startDestination = Screen.HOME.route,
             modifier = Modifier.fillMaxSize()
         ) {
-                composable(Screen.HOME.route) { HomeScreen() }
-                composable(Screen.CLASSROOMS.route) {
+            composable(Screen.HOME.route) {
+                HomeScreen(
+                    onMenuClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    }
+                )
+            }
+
+            composable(Screen.CLASSROOMS.route) {
                     ClassroomsRoute(
                         onClassroomClick = { classroomId ->
                             navController.navigate("classroom_detail/$classroomId")

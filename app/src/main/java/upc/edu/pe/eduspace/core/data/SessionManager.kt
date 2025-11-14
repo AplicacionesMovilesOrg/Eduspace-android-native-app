@@ -60,4 +60,3 @@ class SessionManager @Inject constructor(@param:ApplicationContext private val c
         preferences[USER_EMAIL_KEY]
     }
 }
-
