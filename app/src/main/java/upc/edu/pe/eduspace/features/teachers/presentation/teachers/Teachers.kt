@@ -89,7 +89,6 @@ fun TeachersRoute(
     val teacherUpdatedMessage = stringResource(R.string.teacher_updated)
     val teacherDeletedMessage = stringResource(R.string.teacher_deleted)
 
-    // Reload data when returning to this screen
     LaunchedEffect(Unit) {
         viewModel.getAllTeachers()
     }
@@ -101,7 +100,6 @@ fun TeachersRoute(
                 snack = teacherCreatedMessage
                 showAddDialog = false
                 viewModel.resetCreateState()
-                viewModel.getAllTeachers()
             }
             is UiState.Error -> {
                 snack = (createState as UiState.Error).message
@@ -117,7 +115,6 @@ fun TeachersRoute(
                 snack = teacherUpdatedMessage
                 showEditDialog = false
                 viewModel.resetUpdateState()
-                viewModel.getAllTeachers() // Recargar lista
             }
             is UiState.Error -> {
                 snack = (updateState as UiState.Error).message
@@ -134,7 +131,6 @@ fun TeachersRoute(
                 showDeleteDialog = false
                 selectedTeacher = null
                 viewModel.resetDeleteState()
-                viewModel.getAllTeachers()
             }
             is UiState.Error -> {
                 snack = (deleteState as UiState.Error).message
@@ -189,8 +185,8 @@ fun TeachersRoute(
     if (showDeleteDialog) {
         selectedTeacher?.let { teacher ->
             DeleteConfirmationDialog(
-                title = stringResource(R.string.delete_teacher), // Añadir string
-                message = stringResource(R.string.delete_teacher_confirm, "${teacher.firstName} ${teacher.lastName}"), // Añadir string
+                title = stringResource(R.string.delete_teacher),
+                message = stringResource(R.string.delete_teacher_confirm, "${teacher.firstName} ${teacher.lastName}"),
                 onDismiss = { showDeleteDialog = false },
                 onConfirm = {
                     viewModel.deleteTeacher(teacher.id)
@@ -397,7 +393,6 @@ private fun TeacherCard(
     }
 }
 
-
 @Composable
 private fun TeacherDetailDialog(
     teacher: Teacher,
@@ -426,7 +421,6 @@ private fun TeacherDetailDialog(
                         .navigationBarsPadding(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Header with gradient icon
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -462,54 +456,10 @@ private fun TeacherDetailDialog(
                                 fontWeight = FontWeight.Bold
                             )
                         )
-
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Button(
-                                onClick = onDelete,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFD32F2F),
-                                    contentColor = Color.White
-                                ),
-                                shape = RoundedCornerShape(12.dp),
-                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                            ) {
-                                Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(20.dp))
-                                Spacer(Modifier.width(8.dp))
-                                Text(stringResource(R.string.delete), fontWeight = FontWeight.Bold) // Añadir string
-                            }
-
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Button(
-                                    onClick = onEdit,
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(0xFF2E68B8).copy(alpha = 0.1f),
-                                        contentColor = Color(0xFF2E68B8)
-                                    ),
-                                    shape = RoundedCornerShape(12.dp),
-                                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                                ) {
-                                    Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(20.dp))
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(stringResource(R.string.edit), fontWeight = FontWeight.Bold)
-                                }
-
-                                TextButton(
-                                    onClick = onDismiss,
-                                    shape = RoundedCornerShape(12.dp)
-                                ) {
-                                    Text(stringResource(R.string.close), fontWeight = FontWeight.Bold, color = Color(0xFF2E68B8))
-                                }
-                            }
-                        }
                     }
 
                     HorizontalDivider()
 
-                    // Details section
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         DetailRow(label = stringResource(R.string.teacher_email), value = teacher.email)
                         DetailRow(label = stringResource(R.string.teacher_dni), value = teacher.dni)
@@ -517,19 +467,46 @@ private fun TeacherDetailDialog(
                         DetailRow(label = stringResource(R.string.teacher_phone), value = teacher.phone)
                     }
 
-                    // Close button
                     Row(
                         Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Button(
-                            onClick = onDismiss,
+                            onClick = onDelete,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF2E68B8)
+                                containerColor = Color(0xFFD32F2F),
+                                contentColor = Color.White
                             ),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
                         ) {
-                            Text(stringResource(R.string.close), fontWeight = FontWeight.Bold)
+                            Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(20.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.delete), fontWeight = FontWeight.Bold)
+                        }
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(
+                                onClick = onEdit,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF2E68B8).copy(alpha = 0.1f),
+                                    contentColor = Color(0xFF2E68B8)
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
+                            ) {
+                                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(20.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.edit), fontWeight = FontWeight.Bold)
+                            }
+
+                            TextButton(
+                                onClick = onDismiss,
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text(stringResource(R.string.close), fontWeight = FontWeight.Bold, color = Color(0xFF2E68B8))
+                            }
                         }
                     }
                 }

@@ -67,6 +67,7 @@ class TeachersViewModel @Inject constructor(
             try {
                 repository.updateTeacher(id, input)
                 _updateState.value = UiState.Success(Unit)
+                getAllTeachers()
             } catch (e: Exception) {
                 _updateState.value = UiState.Error(e.message ?: "Unknown error")
             }
@@ -79,6 +80,7 @@ class TeachersViewModel @Inject constructor(
             try {
                 repository.deleteTeacher(id)
                 _deleteState.value = UiState.Success(Unit)
+                getAllTeachers()
             } catch (e: Exception) {
                 _deleteState.value = UiState.Error(e.message ?: "Unknown error")
             }
