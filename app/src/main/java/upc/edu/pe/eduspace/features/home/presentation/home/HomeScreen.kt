@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -56,6 +57,7 @@ fun HomeScreen(
                     listOf(Color(0xFF7EC0EE), Color(0xFFF5E682))
                 )
             )
+            .systemBarsPadding()
     ) {
         when (val state = homeState) {
             is UiState.Loading -> {

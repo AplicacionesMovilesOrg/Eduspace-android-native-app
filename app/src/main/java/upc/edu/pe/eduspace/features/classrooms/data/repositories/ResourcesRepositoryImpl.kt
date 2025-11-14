@@ -32,7 +32,7 @@ class ResourcesRepositoryImpl @Inject constructor(
             Log.d("ResourcesRepository", "Received ${list.size} resources from API: $list")
 
             val domainList = list.mapNotNull { dto ->
-                val domain = dto.toDomain()
+                val domain = dto.toDomain(fallbackClassroomId = classroomId)
                 if (domain == null) {
                     Log.w("ResourcesRepository", "Failed to convert DTO to domain: $dto")
                 }

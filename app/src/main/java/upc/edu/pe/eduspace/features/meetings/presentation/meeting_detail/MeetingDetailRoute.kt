@@ -191,10 +191,12 @@ fun MeetingDetailRoute(
                     val meeting = (meetingState as UiState.Success<Meeting>).data
                     val classrooms: List<Classroom> = classroomsState.getOrNull() ?: emptyList()
 
+                    android.util.Log.d(
+                        "MeetingDetail",
+                        "meeting.classroomId=${meeting.classroomId}, classrooms=${classrooms.map { it.id }}"
+                    )
 
-                    val classroomForMeeting: Classroom? = meeting?.let { m ->
-                        classrooms.find { it.id == m.classroomId }
-                    }
+                    val classroomForMeeting: Classroom? = classrooms.find { it.id == meeting.classroomId }
 
 
 

@@ -1,5 +1,6 @@
 package upc.edu.pe.eduspace.features.auth.presentation.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,12 +12,14 @@ import upc.edu.pe.eduspace.core.utils.Resource
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.auth.domain.models.User
 import upc.edu.pe.eduspace.features.auth.domain.repositories.AuthRepository
+import upc.edu.pe.eduspace.features.home.domain.repositories.HomeRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val repository: AuthRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val homeRepository: HomeRepository
 ) : ViewModel() {
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username
@@ -38,19 +41,26 @@ class LoginViewModel @Inject constructor(
     fun login() {
         _user.value = UiState.Loading
         viewModelScope.launch {
-            val resource = repository.signIn(
-                username.value,
-                password.value
-            )
+            val resource = repository.signIn(username.value, password.value)
 
             when (resource) {
                 is Resource.Success -> {
                     val user = resource.data as User
-                    // Save complete session with token
-                    sessionManager.saveSession(user.id, username.value, user.token)
+                    sessionManager.saveSession(
+                        adminId = user.id,
+                        email = username.value,
+                        token = user.token
+                    )
+                    try {
+                        val adminProfile = homeRepository.getAdministratorProfiles()
+                        sessionManager.saveAdminId(adminProfile.id)
+                    } catch (e: Exception) {
+                        Log.e("LoginViewModel", "Failed to fetch admin profile: ${e.message}")
+                    }
+
                     _user.value = UiState.Success(user)
                 }
-                is Resource.Error -> _user.value = UiState.Error(resource.message as String)
+                is Resource.Error -> _user.value = UiState.Error(resource.message ?: "Error")
                 is Resource.Loading -> _user.value = UiState.Loading
             }
         }
