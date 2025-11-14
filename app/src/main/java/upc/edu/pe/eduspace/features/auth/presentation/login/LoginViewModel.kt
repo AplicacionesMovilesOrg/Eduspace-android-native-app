@@ -18,6 +18,7 @@ class LoginViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
+
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username
 
@@ -46,11 +47,17 @@ class LoginViewModel @Inject constructor(
             when (resource) {
                 is Resource.Success -> {
                     val user = resource.data as User
-                    // Save complete session with token
-                    sessionManager.saveSession(user.id, username.value, user.token)
+
+                    sessionManager.saveSession(
+                        adminId = user.id.toString(),
+                        email = user.username,
+                        token = user.token,
+                        username = user.username
+                    )
+
                     _user.value = UiState.Success(user)
                 }
-                is Resource.Error -> _user.value = UiState.Error(resource.message as String)
+                is Resource.Error -> _user.value = UiState.Error(resource.message ?: "Error en login")
                 is Resource.Loading -> _user.value = UiState.Loading
             }
         }
