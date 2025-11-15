@@ -4,10 +4,10 @@ import androidx.annotation.StringRes
 import upc.edu.pe.eduspace.R
 
 data class Resource(
-    val id: Int,
+    val id: String,
     val name: String,
     val kindOfResource: String,
-    val classroomId: Int
+    val classroomId: String
 )
 
 enum class ResourceType(@StringRes val displayNameRes: Int, val backendName: String) {

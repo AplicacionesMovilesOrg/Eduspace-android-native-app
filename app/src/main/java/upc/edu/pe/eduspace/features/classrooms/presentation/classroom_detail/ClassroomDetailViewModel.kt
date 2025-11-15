@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import upc.edu.pe.eduspace.core.data.SessionManager
 import upc.edu.pe.eduspace.core.utils.UiState
@@ -36,7 +35,7 @@ class ClassroomDetailViewModel @Inject constructor(
     private val _createMeetingState = MutableStateFlow<UiState<Meeting>>(UiState.Initial)
     val createMeetingState: StateFlow<UiState<Meeting>> = _createMeetingState.asStateFlow()
 
-    fun getClassroomById(classroomId: Int) {
+    fun getClassroomById(classroomId: String) {
         viewModelScope.launch {
             _classroomState.value = UiState.Loading
             try {
@@ -54,7 +53,7 @@ class ClassroomDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadTeacherById(teacherId: Int) {
+    private suspend fun loadTeacherById(teacherId: String) {
         _teacherState.value = UiState.Loading
         try {
             val teacher = teachersRepository.getTeacherById(teacherId)
@@ -69,7 +68,7 @@ class ClassroomDetailViewModel @Inject constructor(
     }
 
     fun createMeeting(
-        classroomId: Int,
+        classroomId: String,
         title: String,
         description: String,
         date: String,
@@ -79,21 +78,15 @@ class ClassroomDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _createMeetingState.value = UiState.Loading
             try {
-                val administratorId = sessionManager.adminIdFlow.firstOrNull()
-
-                if (administratorId == null) {
-                    _createMeetingState.value = UiState.Error("User not authenticated")
-                    return@launch
-                }
-
                 val meeting = CreateMeeting(
+                    classroomId = classroomId,
                     title = title,
                     description = description,
                     date = date,
                     start = start,
                     end = end
                 )
-                val result = meetingsRepository.createMeeting(administratorId, classroomId, meeting)
+                val result = meetingsRepository.createMeeting(classroomId, meeting)
                 if (result != null) {
                     _createMeetingState.value = UiState.Success(result)
                 } else {

@@ -4,8 +4,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import upc.edu.pe.eduspace.BuildConfig
+import upc.edu.pe.eduspace.core.data.AuthInterceptor
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -17,14 +20,26 @@ object RemoteModule {
     @Singleton
     @Named("url")
     fun provideBaseUrl(): String {
-        return "https://eduspace-platform-production-e783.up.railway.app/api/v1/"
+        return BuildConfig.API_BASE_URL
     }
 
     @Provides
     @Singleton
-    fun provideRetrofit(@Named("url") apiBaseUrl: String): Retrofit {
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(
+        @Named("url") apiBaseUrl: String,
+        okHttpClient: OkHttpClient
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(apiBaseUrl)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

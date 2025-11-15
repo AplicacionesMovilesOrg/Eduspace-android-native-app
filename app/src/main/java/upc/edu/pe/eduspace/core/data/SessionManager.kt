@@ -5,7 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,17 +19,28 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("e
 class SessionManager @Inject constructor(@param:ApplicationContext private val context: Context) {
 
     companion object {
-        val ADMIN_ID_KEY = intPreferencesKey("admin_id")
+        val ADMIN_ID_KEY = stringPreferencesKey("admin_id")
         val IS_LOGGED_IN_KEY = booleanPreferencesKey("is_logged_in")
         val USER_EMAIL_KEY = stringPreferencesKey("user_email")
+        val AUTH_TOKEN_KEY = stringPreferencesKey("auth_token")
     }
 
-    suspend fun saveSession(adminId: Int, email: String) {
+    suspend fun saveSession(adminId: String, email: String, token: String) {
         context.dataStore.edit { preferences ->
             preferences[ADMIN_ID_KEY] = adminId
             preferences[IS_LOGGED_IN_KEY] = true
             preferences[USER_EMAIL_KEY] = email
+            preferences[AUTH_TOKEN_KEY] = token
         }
+    }
+
+    suspend fun saveAdminId(adminId: String) {
+        context.dataStore.edit { prefs ->
+            prefs[ADMIN_ID_KEY] = adminId
+        }
+    }
+    val authTokenFlow: Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[AUTH_TOKEN_KEY]
     }
 
     suspend fun clearSession() {
@@ -39,12 +49,15 @@ class SessionManager @Inject constructor(@param:ApplicationContext private val c
         }
     }
 
-    val adminIdFlow: Flow<Int?> = context.dataStore.data.map { preferences ->
+    val adminIdFlow: Flow<String?> = context.dataStore.data.map { preferences ->
         preferences[ADMIN_ID_KEY]
     }
 
     val isLoggedInFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[IS_LOGGED_IN_KEY] ?: false
+    }
+    val userEmailFlow: Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[USER_EMAIL_KEY]
     }
 }
 

@@ -49,7 +49,7 @@ class ClassroomsViewModel @Inject constructor(
         }
     }
 
-    fun getClassroomsByTeacherId(teacherId: Int) {
+    fun getClassroomsByTeacherId(teacherId: String) {
         viewModelScope.launch {
             _classroomsState.value = UiState.Loading
             try {
@@ -61,7 +61,7 @@ class ClassroomsViewModel @Inject constructor(
         }
     }
 
-    fun createClassroom(teacherId: Int, name: String, description: String) {
+    fun createClassroom(teacherId: String, name: String, description: String) {
         viewModelScope.launch {
             _createState.value = UiState.Loading
             try {
@@ -83,7 +83,7 @@ class ClassroomsViewModel @Inject constructor(
         }
     }
 
-    fun updateClassroom(id: Int, teacherId: Int, name: String, description: String) {
+    fun updateClassroom(id: String, teacherId: String, name: String, description: String) {
         viewModelScope.launch {
             _updateState.value = UiState.Loading
             try {
@@ -105,7 +105,7 @@ class ClassroomsViewModel @Inject constructor(
         }
     }
 
-    fun deleteClassroom(id: Int) {
+    fun deleteClassroom(id: String) {
         viewModelScope.launch {
             _deleteState.value = UiState.Loading
             try {

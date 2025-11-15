@@ -20,6 +20,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -58,8 +60,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
 import upc.edu.pe.eduspace.core.utils.UiState
+import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.DeleteConfirmationDialog
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.CreateTeacher
+import upc.edu.pe.eduspace.features.teachers.domain.repositories.UpdateTeacher
+import upc.edu.pe.eduspace.features.teachers.presentation.teachers.components.EditTeacherDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,13 +74,21 @@ fun TeachersRoute(
     val teachersState by viewModel.teachers.collectAsStateWithLifecycle()
     val createState by viewModel.createState.collectAsStateWithLifecycle()
 
-    var showDialog by remember { mutableStateOf(false) }
+    val updateState by viewModel.updateState.collectAsStateWithLifecycle()
+    val deleteState by viewModel.deleteState.collectAsStateWithLifecycle()
+
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     var snack by remember { mutableStateOf<String?>(null) }
     var selectedTeacher by remember { mutableStateOf<Teacher?>(null) }
 
     val teacherCreatedMessage = stringResource(R.string.teacher_created)
 
-    // Reload data when returning to this screen
+    val teacherUpdatedMessage = stringResource(R.string.teacher_updated)
+    val teacherDeletedMessage = stringResource(R.string.teacher_deleted)
+
     LaunchedEffect(Unit) {
         viewModel.getAllTeachers()
     }
@@ -85,7 +98,7 @@ fun TeachersRoute(
         when (createState) {
             is UiState.Success -> {
                 snack = teacherCreatedMessage
-                showDialog = false
+                showAddDialog = false
                 viewModel.resetCreateState()
             }
             is UiState.Error -> {
@@ -96,16 +109,47 @@ fun TeachersRoute(
         }
     }
 
+    LaunchedEffect(updateState) {
+        when (updateState) {
+            is UiState.Success -> {
+                snack = teacherUpdatedMessage
+                showEditDialog = false
+                viewModel.resetUpdateState()
+            }
+            is UiState.Error -> {
+                snack = (updateState as UiState.Error).message
+                viewModel.resetUpdateState()
+            }
+            else -> {}
+        }
+    }
+
+    LaunchedEffect(deleteState) {
+        when (deleteState) {
+            is UiState.Success -> {
+                snack = teacherDeletedMessage
+                showDeleteDialog = false
+                selectedTeacher = null
+                viewModel.resetDeleteState()
+            }
+            is UiState.Error -> {
+                snack = (deleteState as UiState.Error).message
+                viewModel.resetDeleteState()
+            }
+            else -> {}
+        }
+    }
+
     TeachersContent(
         teachersState = teachersState,
-        onAddTeacher = { showDialog = true },
+        onAddTeacher = { showAddDialog = true },
         onTeacherClick = { selectedTeacher = it },
         onRetry = { viewModel.getAllTeachers() }
     )
 
-    if (showDialog) {
+    if (showAddDialog) {
         AddTeacherDialogStyled(
-            onDismiss = { showDialog = false },
+            onDismiss = { showAddDialog = false },
             onSubmit = { firstName, lastName, email, dni, address, phone, username, password ->
                 viewModel.createTeacher(
                     CreateTeacher(
@@ -123,10 +167,44 @@ fun TeachersRoute(
         )
     }
 
+    if (showEditDialog) {
+        selectedTeacher?.let { teacher ->
+            EditTeacherDialog(
+                teacher = teacher,
+                onDismiss = { showEditDialog = false },
+                onSubmit = { firstName, lastName, email, dni, address, phone ->
+                    viewModel.updateTeacher(
+                        teacher.id,
+                        UpdateTeacher(firstName, lastName, email, dni, address, phone)
+                    )
+                }
+            )
+        }
+    }
+
+    if (showDeleteDialog) {
+        selectedTeacher?.let { teacher ->
+            DeleteConfirmationDialog(
+                title = stringResource(R.string.delete_teacher),
+                message = stringResource(R.string.delete_teacher_confirm, "${teacher.firstName} ${teacher.lastName}"),
+                onDismiss = { showDeleteDialog = false },
+                onConfirm = {
+                    viewModel.deleteTeacher(teacher.id)
+                }
+            )
+        }
+    }
+
     selectedTeacher?.let { t ->
         TeacherDetailDialog(
             teacher = t,
-            onDismiss = { selectedTeacher = null }
+            onDismiss = { selectedTeacher = null },
+            onEdit = {
+                showEditDialog = true
+            },
+            onDelete = {
+                showDeleteDialog = true
+            }
         )
     }
 
@@ -315,11 +393,12 @@ private fun TeacherCard(
     }
 }
 
-
 @Composable
 private fun TeacherDetailDialog(
     teacher: Teacher,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -342,7 +421,6 @@ private fun TeacherDetailDialog(
                         .navigationBarsPadding(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Header with gradient icon
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -382,7 +460,6 @@ private fun TeacherDetailDialog(
 
                     HorizontalDivider()
 
-                    // Details section
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         DetailRow(label = stringResource(R.string.teacher_email), value = teacher.email)
                         DetailRow(label = stringResource(R.string.teacher_dni), value = teacher.dni)
@@ -390,19 +467,46 @@ private fun TeacherDetailDialog(
                         DetailRow(label = stringResource(R.string.teacher_phone), value = teacher.phone)
                     }
 
-                    // Close button
                     Row(
                         Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Button(
-                            onClick = onDismiss,
+                            onClick = onDelete,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF2E68B8)
+                                containerColor = Color(0xFFD32F2F),
+                                contentColor = Color.White
                             ),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
                         ) {
-                            Text(stringResource(R.string.close), fontWeight = FontWeight.Bold)
+                            Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(20.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.delete), fontWeight = FontWeight.Bold)
+                        }
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(
+                                onClick = onEdit,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF2E68B8).copy(alpha = 0.1f),
+                                    contentColor = Color(0xFF2E68B8)
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
+                            ) {
+                                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(20.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.edit), fontWeight = FontWeight.Bold)
+                            }
+
+                            TextButton(
+                                onClick = onDismiss,
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text(stringResource(R.string.close), fontWeight = FontWeight.Bold, color = Color(0xFF2E68B8))
+                            }
                         }
                     }
                 }

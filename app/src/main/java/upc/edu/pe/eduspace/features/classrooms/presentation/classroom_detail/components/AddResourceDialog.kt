@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -46,9 +47,9 @@ import upc.edu.pe.eduspace.features.classrooms.domain.models.ResourceType
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddResourceDialog(
-    classroomId: Int,
+    classroomId: String,
     onDismiss: () -> Unit,
-    onSubmit: (name: String, kindOfResource: String) -> Unit
+    onSubmit: (String, String) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var selectedResourceType by remember { mutableStateOf<ResourceType?>(null) }
@@ -103,7 +104,7 @@ fun AddResourceDialog(
                             value = name,
                             onValueChange = { name = it },
                             label = { Text(stringResource(R.string.resource_name)) },
-                            placeholder = { Text(stringResource(R.string.resource_name_placeholder, selectedResourceType?.let { stringResource(it.displayNameRes) } ?: stringResource(R.string.resource_name), classroomId)) },
+                            placeholder = { Text(stringResource(R.string.resource_name_placeholder, selectedResourceType?.let { stringResource(it.displayNameRes) } ?: stringResource(R.string.resource_name))) },
                             singleLine = true,
                             shape = tfShape,
                             colors = tfColors,
@@ -138,7 +139,9 @@ fun AddResourceDialog(
 
                         ExposedDropdownMenu(
                             expanded = expanded,
-                            onDismissRequest = { expanded = false }
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier
+                                .heightIn(max = 280.dp)
                         ) {
                             ResourceType.getAllTypes().forEach { type ->
                                 DropdownMenuItem(
@@ -166,13 +169,7 @@ fun AddResourceDialog(
                             onClick = {
                                 val type = selectedResourceType
                                 if (name.isNotBlank() && type != null) {
-                                    // Add suffix if name doesn't already have one
-                                    val finalName = if (name.trim().contains("-")) {
-                                        name.trim()
-                                    } else {
-                                        "${name.trim()}-Room$classroomId"
-                                    }
-                                    onSubmit(finalName, type.backendName)
+                                    onSubmit(name.trim(), type.backendName)
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = primaryBlue),

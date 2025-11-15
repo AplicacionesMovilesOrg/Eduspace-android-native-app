@@ -3,7 +3,7 @@ package upc.edu.pe.eduspace.features.home.data.remote.models
 import upc.edu.pe.eduspace.features.home.domain.models.AdministratorProfile
 
 data class AdministratorProfileDto(
-    val id: Int,
+    val id: String,
     val firstName: String,
     val lastName: String,
     val email: String,

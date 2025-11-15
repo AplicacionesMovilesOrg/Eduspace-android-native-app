@@ -6,7 +6,7 @@ data class SignInRequestDto(
 )
 
 data class AuthenticatedResponseDto(
-    val id: Int,
+    val id: String,
     val username: String,
     val role: String,
     val token: String
@@ -24,7 +24,7 @@ data class SignUpRequestDto(
 )
 
 data class SignUpResponseDto(
-    val id: Int,
+    val id: String,
     val firstName: String,
     val lastName: String,
     val email: String

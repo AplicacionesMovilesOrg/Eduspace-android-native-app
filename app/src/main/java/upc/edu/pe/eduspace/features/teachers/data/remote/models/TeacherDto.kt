@@ -1,7 +1,7 @@
 package upc.edu.pe.eduspace.features.teachers.data.remote.models
 
 data class TeacherDto(
-    val id: Int?,
+    val id: String?,
     val firstName: String?,
     val lastName: String?,
     val email: String?,
@@ -9,5 +9,5 @@ data class TeacherDto(
     val address: String?,
     val phone: String?,
     val username: String?,
-    val administratorId: Int?
+    val administratorId: String?
 )

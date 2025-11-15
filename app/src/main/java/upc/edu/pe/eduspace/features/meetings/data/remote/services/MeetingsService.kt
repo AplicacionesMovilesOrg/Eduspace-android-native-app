@@ -16,27 +16,27 @@ interface MeetingsService {
     suspend fun getAllMeetings(): Response<List<MeetingDto>>
 
     @GET("meetings/{id}")
-    suspend fun getMeetingById(@Path("id") id: Int): Response<MeetingDto>
+    suspend fun getMeetingById(@Path("id") id: String): Response<MeetingDto>
 
     @POST("administrators/{administratorId}/classrooms/{classroomId}/meetings")
     suspend fun createMeeting(
-        @Path("administratorId") administratorId: Int,
-        @Path("classroomId") classroomId: Int,
+        @Path("administratorId") administratorId: String,
+        @Path("classroomId") classroomId: String,
         @Body meeting: CreateMeetingRequestDto
     ): Response<MeetingDto>
 
     @PUT("meetings/{id}")
     suspend fun updateMeeting(
-        @Path("id") id: Int,
+        @Path("id") id: String,
         @Body meeting: UpdateMeetingRequestDto
     ): Response<MeetingDto>
 
     @DELETE("meetings/{id}")
-    suspend fun deleteMeeting(@Path("id") id: Int): Response<Unit>
+    suspend fun deleteMeeting(@Path("id") id: String): Response<Unit>
 
     @POST("meetings/{meetingId}/teachers/{teacherId}")
     suspend fun addTeacherToMeeting(
-        @Path("meetingId") meetingId: Int,
-        @Path("teacherId") teacherId: Int
+        @Path("meetingId") meetingId: String,
+        @Path("teacherId") teacherId: String
     ): Response<Unit>
 }
