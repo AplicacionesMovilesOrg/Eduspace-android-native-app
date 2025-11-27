@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import upc.edu.pe.eduspace.R
+import upc.edu.pe.eduspace.core.ui.theme.EduGradientBackground
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.home.domain.models.ReportResource
 
@@ -52,11 +53,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.linearGradient(
-                    listOf(Color(0xFF7EC0EE), Color(0xFFF5E682))
-                )
-            )
+            .background(EduGradientBackground)
             .systemBarsPadding()
     ) {
         when (val state = homeState) {

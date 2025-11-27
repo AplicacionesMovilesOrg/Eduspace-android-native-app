@@ -59,6 +59,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
+import upc.edu.pe.eduspace.core.ui.theme.EduGradientBackground
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.DeleteConfirmationDialog
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
@@ -255,11 +256,7 @@ private fun TeachersContent(
             Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(
-                    Brush.linearGradient(
-                        listOf(Color(0xFF7EC0EE), Color(0xFFF5E682))
-                    )
-                )
+                .background(EduGradientBackground)
         ) {
             when (teachersState) {
                 is UiState.Loading -> {
