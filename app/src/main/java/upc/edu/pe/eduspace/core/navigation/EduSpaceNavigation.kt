@@ -1,10 +1,17 @@
 package upc.edu.pe.eduspace.core.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import kotlinx.coroutines.CoroutineScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,6 +41,9 @@ import upc.edu.pe.eduspace.features.menu.domain.model.Screen
 import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_area_detail.SharedAreaDetailRoute
 import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_areas.SharedAreasRoute
 import upc.edu.pe.eduspace.features.teachers.presentation.teachers.TeachersRoute
+import upc.edu.pe.eduspace.features.teachers.presentation.teacher_detail.TeacherDetailRoute
+import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
+import upc.edu.pe.eduspace.features.teachers.domain.repositories.UpdateTeacher
 
 @Composable
 fun EduSpaceNavigation(onLogout: () -> Unit) {
@@ -58,8 +68,14 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        scrimColor = Color.Black.copy(alpha = 0.32f),
         drawerContent = {
-            Box(modifier = Modifier.fillMaxSize().background(Color(0xFFFFFFFF))) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.75f)
+                    .background(Color(0xFFFFFFFF))
+            ) {
                 DrawerMenu(
                     items = menuItems,
                     current = currentScreen,
@@ -89,9 +105,16 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
             startDestination = Screen.HOME.route,
             modifier = Modifier.fillMaxSize()
         ) {
-                composable(Screen.HOME.route) { HomeScreen() }
+                composable(Screen.HOME.route) {
+                    HomeScreen(
+                        drawerState = drawerState,
+                        scope = scope
+                    )
+                }
                 composable(Screen.CLASSROOMS.route) {
                     ClassroomsRoute(
+                        drawerState = drawerState,
+                        scope = scope,
                         onClassroomClick = { classroomId ->
                             navController.navigate("classroom_detail/$classroomId")
                         }
@@ -111,6 +134,8 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                 }
                 composable(Screen.SHARED_SPACES.route) {
                     SharedAreasRoute(
+                        drawerState = drawerState,
+                        scope = scope,
                         onNavigateToDetail = { sharedAreaId ->
                             navController.navigate("shared_area_detail/$sharedAreaId")
                         }
@@ -128,6 +153,8 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                 }
                 composable(Screen.MEETINGS.route) {
                     MeetingsRoute(
+                        drawerState = drawerState,
+                        scope = scope,
                         onNavigateToDetail = { meetingId ->
                             navController.navigate("meeting_detail/$meetingId")
                         }
@@ -143,7 +170,59 @@ fun EduSpaceNavigation(onLogout: () -> Unit) {
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
-                composable(Screen.TEACHERS.route) { TeachersRoute() }
+                composable(Screen.TEACHERS.route) {
+                    TeachersRoute(
+                        drawerState = drawerState,
+                        scope = scope,
+                        onNavigateToDetail = { teacherId ->
+                            navController.navigate("teacher_detail/$teacherId")
+                        }
+                    )
+                }
+                composable(
+                    route = "teacher_detail/{teacherId}",
+                    arguments = listOf(
+                        navArgument("teacherId") { type = NavType.StringType }
+                    )
+                ) { backStackEntry ->
+                    val teacherId = backStackEntry.arguments?.getString("teacherId") ?: ""
+                    // Por ahora usamos un placeholder, en producción deberías obtener el teacher del viewModel
+                    val sessionManager = remember { SessionManager(context) }
+                    androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel<upc.edu.pe.eduspace.features.teachers.presentation.teachers.TeachersViewModel>().let { viewModel ->
+                        val teachersState by viewModel.teachers.collectAsState()
+                        LaunchedEffect(Unit) {
+                            viewModel.getAllTeachers()
+                        }
+                        when (val state = teachersState) {
+                            is upc.edu.pe.eduspace.core.utils.UiState.Success -> {
+                                val teacher = state.data.find { it.id == teacherId }
+                                if (teacher != null) {
+                                    TeacherDetailRoute(
+                                        teacherId = teacherId,
+                                        teacher = teacher,
+                                        onNavigateBack = { navController.popBackStack() },
+                                        onEdit = { id, updateTeacher ->
+                                            viewModel.updateTeacher(id, updateTeacher)
+                                        },
+                                        onDelete = { id ->
+                                            viewModel.deleteTeacher(id)
+                                            navController.popBackStack()
+                                        }
+                                    )
+                                } else {
+                                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                            }
+                            else -> {
+                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+                    }
+                }
             }
 //...
     }

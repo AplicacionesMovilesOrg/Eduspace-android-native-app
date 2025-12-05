@@ -8,27 +8,30 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,20 +39,18 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.data.LanguagePreferences
+import upc.edu.pe.eduspace.core.ui.theme.EduGradientPrimary
 import upc.edu.pe.eduspace.core.utils.getLocalizedLabel
 import upc.edu.pe.eduspace.features.menu.domain.model.MenuEntry
 import upc.edu.pe.eduspace.features.menu.domain.model.Screen
 
 @Composable
 fun DrawerHeader() {
-    val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFF1FA2FF), Color(0xFF12D8FA), Color(0xFFA6FFCB))
-    )
+    val gradient = EduGradientPrimary
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clip(RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp))
             .background(gradient),
         contentAlignment = Alignment.Center
     ) {
@@ -77,7 +78,11 @@ fun DrawerMenu(
     val navigationItems = items.filter { it.screen != Screen.LOGOUT }
     val logoutItem = items.find { it.screen == Screen.LOGOUT }
 
-    Column(Modifier.fillMaxSize()) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+    ) {
         DrawerHeader()
 
         Spacer(Modifier.height(8.dp))
@@ -136,6 +141,7 @@ fun DrawerMenu(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageSelector(
     languagePreferences: LanguagePreferences,
@@ -148,7 +154,7 @@ fun LanguageSelector(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF1FA2FF).copy(alpha = 0.1f)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -160,72 +166,43 @@ fun LanguageSelector(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Language,
-                    contentDescription = stringResource(R.string.language),
-                    tint = Color(0xFF1FA2FF),
-                    modifier = Modifier.size(24.dp)
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                Spacer(Modifier.padding(4.dp))
+                Spacer(Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.language),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF161616)
+                    fontWeight = FontWeight.Medium
                 )
             }
 
-            Row(
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // English button
-                IconButton(
+            SingleChoiceSegmentedButtonRow {
+                SegmentedButton(
+                    selected = currentLanguage == "en",
                     onClick = {
                         scope.launch {
                             languagePreferences.setLanguage("en")
                         }
                     },
-                    modifier = Modifier.size(40.dp)
+                    shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
                 ) {
-                    Text(
-                        text = "🇺🇸",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .background(
-                                color = if (currentLanguage == "en") Color(0xFF1FA2FF).copy(alpha = 0.2f)
-                                       else Color.Transparent,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(4.dp)
-                    )
+                    Text("EN 🇺🇸", style = MaterialTheme.typography.labelMedium)
                 }
-
-                Spacer(Modifier.padding(4.dp))
-
-                // Spanish button
-                IconButton(
+                SegmentedButton(
+                    selected = currentLanguage == "es",
                     onClick = {
                         scope.launch {
                             languagePreferences.setLanguage("es")
                         }
                     },
-                    modifier = Modifier.size(40.dp)
+                    shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
                 ) {
-                    Text(
-                        text = "🇪🇸",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .background(
-                                color = if (currentLanguage == "es") Color(0xFF1FA2FF).copy(alpha = 0.2f)
-                                       else Color.Transparent,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(4.dp)
-                    )
+                    Text("ES 🇪🇸", style = MaterialTheme.typography.labelMedium)
                 }
             }
         }

@@ -46,7 +46,7 @@ fun MeetingCard(
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(16.dp),
-                spotColor = Color(0xFF2E68B8).copy(alpha = 0.25f)
+                spotColor = Color.Black.copy(alpha = 0.08f)
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),

@@ -5,24 +5,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import upc.edu.pe.eduspace.core.ui.theme.EduGradientPrimary
 
 @Composable
 fun GradientBackground(content: @Composable () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF1E88E5),
-                        Color(0xFF64B5F6),
-                        Color(0xFF81C784),
-                        Color(0xFFFFEB3B)
-                    )
-                )
-            )
+            .background(brush = EduGradientPrimary)
     ) {
         content()
     }

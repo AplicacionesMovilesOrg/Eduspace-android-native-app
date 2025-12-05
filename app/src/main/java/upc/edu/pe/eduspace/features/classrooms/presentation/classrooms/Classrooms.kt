@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -21,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import kotlinx.coroutines.CoroutineScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,10 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
+import upc.edu.pe.eduspace.core.ui.components.EduSpaceTopAppBar
+import upc.edu.pe.eduspace.core.ui.theme.EduGradientBackground
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.ClassroomCard
-import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.ClassroomsHeader
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.CreateClassroomDialog
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.DeleteConfirmationDialog
 import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.EditClassroomDialog
@@ -51,6 +53,8 @@ import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassroomsRoute(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
     onClassroomClick: (String) -> Unit = {},
     viewModel: ClassroomsViewModel = hiltViewModel()
 ) {
@@ -117,6 +121,8 @@ fun ClassroomsRoute(
     }
 
     ClassroomsContent(
+        drawerState = drawerState,
+        scope = scope,
         classroomsState = classroomsState,
         teachersState = teachersState,
         onAddClick = { showCreateDialog = true },
@@ -180,6 +186,8 @@ fun ClassroomsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ClassroomsContent(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
     classroomsState: UiState<List<Classroom>>,
     teachersState: UiState<List<Teacher>>,
     onAddClick: () -> Unit,
@@ -188,6 +196,13 @@ private fun ClassroomsContent(
     onDeleteClick: (Classroom) -> Unit
 ) {
     Scaffold(
+        topBar = {
+            EduSpaceTopAppBar(
+                title = stringResource(R.string.nav_classrooms),
+                drawerState = drawerState,
+                scope = scope
+            )
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onAddClick,
@@ -218,11 +233,7 @@ private fun ClassroomsContent(
             Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(
-                    Brush.linearGradient(
-                        listOf(Color(0xFF7EC0EE), Color(0xFFF5E682))
-                    )
-                )
+                .background(EduGradientBackground)
         ) {
             when (classroomsState) {
                 is UiState.Loading -> {
@@ -236,10 +247,6 @@ private fun ClassroomsContent(
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        item {
-                            ClassroomsHeader(classroomCount = classrooms.size)
-                        }
-
                         if (classrooms.isEmpty()) {
                             item {
                                 EmptyClassroomsState()

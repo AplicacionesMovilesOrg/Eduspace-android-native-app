@@ -20,16 +20,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -38,6 +36,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import kotlinx.coroutines.CoroutineScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,17 +58,19 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
+import upc.edu.pe.eduspace.core.ui.components.EduSpaceTopAppBar
+import upc.edu.pe.eduspace.core.ui.theme.EduGradientBackground
 import upc.edu.pe.eduspace.core.utils.UiState
-import upc.edu.pe.eduspace.features.classrooms.presentation.classrooms.components.DeleteConfirmationDialog
 import upc.edu.pe.eduspace.features.teachers.domain.model.Teacher
 import upc.edu.pe.eduspace.features.teachers.domain.repositories.CreateTeacher
-import upc.edu.pe.eduspace.features.teachers.domain.repositories.UpdateTeacher
-import upc.edu.pe.eduspace.features.teachers.presentation.teachers.components.EditTeacherDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeachersRoute(
-    viewModel: TeachersViewModel = hiltViewModel(),
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+    onNavigateToDetail: (String) -> Unit = {},
+    viewModel: TeachersViewModel = hiltViewModel()
 ) {
     val teachersState by viewModel.teachers.collectAsStateWithLifecycle()
     val createState by viewModel.createState.collectAsStateWithLifecycle()
@@ -78,11 +79,8 @@ fun TeachersRoute(
     val deleteState by viewModel.deleteState.collectAsStateWithLifecycle()
 
     var showAddDialog by remember { mutableStateOf(false) }
-    var showEditDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
 
     var snack by remember { mutableStateOf<String?>(null) }
-    var selectedTeacher by remember { mutableStateOf<Teacher?>(null) }
 
     val teacherCreatedMessage = stringResource(R.string.teacher_created)
 
@@ -113,7 +111,6 @@ fun TeachersRoute(
         when (updateState) {
             is UiState.Success -> {
                 snack = teacherUpdatedMessage
-                showEditDialog = false
                 viewModel.resetUpdateState()
             }
             is UiState.Error -> {
@@ -128,8 +125,6 @@ fun TeachersRoute(
         when (deleteState) {
             is UiState.Success -> {
                 snack = teacherDeletedMessage
-                showDeleteDialog = false
-                selectedTeacher = null
                 viewModel.resetDeleteState()
             }
             is UiState.Error -> {
@@ -141,9 +136,11 @@ fun TeachersRoute(
     }
 
     TeachersContent(
+        drawerState = drawerState,
+        scope = scope,
         teachersState = teachersState,
         onAddTeacher = { showAddDialog = true },
-        onTeacherClick = { selectedTeacher = it },
+        onTeacherClick = { teacher -> onNavigateToDetail(teacher.id) },
         onRetry = { viewModel.getAllTeachers() }
     )
 
@@ -167,47 +164,6 @@ fun TeachersRoute(
         )
     }
 
-    if (showEditDialog) {
-        selectedTeacher?.let { teacher ->
-            EditTeacherDialog(
-                teacher = teacher,
-                onDismiss = { showEditDialog = false },
-                onSubmit = { firstName, lastName, email, dni, address, phone ->
-                    viewModel.updateTeacher(
-                        teacher.id,
-                        UpdateTeacher(firstName, lastName, email, dni, address, phone)
-                    )
-                }
-            )
-        }
-    }
-
-    if (showDeleteDialog) {
-        selectedTeacher?.let { teacher ->
-            DeleteConfirmationDialog(
-                title = stringResource(R.string.delete_teacher),
-                message = stringResource(R.string.delete_teacher_confirm, "${teacher.firstName} ${teacher.lastName}"),
-                onDismiss = { showDeleteDialog = false },
-                onConfirm = {
-                    viewModel.deleteTeacher(teacher.id)
-                }
-            )
-        }
-    }
-
-    selectedTeacher?.let { t ->
-        TeacherDetailDialog(
-            teacher = t,
-            onDismiss = { selectedTeacher = null },
-            onEdit = {
-                showEditDialog = true
-            },
-            onDelete = {
-                showDeleteDialog = true
-            }
-        )
-    }
-
     snack?.let { msg ->
         CustomSnackbar(
             message = msg,
@@ -219,12 +175,21 @@ fun TeachersRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TeachersContent(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
     teachersState: UiState<List<Teacher>>,
     onAddTeacher: () -> Unit = {},
     onTeacherClick: (Teacher) -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
     Scaffold(
+        topBar = {
+            EduSpaceTopAppBar(
+                title = stringResource(R.string.nav_teachers),
+                drawerState = drawerState,
+                scope = scope
+            )
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onAddTeacher,
@@ -255,11 +220,7 @@ private fun TeachersContent(
             Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(
-                    Brush.linearGradient(
-                        listOf(Color(0xFF7EC0EE), Color(0xFFF5E682))
-                    )
-                )
+                .background(EduGradientBackground)
         ) {
             when (teachersState) {
                 is UiState.Loading -> {
@@ -392,147 +353,6 @@ private fun TeacherCard(
         }
     }
 }
-
-@Composable
-private fun TeacherDetailDialog(
-    teacher: Teacher,
-    onDismiss: () -> Unit,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
-) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Box(
-            Modifier
-                .fillMaxWidth(0.9f)
-                .wrapContentHeight()
-        ) {
-            Surface(
-                shape = RoundedCornerShape(24.dp),
-                tonalElevation = 8.dp,
-                shadowElevation = 12.dp,
-                color = Color.White
-            ) {
-                Column(
-                    Modifier
-                        .padding(24.dp)
-                        .navigationBarsPadding(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Box(
-                            Modifier
-                                .size(56.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(
-                                    Brush.linearGradient(
-                                        colors = listOf(
-                                            Color(0xFF2E68B8),
-                                            Color(0xFF4A90E2)
-                                        )
-                                    )
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            val initials = (teacher.firstName.firstOrNull()?.toString().orEmpty() +
-                                    teacher.lastName.firstOrNull()?.toString().orEmpty()).uppercase()
-                            Text(
-                                initials,
-                                style = MaterialTheme.typography.titleLarge,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-
-                        Text(
-                            text = "${teacher.firstName} ${teacher.lastName}",
-                            style = MaterialTheme.typography.headlineSmall.copy(
-                                color = Color(0xFF2E68B8),
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
-
-                    HorizontalDivider()
-
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        DetailRow(label = stringResource(R.string.teacher_email), value = teacher.email)
-                        DetailRow(label = stringResource(R.string.teacher_dni), value = teacher.dni)
-                        DetailRow(label = stringResource(R.string.teacher_address), value = teacher.address)
-                        DetailRow(label = stringResource(R.string.teacher_phone), value = teacher.phone)
-                    }
-
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Button(
-                            onClick = onDelete,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFD32F2F),
-                                contentColor = Color.White
-                            ),
-                            shape = RoundedCornerShape(12.dp),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                        ) {
-                            Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(20.dp))
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.delete), fontWeight = FontWeight.Bold)
-                        }
-
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(
-                                onClick = onEdit,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFF2E68B8).copy(alpha = 0.1f),
-                                    contentColor = Color(0xFF2E68B8)
-                                ),
-                                shape = RoundedCornerShape(12.dp),
-                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                            ) {
-                                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(20.dp))
-                                Spacer(Modifier.width(8.dp))
-                                Text(stringResource(R.string.edit), fontWeight = FontWeight.Bold)
-                            }
-
-                            TextButton(
-                                onClick = onDismiss,
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text(stringResource(R.string.close), fontWeight = FontWeight.Bold, color = Color(0xFF2E68B8))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun DetailRow(label: String, value: String) {
-    Column {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = Color(0xFF666666)
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color(0xFF1A1A1A),
-            fontWeight = FontWeight.Medium
-        )
-    }
-}
-
 
 @Composable
 private fun AddTeacherDialogStyled(

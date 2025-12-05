@@ -17,12 +17,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import kotlinx.coroutines.CoroutineScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +41,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import upc.edu.pe.eduspace.R
 import upc.edu.pe.eduspace.core.ui.components.CustomSnackbar
+import upc.edu.pe.eduspace.core.ui.components.EduSpaceTopAppBar
+import upc.edu.pe.eduspace.core.ui.theme.EduGradientBackground
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.shared_spaces.domain.models.SharedArea
 import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_areas.components.CreateSharedAreaDialog
@@ -49,6 +52,8 @@ import upc.edu.pe.eduspace.features.shared_spaces.presentation.shared_areas.comp
 
 @Composable
 fun SharedAreasRoute(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
     onNavigateToDetail: (String) -> Unit,
     viewModel: SharedAreasViewModel = hiltViewModel()
 ) {
@@ -123,6 +128,13 @@ fun SharedAreasRoute(
     }
 
     Scaffold(
+        topBar = {
+            EduSpaceTopAppBar(
+                title = stringResource(R.string.nav_shared_spaces),
+                drawerState = drawerState,
+                scope = scope
+            )
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = { showCreateDialog = true },
@@ -153,11 +165,7 @@ fun SharedAreasRoute(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(
-                    Brush.linearGradient(
-                        listOf(Color(0xFF7EC0EE), Color(0xFFF5E682))
-                    )
-                )
+                .background(EduGradientBackground)
         ) {
             when (sharedAreasState) {
                 is UiState.Loading -> {

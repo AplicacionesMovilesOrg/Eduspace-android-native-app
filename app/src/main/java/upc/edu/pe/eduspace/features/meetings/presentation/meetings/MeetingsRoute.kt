@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -23,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import kotlinx.coroutines.CoroutineScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import upc.edu.pe.eduspace.R
+import upc.edu.pe.eduspace.core.ui.components.EduSpaceTopAppBar
+import upc.edu.pe.eduspace.core.ui.theme.EduGradientBackground
 import upc.edu.pe.eduspace.core.utils.UiState
 import upc.edu.pe.eduspace.features.classrooms.domain.models.Classroom
 import upc.edu.pe.eduspace.features.meetings.domain.models.Meeting
@@ -48,6 +51,8 @@ import upc.edu.pe.eduspace.features.meetings.presentation.meetings.components.Me
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MeetingsRoute(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
     onNavigateToDetail: (String) -> Unit = {},
     viewModel: MeetingsViewModel = hiltViewModel()
 ) {
@@ -87,6 +92,8 @@ fun MeetingsRoute(
     }
 
     MeetingsContent(
+        drawerState = drawerState,
+        scope = scope,
         meetingsState = meetingsState,
         classroomsState = classroomsState,
         onAddClick = {
@@ -113,6 +120,8 @@ fun MeetingsRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MeetingsContent(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
     meetingsState: UiState<List<Meeting>>,
     classroomsState: UiState<List<Classroom>>,
     onAddClick: () -> Unit,
@@ -121,6 +130,13 @@ private fun MeetingsContent(
 ) {
 
     Scaffold(
+        topBar = {
+            EduSpaceTopAppBar(
+                title = stringResource(R.string.nav_meetings),
+                drawerState = drawerState,
+                scope = scope
+            )
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onAddClick,
@@ -151,11 +167,7 @@ private fun MeetingsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(
-                    Brush.linearGradient(
-                        listOf(Color(0xFF7EC0EE), Color(0xFFF5E682))
-                    )
-                )
+                .background(EduGradientBackground)
         ) {
             when (meetingsState) {
                 is UiState.Loading -> {
